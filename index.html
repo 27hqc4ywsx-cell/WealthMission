@@ -1008,7 +1008,11 @@
   <div class="ob-step active" data-step="1">
     <div class="ob-eyebrow">SCHRITT 1 VON 9</div>
     <h1 class="ob-title">Erschaffe deinen Helden</h1>
-    <p class="ob-sub">Wähle deinen Charaktertyp. Er wächst mit dir mit.</p>
+    <p class="ob-sub">
+      WealthMission verbindet Vermögensaufbau mit Charakter-Entwicklung.<br/>
+      Du baust echtes Vermögen auf – dein Charakter steigt mit jedem Erfolg auf.<br/>
+      In 9 Schritten erstellen wir dein persönliches Profil. Dann gibt's die ersten Quests.
+    </p>
     <div class="choice-grid">
       <div class="choice" data-gender="male">
         <span class="icon">🤴</span>
@@ -1085,7 +1089,10 @@
   <div class="ob-step" data-step="5">
     <div class="ob-eyebrow">SCHRITT 5 VON 9</div>
     <h1 class="ob-title">Wo stehst du?</h1>
-    <p class="ob-sub">Deine aktuellen Werte. Schätze ruhig – du kannst es jederzeit anpassen.</p>
+    <p class="ob-sub">
+      Trag deine aktuellen Werte ein. <strong style="color:var(--gold-soft)">Nettovermögen</strong> = Bargeld + Bank + Depot + Gold − Schulden.<br/>
+      Schätze ruhig – jederzeit nachpflegbar.
+    </p>
     <div class="field-grid">
       <div>
         <label>💵 Bargeld €</label>
@@ -1119,15 +1126,18 @@
   <div class="ob-step" data-step="6">
     <div class="ob-eyebrow">SCHRITT 6 VON 9</div>
     <h1 class="ob-title">Dein Geldfluss</h1>
-    <p class="ob-sub">Pro Monat – ehrliche Zahlen geben bessere Missionen.</p>
-    <label>💰 Einnahmen €</label>
-    <input type="number" inputmode="decimal" id="ob-income" placeholder="z.B. 2200" />
-    <label>📌 Fixkosten €</label>
-    <input type="number" inputmode="decimal" id="ob-fixed" placeholder="Miete, Strom, Abos..." />
-    <label>🛍️ Variable Ausgaben €</label>
-    <input type="number" inputmode="decimal" id="ob-variable" placeholder="Essen, Freizeit, Konsum..." />
-    <label>💎 Sparbetrag €</label>
-    <input type="number" inputmode="decimal" id="ob-savings" placeholder="Was bleibt am Monatsende?" />
+    <p class="ob-sub">
+      Alles pro Monat. Faustregel: <em>Einnahmen − Fixkosten − Variable = was du sparen kannst.</em><br/>
+      Gib unten deinen tatsächlichen Sparbetrag ein – wenn er stark abweicht, bekommst du im Dashboard einen Hinweis.
+    </p>
+    <label>💰 Einnahmen €/Monat</label>
+    <input type="number" inputmode="decimal" id="ob-income" placeholder="Gehalt, Job, Rente, BAföG..." />
+    <label>📌 Fixkosten €/Monat</label>
+    <input type="number" inputmode="decimal" id="ob-fixed" placeholder="Miete, Strom, Versicherungen, Abos" />
+    <label>🛍️ Variable Ausgaben €/Monat</label>
+    <input type="number" inputmode="decimal" id="ob-variable" placeholder="Essen, Freizeit, Konsum" />
+    <label>💎 Tatsächlicher Sparbetrag €/Monat</label>
+    <input type="number" inputmode="decimal" id="ob-savings" placeholder="Was bleibt wirklich übrig?" />
     <div class="ob-spacer"></div>
     <div class="btn-row">
       <button class="btn-ghost" data-back="6">Zurück</button>
@@ -1139,7 +1149,9 @@
   <div class="ob-step" data-step="7">
     <div class="ob-eyebrow">SCHRITT 7 VON 9</div>
     <h1 class="ob-title">Dein Vermögensziel</h1>
-    <p class="ob-sub">Wohin willst du? Du kannst es später jederzeit hochsetzen.</p>
+    <p class="ob-sub">
+      Bis zu welchem <strong style="color:var(--gold-soft)">Nettovermögen</strong> willst du? Erstes realistisches Ziel reicht – du kannst es jederzeit hochsetzen, wenn du es erreichst.
+    </p>
     <div class="chip-row" id="ob-goal-chips"></div>
     <label>oder eigener Betrag</label>
     <input type="number" inputmode="decimal" id="ob-goal-custom" placeholder="z.B. 3500" />
@@ -1183,7 +1195,10 @@
 <div id="app" class="hidden">
   <div class="header">
     <div class="logo">⚔️ WEALTHMISSION</div>
-    <button class="menu-btn" id="reset-btn">Reset</button>
+    <div style="display:flex;gap:6px;">
+      <button class="menu-btn" id="help-btn" aria-label="Hilfe">?</button>
+      <button class="menu-btn" id="reset-btn">Reset</button>
+    </div>
   </div>
 
   <!-- ============== DASHBOARD ============== -->
@@ -1268,14 +1283,15 @@
       <div class="card-title">Cashflow <span class="accent" id="cashflow-tier">Anfänger</span></div>
       <div class="stat-grid" style="margin-top: 0;">
         <div class="stat green">
-          <div class="k">Sparrate / Monat</div>
+          <div class="k">Sparrate / Monat (Vorgabe)</div>
           <div class="v" id="cashflow-savings">0 €</div>
         </div>
         <div class="stat">
-          <div class="k">Frei nach Fix</div>
+          <div class="k">Rechnerisch frei (Einn − Fix − Var)</div>
           <div class="v" id="cashflow-free">0 €</div>
         </div>
       </div>
+      <div class="text-muted text-small mt-12" id="cashflow-hint" style="display:none;line-height:1.4;"></div>
     </div>
 
     <!-- Open Missions Preview -->
@@ -1323,9 +1339,12 @@
 
     <!-- TRESOR -->
     <div class="card gold">
-      <div class="card-title">🔒 Tresor (geschütztes Vermögen) <span class="accent" id="vault-protect">Schutz: 0 Tage</span></div>
+      <div class="card-title">🔒 Tresor – geschützter Anteil <span class="accent" id="vault-protect">Schutz: 0 Tage</span></div>
       <div class="wealth-net" id="vault-total">0 €</div>
-      <div class="wealth-sub">Geld, das du wirklich beiseitegelegt hast. Entnahmen kosten XP – innerhalb 30 Tagen sogar doppelt.</div>
+      <div class="wealth-sub">
+        <strong>Wichtig:</strong> Der Tresor ist <u>kein zusätzliches Vermögen</u> – er markiert, welcher Teil deines Bargelds/Bankkontos „geschützt" ist (Schließfach, Festgeld, separates Konto).<br/>
+        Entnahme = Bank wird tatsächlich reduziert. Innerhalb 30 Tagen seit Einzahlung kostet das doppelte XP.
+      </div>
 
       <div class="btn-row mt-16">
         <button class="btn-primary" id="vault-deposit-btn">+ Einzahlen</button>
@@ -1836,9 +1855,10 @@ function netWorth() {
   return (w.cash || 0) + (w.bank || 0) + (w.depot || 0) + (w.gold || 0) - (w.debt || 0);
 }
 
-// Gesamtvermögen inkl. Tresor (für Meilensteine, Char-Level)
+// Tresor ist eine Markierung auf cash/bank, KEIN zusätzliches Vermögen.
+// totalWealth() existiert nur als Alias für netWorth() (Backward-Compat).
 function totalWealth() {
-  return netWorth() + (state.locked.total || 0);
+  return netWorth();
 }
 
 function currentEquipmentTier() {
@@ -2059,7 +2079,9 @@ function validateObStep(step) {
 }
 
 function num(id) {
-  const v = parseFloat(document.getElementById(id).value);
+  // Akzeptiert deutsche Komma-Eingabe ("3,50" -> 3.5)
+  const raw = String(document.getElementById(id).value || "").replace(",", ".").trim();
+  const v = parseFloat(raw);
   return isNaN(v) ? 0 : Math.max(0, v);
 }
 
@@ -2266,13 +2288,14 @@ function renderWealth() {
 
   // Aufteilung
   const grid = document.getElementById("wealth-grid");
+  // Tresor ist KEIN eigener Posten - nur Cash/Bank/Depot/Gold/Debt zählen.
+  // Tresor wird als Markierung in eigener Karte angezeigt.
   const items = [
     ["💵 Bargeld", state.wealth.cash, ""],
     ["🏦 Bank",    state.wealth.bank, ""],
     ["📈 Depot",   state.wealth.depot, ""],
     ["🪙 Gold",    state.wealth.gold, ""],
     ["💳 Schulden", state.wealth.debt, "debt"],
-    ["🔒 Tresor", state.locked.total, "locked"],
   ];
   grid.innerHTML = items.map(([k, v, cls]) =>
     '<div class="wealth-item ' + cls + '">' +
@@ -2298,10 +2321,27 @@ function renderWealth() {
 
 function renderCashflow() {
   const cf = state.cashflow;
-  const free = (cf.income || 0) - (cf.fixed || 0);
+  // Korrekte Berechnung: Einnahmen - Fix - Variabel
+  const calcFree = (cf.income || 0) - (cf.fixed || 0) - (cf.variable || 0);
   document.getElementById("cashflow-savings").textContent = fmt(cf.savings || 0);
-  document.getElementById("cashflow-free").textContent = fmt(free);
+  document.getElementById("cashflow-free").textContent = fmt(calcFree);
   document.getElementById("cashflow-tier").textContent = TIER_NAMES[state.userTier];
+
+  // Konsistenzhinweis
+  const hint = document.getElementById("cashflow-hint");
+  if (hint) {
+    const diff = (cf.savings || 0) - calcFree;
+    if (cf.income > 0 && Math.abs(diff) > 20) {
+      hint.style.display = "";
+      if (diff > 0) {
+        hint.textContent = "⚠️ Sparrate (" + fmt(cf.savings) + ") ist " + fmt(diff) + " höher als rechnerisch frei. Prüf deine Werte unter Held → Profil bearbeiten.";
+      } else {
+        hint.textContent = "💡 Du könntest theoretisch " + fmt(-diff) + " mehr sparen (rechnerisch frei: " + fmt(calcFree) + ").";
+      }
+    } else {
+      hint.style.display = "none";
+    }
+  }
 }
 
 function renderVault() {
@@ -2520,10 +2560,20 @@ function bindMissionEvents(scope) {
       const uid = b.dataset.vault;
       const inputId = "save-input-" + uid;
       const inp = document.getElementById(inputId);
-      const v = parseFloat(inp.value);
+      const raw = String(inp.value || "").replace(",", ".").trim();
+      const v = parseFloat(raw);
       if (isNaN(v) || v <= 0) { toast("Bitte gib einen Betrag ein."); return; }
-      depositToVault(v, "Mission " + uid);
+      // Du hast tatsächlich Geld gespart → kommt zur Bank UND wird im Tresor markiert
+      state.wealth.bank = (state.wealth.bank || 0) + v;
+      state.stats.moneyEarned = (state.stats.moneyEarned || 0) + v;
+      state.locked.deposits.push({
+        id: "d_" + Math.random().toString(36).slice(2, 9),
+        amount: v, date: todayISO(), note: "Quest"
+      });
+      state.locked.total = (state.locked.total || 0) + v;
+      state.stats.lockedTotal = (state.stats.lockedTotal || 0) + v;
       completeMission(uid);
+      toast("+" + fmt(v) + " auf Bank · 🔒 geschützt");
     });
   });
 }
@@ -2701,27 +2751,37 @@ function pushHistory() {
 /* =========================================================
    TRESOR: Einzahlung / Entnahme
    ========================================================= */
+// Markiert einen Teil von cash+bank als "geschützt".
+// Verändert wealth.cash/bank NICHT – das Geld muss bereits eingetragen sein.
 function depositToVault(amount, note = "") {
   if (!amount || amount <= 0) return;
+  const liquid = (state.wealth.cash || 0) + (state.wealth.bank || 0);
+  const newLocked = (state.locked.total || 0) + amount;
+  if (newLocked > liquid + 0.01) {
+    toast("Tresor ("+fmt(newLocked)+") wäre größer als Bargeld+Bank ("+fmt(liquid)+"). Trag das gesparte Geld zuerst unter Bargeld/Bank ein.");
+    return;
+  }
   state.locked.deposits.push({
     id: "d_" + Math.random().toString(36).slice(2, 9),
     amount: amount, date: todayISO(), note: note,
   });
-  state.locked.total = (state.locked.total || 0) + amount;
+  state.locked.total = newLocked;
   state.stats.lockedTotal = (state.stats.lockedTotal || 0) + amount;
   pushHistory();
   save();
   renderAll();
-  toast("🔒 " + fmt(amount) + " in den Tresor!");
+  toast("🔒 " + fmt(amount) + " als geschützt markiert");
 }
 
+// Du hast Tresor-Geld wieder ausgegeben → Bank/Cash wird tatsächlich reduziert,
+// Tresor sinkt entsprechend, XP-Strafe wird verhängt.
 function withdrawFromVault(amount, note = "") {
   if (!amount || amount <= 0) return;
   if (amount > state.locked.total) {
     toast("Nicht genug im Tresor.");
     return;
   }
-  // Berechne XP-Strafe basierend auf Frische des Geldes (FIFO)
+  // FIFO-Berechnung der XP-Strafe basierend auf Frische der Einzahlungen
   let remaining = amount;
   let penalty = 0;
   let earlyAmount = 0;
@@ -2734,22 +2794,29 @@ function withdrawFromVault(amount, note = "") {
     const days = daysBetween(d.date, today);
     if (days < 30) {
       earlyAmount += take;
-      penalty += Math.round(take * 2); // doppelt: 2 XP pro Euro
+      penalty += Math.round(take * 2);
     } else {
       lateAmount += take;
-      penalty += Math.round(take); // einfach: 1 XP pro Euro
+      penalty += Math.round(take);
     }
-    if (take < d.amount) {
-      newDeposits.push({ ...d, amount: d.amount - take });
-    }
+    if (take < d.amount) newDeposits.push({ ...d, amount: d.amount - take });
     remaining -= take;
   }
   state.locked.deposits = newDeposits;
   state.locked.total -= amount;
+
+  // Geld ist tatsächlich weg: zuerst Bank reduzieren, Rest aus Cash
+  let toRemove = amount;
+  const fromBank = Math.min(state.wealth.bank || 0, toRemove);
+  state.wealth.bank = (state.wealth.bank || 0) - fromBank;
+  toRemove -= fromBank;
+  if (toRemove > 0) {
+    state.wealth.cash = Math.max(0, (state.wealth.cash || 0) - toRemove);
+  }
+
   state.locked.withdrawals.push({
     id: "w_" + Math.random().toString(36).slice(2, 9),
-    amount: amount, date: today,
-    note: note,
+    amount: amount, date: today, note: note,
     daysAfterDeposit: earlyAmount > lateAmount ? "<30" : "≥30"
   });
 
@@ -2768,7 +2835,9 @@ function withdrawFromVault(amount, note = "") {
    MEILENSTEINE
    ========================================================= */
 function checkMilestones() {
-  const total = totalWealth();
+  // Meilensteine basieren ausschließlich auf Nettovermögen
+  // (Tresor ist Teil davon, KEINE Doppelzählung)
+  const total = netWorth();
   for (const ms of MILESTONES) {
     if (total >= ms.at && !state.milestonesReached.includes(ms.at)) {
       state.milestonesReached.push(ms.at);
@@ -2838,31 +2907,38 @@ function showDecayModal(amount, penalty, isEarly) {
 
 function showWelcomeModal() {
   modalShell(
-    '<div class="big-icon">⚔️</div>' +
+    '<div class=”big-icon”>⚔️</div>' +
     '<h2>Willkommen, ' + escapeHTML(state.character.name) + '!</h2>' +
-    '<p>Dein Charakter ist erschaffen. Wir haben dir bereits passende Quests bereitgelegt – starte mit der ersten unter „Quests“.</p>' +
-    '<p><strong style="color:var(--gold)">Dein Tier:</strong> ' + TIER_NAMES[state.userTier] + '</p>' +
-    '<button class="btn-primary" onclick="closeModal()">Reise beginnen</button>'
+    '<p>Dein Charakter ist erschaffen. Wir haben dir bereits passende Quests bereitgelegt – starte mit der ersten unter „Quests”.</p>' +
+    '<p><strong style=”color:var(--gold)”>Dein Tier:</strong> ' + TIER_NAMES[state.userTier] + '</p>' +
+    '<div class=”btn-row” style=”margin-top:6px;”>' +
+      '<button class=”btn-ghost” onclick=”closeModal();showHelpModal();”>Wie funktioniert das?</button>' +
+      '<button class=”btn-primary” onclick=”closeModal()”>Reise beginnen</button>' +
+    '</div>'
   );
   fireConfetti(30);
 }
 
 // Vault Deposit/Withdraw Dialogs
 function showVaultDepositDialog() {
+  const liquid = (state.wealth.cash || 0) + (state.wealth.bank || 0);
+  const free = liquid - (state.locked.total || 0);
   modalShell(
     '<div class="big-icon">🔒</div>' +
-    '<h2>In Tresor einzahlen</h2>' +
-    '<p>Geld, das du tatsächlich beiseitegelegt hast (separates Konto, Bankschließfach, Festgeld).</p>' +
+    '<h2>Im Tresor markieren</h2>' +
+    '<p>Markiert einen Teil deines <strong>bestehenden</strong> Bargelds/Bankkontos als geschützt.<br/>Dein Vermögen ändert sich nicht – aber du verpflichtest dich, diesen Teil nicht anzufassen.</p>' +
+    '<div class="text-small text-muted" style="margin:8px 0;">Bargeld + Bank: ' + fmt(liquid) + ' · davon noch frei (nicht im Tresor): <strong>' + fmt(free) + '</strong></div>' +
     '<input type="number" inputmode="decimal" id="vault-dep-amount" placeholder="Betrag €" style="margin:8px 0;" />' +
-    '<input type="text" id="vault-dep-note" placeholder="Notiz (optional)" style="margin-bottom:12px;" />' +
+    '<input type="text" id="vault-dep-note" placeholder="Wo liegt es? z.B. „Festgeld DKB" (optional)" style="margin-bottom:12px;" />' +
     '<div class="btn-row">' +
       '<button class="btn-ghost" onclick="closeModal()">Abbrechen</button>' +
-      '<button class="btn-primary" onclick="handleVaultDeposit()">Einzahlen</button>' +
+      '<button class="btn-primary" onclick="handleVaultDeposit()">Markieren</button>' +
     '</div>'
   );
 }
 function handleVaultDeposit() {
-  const v = parseFloat(document.getElementById("vault-dep-amount").value);
+  const raw = String(document.getElementById("vault-dep-amount").value || "").replace(",", ".");
+  const v = parseFloat(raw);
   const n = document.getElementById("vault-dep-note").value.trim();
   if (isNaN(v) || v <= 0) { toast("Bitte gib einen Betrag ein."); return; }
   depositToVault(v, n);
@@ -2873,7 +2949,10 @@ function showVaultWithdrawDialog() {
   modalShell(
     '<div class="big-icon">⚠️</div>' +
     '<h2>Aus Tresor entnehmen</h2>' +
-    '<p>Ehrlich sein: du hast Tresor-Geld wieder ausgegeben. Innerhalb 30 Tagen seit Einzahlung kostet das doppelte XP.</p>' +
+    '<p>Ehrlich sein: du hast Tresor-Geld wieder ausgegeben.<br/>' +
+       '<strong>Folge:</strong> Bank wird um den Betrag reduziert · Tresor sinkt mit · XP-Strafe.<br/>' +
+       'Innerhalb 30 Tagen seit Einzahlung = doppelte XP-Strafe.</p>' +
+    '<div class="text-small text-muted" style="margin:8px 0;">Aktuell im Tresor: <strong>' + fmt(state.locked.total) + '</strong></div>' +
     '<input type="number" inputmode="decimal" id="vault-wd-amount" placeholder="Betrag €" style="margin:8px 0;" />' +
     '<input type="text" id="vault-wd-note" placeholder="Wofür? (optional)" style="margin-bottom:12px;" />' +
     '<div class="btn-row">' +
@@ -2884,7 +2963,8 @@ function showVaultWithdrawDialog() {
   );
 }
 function handleVaultWithdraw() {
-  const v = parseFloat(document.getElementById("vault-wd-amount").value);
+  const raw = String(document.getElementById("vault-wd-amount").value || "").replace(",", ".");
+  const v = parseFloat(raw);
   const n = document.getElementById("vault-wd-note").value.trim();
   if (isNaN(v) || v <= 0) { toast("Bitte gib einen Betrag ein."); return; }
   withdrawFromVault(v, n);
@@ -2917,15 +2997,21 @@ function showProfileEditDialog() {
   );
 }
 function handleProfileSave() {
+  const parseNum = (id) => {
+    const raw = String(document.getElementById(id).value || "").replace(",", ".").trim();
+    const v = parseFloat(raw);
+    return isNaN(v) ? 0 : Math.max(0, v);
+  };
   const newName = document.getElementById("pe-name").value.trim();
   if (newName) state.character.name = newName;
   state.profile.age = parseInt(document.getElementById("pe-age").value, 10) || state.profile.age;
   state.profile.occupation = document.getElementById("pe-occ").value;
-  state.cashflow.income = parseFloat(document.getElementById("pe-income").value) || 0;
-  state.cashflow.fixed = parseFloat(document.getElementById("pe-fixed").value) || 0;
-  state.cashflow.variable = parseFloat(document.getElementById("pe-variable").value) || 0;
-  state.cashflow.savings = parseFloat(document.getElementById("pe-savings").value) || 0;
-  state.goals.target = parseFloat(document.getElementById("pe-goal").value) || state.goals.target;
+  state.cashflow.income = parseNum("pe-income");
+  state.cashflow.fixed = parseNum("pe-fixed");
+  state.cashflow.variable = parseNum("pe-variable");
+  state.cashflow.savings = parseNum("pe-savings");
+  const goal = parseNum("pe-goal");
+  if (goal > 0) state.goals.target = goal;
   state.userTier = computeUserTier();
   save();
   renderAll();
@@ -2933,11 +3019,46 @@ function handleProfileSave() {
   toast("Profil aktualisiert.");
 }
 
+// Großes Erklärungs-Modal: erklärt alle Begriffe und Berechnungen
+function showHelpModal() {
+  modalShell(
+    '<h2 style="font-size:22px;margin-bottom:14px;">So funktioniert WealthMission</h2>' +
+    '<div style="text-align:left;font-size:13.5px;line-height:1.65;color:var(--text-soft);max-height:60vh;overflow:auto;padding-right:6px;">' +
+      '<p><strong style="color:var(--gold)">💰 Nettovermögen</strong><br/>' +
+        'Bargeld + Bankkonto + Depot + Gold − Schulden. <u>Die einzige Vermögenszahl.</u> Alles andere ist nur Detail.</p>' +
+      '<p><strong style="color:var(--gold)">🔒 Tresor</strong><br/>' +
+        'Markierung, dass ein Teil deines Bargelds/Bankkontos „geschützt" ist (separates Konto, Schließfach, Festgeld). ' +
+        '<strong>Kein zusätzliches Vermögen!</strong> Wenn du 500 € auf der Bank hast und 200 € als Tresor markierst, hast du immer noch 500 € – aber 200 € davon sind „Hände weg". ' +
+        'Wenn du Tresor-Geld entnimmst, sinkt deine Bank UND der Tresor. Entnahme < 30 Tage seit Einzahlung = doppelte XP-Strafe.</p>' +
+      '<p><strong style="color:var(--violet-soft)">🎯 Tier (finanzielle Stufe)</strong><br/>' +
+        'Berechnet aus deiner Sparrate und deinem Nettovermögen:<br/>' +
+        '0 Anfänger · 1 Überlebender · 2 Stabiler Sparer · 3 Vermögensaufbauer · 4 Investor · 5 Kapitalstratege.<br/>' +
+        'Steuert, welche Quests dir empfohlen werden.</p>' +
+      '<p><strong style="color:var(--gold)">⭐ XP / Level</strong><br/>' +
+        'XP gibt es fürs Erledigen von Quests. Genug XP → Level-Up → neue Charakter-Ausrüstung. ' +
+        'Tresor-Entnahme < 30 Tagen kostet doppelte XP. Bei XP-Schwund kann der Charakter im Level fallen.</p>' +
+      '<p><strong style="color:var(--emerald-soft)">📊 Cashflow</strong><br/>' +
+        '<i>Einnahmen</i> = was reinkommt pro Monat (Gehalt, Job, Rente).<br/>' +
+        '<i>Fixkosten</i> = Miete, Strom, Versicherungen, Abos.<br/>' +
+        '<i>Variable Ausgaben</i> = Essen, Freizeit, Konsum.<br/>' +
+        '<i>Sparrate</i> = was du laut deiner Vorgabe sparen willst.<br/>' +
+        'Rechnerisch frei = Einnahmen − Fix − Variabel. Sollte ungefähr deiner Sparrate entsprechen. Wenn nicht, bekommst du einen Hinweis im Dashboard.</p>' +
+      '<p><strong style="color:var(--gold)">🏆 Meilensteine</strong><br/>' +
+        'Bei 100 € / 500 € / 1.000 € … 1.000.000 € Nettovermögen poppt eine Glückwunsch-Karte mit Kontext-Fakten auf („mehr als 30 % der Deutschen", „3 Monate ohne Einkommen", …).</p>' +
+      '<p><strong style="color:var(--gold)">⚔️ Quests</strong><br/>' +
+        'Konkrete Aufgaben passend zu deiner Lage und deinen Schwächen. Erledigen = XP. ' +
+        'Bei Quests mit €-Effekt kannst du beim Abschluss eingeben, wie viel du wirklich gespart hast – das erscheint dann auf deinem Bankkonto und wird im Tresor geschützt.</p>' +
+    '</div>' +
+    '<button class="btn-primary" style="margin-top:14px;" onclick="closeModal()">Verstanden</button>'
+  );
+}
+
 // Expose globally for inline onclick
 window.closeModal = closeModal;
 window.handleVaultDeposit = handleVaultDeposit;
 window.handleVaultWithdraw = handleVaultWithdraw;
 window.handleProfileSave = handleProfileSave;
+window.showHelpModal = showHelpModal;
 
 /* =========================================================
    CONFETTI
@@ -2985,6 +3106,19 @@ document.getElementById("save-wealth").addEventListener("click", () => {
     depot: num("w-depot"), gold: num("w-gold"),
     debt: num("w-debt"),
   };
+  // Plausibilität: Tresor darf nicht größer sein als Bargeld+Bank
+  const liquid = state.wealth.cash + state.wealth.bank;
+  if (state.locked.total > liquid + 0.01) {
+    state.locked.total = liquid;
+    // Deposits proportional anpassen
+    let cap = liquid;
+    state.locked.deposits = state.locked.deposits.map(d => {
+      if (cap <= 0) return null;
+      if (d.amount <= cap) { cap -= d.amount; return d; }
+      const adj = { ...d, amount: cap }; cap = 0; return adj;
+    }).filter(Boolean);
+    toast("Tresor wurde an dein Bargeld+Bank angepasst.");
+  }
   pushHistory();
   state.userTier = computeUserTier();
   save();
@@ -2995,6 +3129,7 @@ document.getElementById("save-wealth").addEventListener("click", () => {
 document.getElementById("vault-deposit-btn").addEventListener("click", showVaultDepositDialog);
 document.getElementById("vault-withdraw-btn").addEventListener("click", showVaultWithdrawDialog);
 document.getElementById("profile-edit-btn").addEventListener("click", showProfileEditDialog);
+document.getElementById("help-btn").addEventListener("click", showHelpModal);
 
 document.querySelectorAll("#mission-tabs .mission-tab").forEach(t => {
   t.addEventListener("click", () => {
