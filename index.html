@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="theme-color" content="#0d0d14" />
+<title>WealthMission – Vermögen trifft Charakter</title>
+<style>
+  /* ---------- Design Tokens ---------- */
+  :root {
+    --bg-0: #07070c;
+    --bg-1: #0f1018;
+    --bg-2: #161826;
+    --bg-3: #1f2235;
+    --line: #2a2d44;
+    --gold: #e8c468;
+    --gold-soft: #f0d690;
+    --gold-deep: #b8862c;
+    --green: #4ade80;
+    --green-deep: #16a34a;
+    --red: #f87171;
+    --text: #f5f3ee;
+    --muted: #9aa0b8;
+    --shadow: 0 10px 30px rgba(0,0,0,.45);
+    --radius: 16px;
+    --radius-lg: 22px;
+    --safe-top: env(safe-area-inset-top);
+    --safe-bottom: env(safe-area-inset-bottom);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    background:
+      radial-gradient(circle at 20% -10%, rgba(232,196,104,.10), transparent 60%),
+      radial-gradient(circle at 90% 110%, rgba(74,222,128,.07), transparent 55%),
+      linear-gradient(180deg, var(--bg-0), var(--bg-1) 60%);
+    color: var(--text);
+    min-height: 100vh;
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Headings use a slightly more game-feel font stack */
+  h1, h2, h3 { font-family: "Avenir Next", "SF Pro Display", -apple-system, sans-serif; letter-spacing: .3px; }
+
+  /* ---------- App Layout ---------- */
+  #app {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: calc(var(--safe-top) + 14px) 14px calc(var(--safe-bottom) + 96px);
+    min-height: 100vh;
+  }
+
+  .hidden { display: none !important; }
+
+  /* ---------- Cards ---------- */
+  .card {
+    background: linear-gradient(180deg, var(--bg-2), var(--bg-1));
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .card.gold {
+    border-color: rgba(232,196,104,.45);
+    background:
+      linear-gradient(180deg, rgba(232,196,104,.07), rgba(0,0,0,0)),
+      linear-gradient(180deg, var(--bg-2), var(--bg-1));
+  }
+  .card-title {
+    margin: 0 0 10px;
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    font-weight: 700;
+  }
+
+  /* ---------- Buttons ---------- */
+  button, .btn {
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: transform .08s ease, background .15s ease, border-color .15s ease;
+    width: 100%;
+    min-height: 48px;
+  }
+  button:active, .btn:active { transform: scale(.98); }
+  .btn-primary {
+    background: linear-gradient(180deg, var(--gold-soft), var(--gold-deep));
+    color: #1a1505;
+    border: none;
+    box-shadow: 0 6px 20px rgba(232,196,104,.25);
+  }
+  .btn-success {
+    background: linear-gradient(180deg, #5be38c, var(--green-deep));
+    color: #06210d;
+    border: none;
+  }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--text);
+  }
+  .btn-row { display: flex; gap: 10px; }
+  .btn-row > * { flex: 1; }
+
+  /* ---------- Inputs ---------- */
+  input[type="text"], input[type="number"], select {
+    width: 100%;
+    font-size: 17px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--bg-1);
+    color: var(--text);
+    font-family: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input:focus, select:focus { outline: 2px solid var(--gold); border-color: transparent; }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 6px; }
+
+  /* ---------- Onboarding ---------- */
+  #onboarding {
+    display: flex; flex-direction: column; justify-content: center;
+    min-height: 100vh; padding: 24px;
+  }
+  .ob-step { display: none; }
+  .ob-step.active { display: block; animation: fadeIn .35s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .ob-title {
+    font-size: 28px; margin: 0 0 8px;
+    background: linear-gradient(120deg, var(--gold-soft), var(--gold));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .ob-sub { color: var(--muted); margin: 0 0 20px; font-size: 15px; }
+  .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .choice {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-2);
+    padding: 18px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .15s ease, transform .08s ease;
+  }
+  .choice .icon { font-size: 36px; display: block; margin-bottom: 8px; }
+  .choice .label { font-weight: 700; font-size: 15px; }
+  .choice .desc { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .choice.selected { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(232,196,104,.25) inset; }
+  .choice:active { transform: scale(.98); }
+  .choice-grid.full { grid-template-columns: 1fr; }
+
+  /* ---------- Top Header ---------- */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .logo {
+    font-weight: 800; font-size: 18px; letter-spacing: 1px;
+    background: linear-gradient(120deg, var(--gold-soft), var(--gold));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .header .menu-btn {
+    width: auto; padding: 8px 12px; min-height: 36px; font-size: 13px;
+    background: transparent; border: 1px solid var(--line);
+  }
+
+  /* ---------- Character Card ---------- */
+  .char-card {
+    padding: 18px 16px 16px;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(232,196,104,.18), transparent 60%),
+      linear-gradient(180deg, var(--bg-2), var(--bg-1));
+    border: 1px solid rgba(232,196,104,.35);
+  }
+  .char-top { display: flex; gap: 14px; align-items: center; }
+  .char-info { flex: 1; min-width: 0; }
+  .char-name { margin: 0; font-size: 20px; font-weight: 800; }
+  .char-meta { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .rank-badge {
+    display: inline-block;
+    background: linear-gradient(120deg, var(--gold-soft), var(--gold-deep));
+    color: #1a1505;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .level-pill {
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .level-pill strong { color: var(--gold); font-size: 16px; margin-left: 4px; }
+
+  /* ---------- Avatar (CSS-only) ---------- */
+  .avatar-frame {
+    width: 96px; height: 132px;
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #1a1d2e, #0c0e18);
+    border: 2px solid var(--line);
+    flex-shrink: 0;
+  }
+  .avatar-frame.gold-border { border-color: var(--gold); box-shadow: 0 0 16px rgba(232,196,104,.35); }
+
+  /* Background scenes */
+  .scene { position: absolute; inset: 0; }
+  .scene.fantasy {
+    background:
+      radial-gradient(circle at 50% 30%, rgba(160,120,255,.25), transparent 60%),
+      linear-gradient(180deg, #1a1535, #08060f 70%);
+  }
+  .scene.fantasy::before {
+    content: ""; position: absolute; left: 10%; top: 12%; width: 6px; height: 6px;
+    border-radius: 50%; background: #fff; box-shadow:
+      18px 4px 0 #fff, 35px 14px 0 rgba(255,255,255,.7),
+      50px 6px 0 rgba(255,255,255,.5), 70px 20px 0 #fff,
+      14px 28px 0 rgba(255,255,255,.6);
+  }
+  .scene.casual {
+    background: linear-gradient(180deg, #2b3d5a, #0f1726);
+  }
+  .scene.luxury {
+    background:
+      linear-gradient(180deg, rgba(232,196,104,.18), transparent 50%),
+      linear-gradient(180deg, #1c1a26, #0a0911);
+  }
+  .scene.luxury::after {
+    /* skyline */
+    content: ""; position: absolute; bottom: 22%; left: 0; right: 0; height: 22px;
+    background:
+      linear-gradient(90deg,
+        #1a1a26 0 12%, #232338 12% 22%, #1a1a26 22% 35%,
+        #2a2a44 35% 50%, #1a1a26 50% 64%, #2e2e4d 64% 78%, #1a1a26 78% 100%);
+    box-shadow: inset 0 8px 0 rgba(232,196,104,.05);
+  }
+  .scene.penthouse {
+    background:
+      linear-gradient(180deg, rgba(232,196,104,.25), transparent 40%),
+      linear-gradient(180deg, #2a1f12, #0e0a06);
+  }
+  .scene.penthouse::after {
+    content: ""; position: absolute; bottom: 22%; left: 0; right: 0; height: 26px;
+    background:
+      linear-gradient(90deg,
+        #2a2418 0 14%, #3a3022 14% 26%, #251f15 26% 40%,
+        #4a3c20 40% 56%, #28221a 56% 70%, #4a3c20 70% 84%, #2a2418 84% 100%);
+  }
+
+  /* Character body parts */
+  .char {
+    position: absolute; left: 50%; bottom: 6px;
+    transform: translateX(-50%);
+    width: 60px; height: 96px;
+  }
+  .char .head {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 26px; height: 28px; border-radius: 50% 50% 45% 45%;
+    background: #f0c9a4; /* skin */
+    border: 1px solid rgba(0,0,0,.3);
+  }
+  .char .head.female::before {
+    /* hair flow */
+    content: ""; position: absolute; top: -3px; left: -5px; right: -5px; height: 16px;
+    border-radius: 50% 50% 30% 30%;
+    background: var(--hair, #4a2a1a);
+  }
+  .char .head.male::before {
+    content: ""; position: absolute; top: -2px; left: -2px; right: -2px; height: 8px;
+    border-radius: 50% 50% 30% 30%;
+    background: var(--hair, #2a1a10);
+  }
+  .char .face {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    width: 14px; height: 6px;
+  }
+  .char .face::before, .char .face::after {
+    content: ""; position: absolute; top: 0; width: 3px; height: 3px;
+    background: #1a1208; border-radius: 50%;
+  }
+  .char .face::before { left: 0; }
+  .char .face::after { right: 0; }
+  .char .body {
+    position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
+    width: 36px; height: 42px; border-radius: 8px 8px 4px 4px;
+    background: var(--outfit, #4a4a55);
+    border: 1px solid rgba(0,0,0,.4);
+  }
+  .char .arm {
+    position: absolute; top: 32px; width: 8px; height: 30px;
+    background: var(--outfit, #4a4a55);
+    border: 1px solid rgba(0,0,0,.4);
+    border-radius: 4px;
+  }
+  .char .arm.left { left: 4px; }
+  .char .arm.right { right: 4px; }
+  .char .legs {
+    position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+    width: 30px; height: 24px;
+    background: var(--pants, #2a2a35);
+    border: 1px solid rgba(0,0,0,.4);
+    border-radius: 4px 4px 6px 6px;
+  }
+  .char .accessory {
+    position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
+    width: 38px; height: 8px; border-radius: 2px;
+    background: var(--accent, transparent);
+  }
+  .char .crown {
+    position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+    font-size: 14px; line-height: 1;
+  }
+  .char.glow { filter: drop-shadow(0 0 6px var(--accent, var(--gold))); }
+
+  /* ---------- XP / Wealth Bars ---------- */
+  .bar-row { margin-top: 14px; }
+  .bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .bar-label strong { color: var(--text); font-weight: 700; }
+  .bar {
+    width: 100%; height: 10px;
+    background: var(--bg-3);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .bar > span {
+    display: block; height: 100%;
+    background: linear-gradient(90deg, var(--gold-soft), var(--gold));
+    width: 0;
+    transition: width .6s ease;
+    border-radius: 999px;
+  }
+  .bar.green > span { background: linear-gradient(90deg, #6dee9e, var(--green-deep)); }
+
+  /* ---------- Wealth Card ---------- */
+  .wealth-net {
+    font-size: 32px; font-weight: 800;
+    background: linear-gradient(120deg, var(--gold-soft), var(--gold));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    line-height: 1.1;
+  }
+  .wealth-sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .wealth-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    margin-top: 14px;
+  }
+  .wealth-item {
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+  }
+  .wealth-item .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .wealth-item .v { font-size: 16px; font-weight: 700; margin-top: 4px; }
+  .wealth-item.debt .v { color: var(--red); }
+
+  /* Edit Wealth dialog */
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field-grid label { margin-top: 0; }
+
+  /* ---------- Missions ---------- */
+  .mission-tabs {
+    display: flex; gap: 6px; margin-bottom: 10px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+  .mission-tab {
+    flex-shrink: 0;
+    padding: 8px 12px; border-radius: 999px; min-height: 0;
+    background: var(--bg-3); border: 1px solid var(--line);
+    font-size: 13px; width: auto;
+  }
+  .mission-tab.active {
+    background: linear-gradient(120deg, var(--gold-soft), var(--gold));
+    color: #1a1505; border-color: transparent; font-weight: 800;
+  }
+
+  .mission {
+    background: linear-gradient(180deg, var(--bg-2), var(--bg-1));
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .mission::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: var(--gold);
+  }
+  .mission.cat-sparen::before { background: #4ade80; }
+  .mission.cat-verdienen::before { background: #e8c468; }
+  .mission.cat-vertraege::before { background: #60a5fa; }
+  .mission.cat-investieren::before { background: #c084fc; }
+  .mission.cat-disziplin::before { background: #f472b6; }
+  .mission.done { opacity: .55; }
+  .mission.done::before { background: #4a4f6a; }
+
+  .mission-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .mission-title { font-weight: 700; font-size: 15px; margin: 0; }
+  .mission-desc { color: var(--muted); font-size: 13px; margin: 6px 0 10px; line-height: 1.4; }
+  .mission-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .tag {
+    font-size: 10px; padding: 3px 8px; border-radius: 999px;
+    background: var(--bg-3); border: 1px solid var(--line);
+    color: var(--muted); text-transform: uppercase; letter-spacing: .8px; font-weight: 700;
+  }
+  .tag.gold { background: rgba(232,196,104,.15); color: var(--gold); border-color: rgba(232,196,104,.4); }
+  .tag.green { background: rgba(74,222,128,.12); color: var(--green); border-color: rgba(74,222,128,.4); }
+  .tag.diff-leicht { color: #6ee7b7; }
+  .tag.diff-mittel { color: #fcd34d; }
+  .tag.diff-schwer { color: #fca5a5; }
+
+  .mission-actions { display: flex; gap: 8px; }
+  .mission-actions .btn { padding: 10px 12px; min-height: 42px; font-size: 14px; }
+  .mission .delete-btn {
+    position: absolute; top: 8px; right: 8px;
+    background: transparent; border: none; color: var(--muted);
+    width: auto; min-height: 0; padding: 4px 8px; font-size: 16px;
+  }
+
+  /* ---------- Bottom Tab Nav ---------- */
+  .tabnav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(15,16,24,.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid var(--line);
+    display: flex;
+    padding: 8px 8px calc(8px + var(--safe-bottom));
+    z-index: 50;
+  }
+  .tabnav .tab {
+    flex: 1; background: transparent; border: none; color: var(--muted);
+    padding: 8px 4px; font-size: 11px; min-height: 48px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+  }
+  .tabnav .tab .ico { font-size: 22px; line-height: 1; }
+  .tabnav .tab.active { color: var(--gold); }
+
+  /* ---------- Section visibility ---------- */
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn .25s ease; }
+
+  /* ---------- Pop-ups ---------- */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,.7);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; padding: 24px;
+    animation: fadeIn .2s ease;
+  }
+  .modal {
+    background: linear-gradient(180deg, var(--bg-2), var(--bg-1));
+    border: 1px solid var(--gold);
+    border-radius: var(--radius-lg);
+    max-width: 360px; width: 100%;
+    padding: 24px; text-align: center;
+    box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 40px rgba(232,196,104,.25);
+    animation: pop .35s cubic-bezier(.2,1.3,.4,1);
+  }
+  @keyframes pop { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal h2 {
+    margin: 8px 0; font-size: 24px;
+    background: linear-gradient(120deg, var(--gold-soft), var(--gold));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .modal p { color: var(--muted); font-size: 14px; margin: 8px 0 18px; }
+  .levelup-icon { font-size: 64px; }
+
+  /* ---------- History ---------- */
+  .history-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .history-row:last-child { border-bottom: none; }
+  .history-row .date { color: var(--muted); font-size: 12px; }
+  .history-row .net { font-weight: 700; color: var(--gold); }
+
+  .empty {
+    text-align: center; color: var(--muted); padding: 24px 12px; font-size: 14px;
+  }
+
+  /* Streak chip */
+  .streak-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(248,113,113,.15);
+    border: 1px solid rgba(248,113,113,.4);
+    color: #fca5a5;
+    font-size: 12px; font-weight: 700;
+  }
+
+  .stat-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;
+  }
+  .stat {
+    background: var(--bg-3); border: 1px solid var(--line); border-radius: 12px;
+    padding: 10px 12px;
+  }
+  .stat .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .stat .v { font-size: 18px; font-weight: 800; margin-top: 4px; }
+  .stat.green .v { color: var(--green); }
+  .stat.gold .v { color: var(--gold); }
+
+  .next-upgrade {
+    display: flex; gap: 12px; align-items: center;
+    padding: 12px; background: var(--bg-3);
+    border-radius: 12px; border: 1px solid var(--line); margin-top: 12px;
+  }
+  .next-upgrade .nu-icon { font-size: 28px; }
+  .next-upgrade .nu-text .t { font-weight: 700; font-size: 14px; }
+  .next-upgrade .nu-text .s { color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: calc(96px + var(--safe-bottom));
+    left: 50%; transform: translateX(-50%);
+    background: var(--bg-3); color: var(--text);
+    border: 1px solid var(--gold);
+    padding: 10px 16px; border-radius: 999px;
+    font-size: 14px; font-weight: 600;
+    z-index: 200;
+    animation: toastIn .25s ease, toastOut .25s ease 2.2s forwards;
+    box-shadow: 0 10px 30px rgba(0,0,0,.5);
+  }
+  @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  @keyframes toastOut { to { opacity: 0; transform: translate(-50%, 10px); } }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 0; height: 0; }
+</style>
+</head>
+<body>
+
+<!-- ==================== ONBOARDING ==================== -->
+<section id="onboarding">
+  <!-- Step 1: Gender -->
+  <div class="ob-step active" data-step="1">
+    <h1 class="ob-title">Willkommen, Held!</h1>
+    <p class="ob-sub">Erschaffe deinen Charakter und beginne deine Vermögensreise.</p>
+    <label>Wähle deinen Charaktertyp</label>
+    <div class="choice-grid">
+      <div class="choice" data-gender="male">
+        <span class="icon">🤴</span>
+        <div class="label">Mann</div>
+      </div>
+      <div class="choice" data-gender="female">
+        <span class="icon">👸</span>
+        <div class="label">Frau</div>
+      </div>
+    </div>
+    <div style="margin-top:24px;">
+      <button class="btn-primary" data-next="1">Weiter</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Name -->
+  <div class="ob-step" data-step="2">
+    <h1 class="ob-title">Wie heißt du?</h1>
+    <p class="ob-sub">Dein Name erscheint auf deiner Charakterkarte.</p>
+    <label>Charaktername</label>
+    <input type="text" id="ob-name" maxlength="20" placeholder="z.B. Alex" autocomplete="off" />
+    <div class="btn-row" style="margin-top:24px;">
+      <button class="btn-ghost" data-back="2">Zurück</button>
+      <button class="btn-primary" data-next="2">Weiter</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Style -->
+  <div class="ob-step" data-step="3">
+    <h1 class="ob-title">Wähle deinen Stil</h1>
+    <p class="ob-sub">Bestimmt das Design deines Charakters und deiner Welt.</p>
+    <div class="choice-grid full">
+      <div class="choice" data-style="rpg">
+        <span class="icon">⚔️</span>
+        <div class="label">RPG / Fantasy</div>
+        <div class="desc">Rüstungen, Ränge, Heldenpfad</div>
+      </div>
+      <div class="choice" data-style="sims">
+        <span class="icon">🏙️</span>
+        <div class="label">Sims / Luxus</div>
+        <div class="desc">Outfits, Lifestyle, Penthouse</div>
+      </div>
+      <div class="choice" data-style="hybrid">
+        <span class="icon">✨</span>
+        <div class="label">Hybrid</div>
+        <div class="desc">Das Beste aus beiden Welten</div>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:24px;">
+      <button class="btn-ghost" data-back="3">Zurück</button>
+      <button class="btn-primary" id="ob-finish">Charakter erschaffen</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== APP ==================== -->
+<div id="app" class="hidden">
+  <div class="header">
+    <div class="logo">⚔️ WEALTHMISSION</div>
+    <button class="menu-btn" id="reset-btn">Reset</button>
+  </div>
+
+  <!-- Dashboard View -->
+  <section class="view active" data-view="dashboard">
+    <!-- Character Card -->
+    <div class="card char-card gold">
+      <div class="char-top">
+        <div class="avatar-frame" id="avatar-frame">
+          <div class="scene" id="scene"></div>
+          <div class="char" id="char">
+            <div class="crown" id="char-crown"></div>
+            <div class="head" id="char-head"><div class="face"></div></div>
+            <div class="accessory" id="char-acc"></div>
+            <div class="body" id="char-body"></div>
+            <div class="arm left" id="char-arm-l"></div>
+            <div class="arm right" id="char-arm-r"></div>
+            <div class="legs" id="char-legs"></div>
+          </div>
+        </div>
+        <div class="char-info">
+          <h2 class="char-name" id="char-name">—</h2>
+          <div class="char-meta" id="char-meta">—</div>
+          <div class="rank-badge" id="char-rank">Anfänger</div>
+          <div style="margin-top:8px;">
+            <span class="level-pill">Level<strong id="char-level">1</strong></span>
+            <span class="streak-chip" id="streak-chip" style="margin-left:6px;">🔥 <span id="streak-count">0</span> Tage</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">
+          <span>XP – <span id="xp-current">0</span> / <span id="xp-needed">100</span></span>
+          <strong id="xp-percent">0%</strong>
+        </div>
+        <div class="bar"><span id="xp-bar"></span></div>
+      </div>
+
+      <div class="next-upgrade" id="next-upgrade">
+        <div class="nu-icon">🎁</div>
+        <div class="nu-text">
+          <div class="t">Nächstes Upgrade auf Level <span id="nu-level">5</span></div>
+          <div class="s" id="nu-desc">Lederrüstung schaltet sich frei</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wealth Card -->
+    <div class="card">
+      <div class="card-title">Nettovermögen</div>
+      <div class="wealth-net" id="net-worth">0 €</div>
+      <div class="wealth-sub" id="net-sub">Tippe „Vermögen“ um deine Werte zu pflegen.</div>
+
+      <div class="bar-row">
+        <div class="bar-label">
+          <span>Ziel: <span id="goal-value">1.000 €</span></span>
+          <strong id="goal-percent">0%</strong>
+        </div>
+        <div class="bar green"><span id="goal-bar"></span></div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat green">
+          <div class="k">Durch Missionen</div>
+          <div class="v" id="stat-mission-money">0 €</div>
+        </div>
+        <div class="stat gold">
+          <div class="k">Erledigt</div>
+          <div class="v" id="stat-mission-count">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Open Missions Preview -->
+    <div class="card">
+      <div class="card-title">Offene Quests</div>
+      <div id="dashboard-missions"></div>
+      <button class="btn-ghost" data-go="missions" style="margin-top:6px;">Alle Quests anzeigen</button>
+    </div>
+  </section>
+
+  <!-- Wealth View -->
+  <section class="view" data-view="wealth">
+    <div class="card">
+      <div class="card-title">Vermögen verwalten</div>
+      <div class="wealth-net" id="net-worth-2">0 €</div>
+      <div class="wealth-sub">Trage deine aktuellen Werte ein. Schulden werden abgezogen.</div>
+
+      <div class="field-grid" style="margin-top:14px;">
+        <div>
+          <label>💵 Bargeld</label>
+          <input type="number" inputmode="decimal" id="w-cash" placeholder="0" />
+        </div>
+        <div>
+          <label>🏦 Bankkonto</label>
+          <input type="number" inputmode="decimal" id="w-bank" placeholder="0" />
+        </div>
+        <div>
+          <label>📈 Depot/ETF</label>
+          <input type="number" inputmode="decimal" id="w-depot" placeholder="0" />
+        </div>
+        <div>
+          <label>🪙 Gold/Sachw.</label>
+          <input type="number" inputmode="decimal" id="w-gold" placeholder="0" />
+        </div>
+        <div style="grid-column: 1/-1;">
+          <label>💳 Schulden</label>
+          <input type="number" inputmode="decimal" id="w-debt" placeholder="0" />
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:16px;">
+        <button class="btn-primary" id="save-wealth">Speichern</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Aktuelle Aufteilung</div>
+      <div class="wealth-grid" id="wealth-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Vermögensverlauf</div>
+      <div id="history-list"></div>
+    </div>
+  </section>
+
+  <!-- Missions View -->
+  <section class="view" data-view="missions">
+    <div class="card">
+      <div class="card-title">Quests</div>
+      <div class="mission-tabs" id="mission-tabs">
+        <button class="mission-tab active" data-cat="alle">Alle</button>
+        <button class="mission-tab" data-cat="empfohlen">⭐ Empfohlen</button>
+        <button class="mission-tab" data-cat="sparen">Sparen</button>
+        <button class="mission-tab" data-cat="verdienen">Verdienen</button>
+        <button class="mission-tab" data-cat="vertraege">Verträge</button>
+        <button class="mission-tab" data-cat="investieren">Investieren</button>
+        <button class="mission-tab" data-cat="disziplin">Disziplin</button>
+        <button class="mission-tab" data-cat="erledigt">Erledigt</button>
+      </div>
+      <div id="missions-list"></div>
+      <button class="btn-ghost" id="add-suggested" style="margin-top:8px;">+ Empfohlene Quests laden</button>
+    </div>
+  </section>
+
+  <!-- Char View -->
+  <section class="view" data-view="char">
+    <div class="card char-card gold">
+      <div class="char-top">
+        <div class="avatar-frame" id="avatar-frame-2"></div>
+        <div class="char-info">
+          <h2 class="char-name" id="char-name-2">—</h2>
+          <div class="char-meta" id="char-meta-2">—</div>
+          <div class="rank-badge" id="char-rank-2">Anfänger</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Ausrüstung & Lifestyle</div>
+      <div id="equipment-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Stil ändern</div>
+      <div class="choice-grid full">
+        <div class="choice" data-set-style="rpg"><span class="icon">⚔️</span><div class="label">RPG / Fantasy</div></div>
+        <div class="choice" data-set-style="sims"><span class="icon">🏙️</span><div class="label">Sims / Luxus</div></div>
+        <div class="choice" data-set-style="hybrid"><span class="icon">✨</span><div class="label">Hybrid</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom Tab Nav -->
+  <nav class="tabnav">
+    <button class="tab active" data-go="dashboard"><span class="ico">🏰</span><span>Dashboard</span></button>
+    <button class="tab" data-go="wealth"><span class="ico">💰</span><span>Vermögen</span></button>
+    <button class="tab" data-go="missions"><span class="ico">⚔️</span><span>Quests</span></button>
+    <button class="tab" data-go="char"><span class="ico">🛡️</span><span>Charakter</span></button>
+  </nav>
+</div>
+
+<!-- Modal target -->
+<div id="modal-root"></div>
+
+<script>
+/* =====================================================
+   WEALTHMISSION – Vermögenstracker im RPG/Sims-Stil
+   ===================================================== */
+
+/* ---------- Konstanten ---------- */
+
+// XP, die für Level n -> n+1 benötigt werden (linear ansteigend).
+const xpForLevel = (lvl) => 100 + (lvl - 1) * 50;
+
+// Rang abhängig vom Level
+function rankForLevel(lvl) {
+  if (lvl >= 50) return "Legende";
+  if (lvl >= 30) return "Meister";
+  if (lvl >= 20) return "Veteran";
+  if (lvl >= 10) return "Aufsteiger";
+  if (lvl >= 5)  return "Lehrling";
+  return "Anfänger";
+}
+
+// Vermögensziele (Sprungstufen) – das nächste höhere wird angezeigt
+const WEALTH_GOALS = [
+  500, 1000, 2500, 5000, 10000, 25000, 50000, 100000,
+  250000, 500000, 1000000
+];
+
+// Liefert das nächste offene Vermögensziel
+function nextWealthGoal(net) {
+  for (const g of WEALTH_GOALS) if (net < g) return g;
+  return WEALTH_GOALS[WEALTH_GOALS.length - 1];
+}
+
+// Ausrüstungs-/Lifestyle-Stufen (RPG, Sims, Hybrid)
+const EQUIPMENT = {
+  rpg: [
+    { lvl: 1,  name: "Einfache Tunika",     icon: "👕", desc: "Kleidung eines Reisenden" },
+    { lvl: 5,  name: "Lederrüstung",        icon: "🥋", desc: "Schutz für junge Abenteurer" },
+    { lvl: 10, name: "Eisenrüstung",        icon: "🛡️", desc: "Solide Rüstung erfahrener Krieger" },
+    { lvl: 20, name: "Ritterrüstung",       icon: "⚔️", desc: "Glänzende Rüstung eines Ritters" },
+    { lvl: 30, name: "Magische Rüstung",    icon: "🔮", desc: "Verzauberte Rüstung mit Aura" },
+    { lvl: 50, name: "Legendäre Goldrüstung", icon: "👑", desc: "Rüstung der Helden-Legenden" },
+  ],
+  sims: [
+    { lvl: 1,  name: "Einfache Kleidung",   icon: "👕", desc: "Alltagslook" },
+    { lvl: 5,  name: "Casual Look",         icon: "🧥", desc: "Gepflegt und stilbewusst" },
+    { lvl: 10, name: "Business Outfit",     icon: "💼", desc: "Professionell und seriös" },
+    { lvl: 20, name: "Designer Outfit",     icon: "🕴️", desc: "Edel und exklusiv" },
+    { lvl: 30, name: "Luxuswohnung",        icon: "🏙️", desc: "Stilvoller Lifestyle" },
+    { lvl: 50, name: "Penthouse + Sportwagen", icon: "🏎️", desc: "High-Society-Lifestyle" },
+  ],
+  hybrid: [
+    { lvl: 1,  name: "Einfache Kleidung",        icon: "👕", desc: "Der Anfang aller Helden" },
+    { lvl: 5,  name: "Lederrüstung & Casual",    icon: "🥋", desc: "Bereit für die ersten Quests" },
+    { lvl: 10, name: "Eisenrüstung & Business",  icon: "🛡️", desc: "Stärke trifft Stil" },
+    { lvl: 20, name: "Ritter im Designer-Look",  icon: "⚔️", desc: "Edler Krieger der Moderne" },
+    { lvl: 30, name: "Magische Luxusrüstung",    icon: "🔮", desc: "Penthouse mit magischer Aura" },
+    { lvl: 50, name: "Legendärer High-Roller",   icon: "👑", desc: "Mythos und Luxus vereint" },
+  ],
+};
+
+// Mission-Vorlagen (alle Pflicht-Beispiele aus der Aufgabe + Beschreibungen)
+const MISSION_TEMPLATES = [
+  // --- Sparen ---
+  { id: "s1", title: "30 Tage ohne To-Go-Kaffee", category: "sparen", difficulty: "mittel", effect: 90, xp: 150,
+    desc: "Verzichte einen Monat lang auf gekauften Kaffee unterwegs. Spare bis zu 90€." },
+  { id: "s2", title: "3 No-Spend-Days", category: "sparen", difficulty: "leicht", effect: 30, xp: 60,
+    desc: "Drei Tage in dieser Woche keinen Cent ausgeben." },
+  { id: "s3", title: "Wochenbudget setzen", category: "sparen", difficulty: "leicht", effect: 0, xp: 40,
+    desc: "Lege ein klares Wochenbudget fest und halte es ein." },
+  { id: "s4", title: "Lebensmittelkosten -20€", category: "sparen", difficulty: "mittel", effect: 20, xp: 70,
+    desc: "Reduziere die Lebensmittelausgaben dieser Woche um 20€." },
+
+  // --- Verdienen ---
+  { id: "v1", title: "3 Sachen bei eBay verkaufen", category: "verdienen", difficulty: "leicht", effect: 50, xp: 90,
+    desc: "Such drei Dinge, die du nicht brauchst, und stell sie online." },
+  { id: "v2", title: "Alte Kleidung verkaufen", category: "verdienen", difficulty: "leicht", effect: 30, xp: 70,
+    desc: "Vinted, Flohmarkt oder Second-Hand-Laden – mach Cash aus deinem Schrank." },
+  { id: "v3", title: "Wochenendjob suchen", category: "verdienen", difficulty: "schwer", effect: 250, xp: 300,
+    desc: "Recherchiere und bewirb dich für einen Nebenjob am Wochenende." },
+  { id: "v4", title: "Kleine Dienstleistung anbieten", category: "verdienen", difficulty: "mittel", effect: 80, xp: 130,
+    desc: "Biete Nachhilfe, Babysitting, Hundesitting o.ä. an." },
+
+  // --- Verträge ---
+  { id: "c1", title: "Abos prüfen", category: "vertraege", difficulty: "leicht", effect: 0, xp: 40,
+    desc: "Mach einen vollständigen Check aller laufenden Abos." },
+  { id: "c2", title: "Unnötige Abos kündigen", category: "vertraege", difficulty: "leicht", effect: 25, xp: 80,
+    desc: "Mindestens ein Abo kündigen, das du selten nutzt." },
+  { id: "c3", title: "Handyvertrag verhandeln", category: "vertraege", difficulty: "mittel", effect: 15, xp: 110,
+    desc: "Ruf deinen Anbieter an und frag nach einem besseren Tarif." },
+  { id: "c4", title: "Versicherungen vergleichen", category: "vertraege", difficulty: "mittel", effect: 30, xp: 110,
+    desc: "Eine Versicherung pro Monat checken und ggf. wechseln." },
+
+  // --- Investieren ---
+  { id: "i1", title: "Depot eröffnen", category: "investieren", difficulty: "mittel", effect: 0, xp: 200,
+    desc: "Eröffne ein Wertpapierdepot bei einem Broker deiner Wahl." },
+  { id: "i2", title: "ETF-Sparplan einrichten", category: "investieren", difficulty: "mittel", effect: 0, xp: 250,
+    desc: "Lege einen monatlichen Sparplan auf einen breiten ETF an." },
+  { id: "i3", title: "30 Min ETF-Wissen", category: "investieren", difficulty: "leicht", effect: 0, xp: 60,
+    desc: "Schau ein Erklär-Video oder lies einen Artikel über ETFs." },
+  { id: "i4", title: "Sparrate +10€", category: "investieren", difficulty: "leicht", effect: 0, xp: 80,
+    desc: "Erhöhe deinen Sparplan um mindestens 10€ pro Monat." },
+
+  // --- Disziplin ---
+  { id: "d1", title: "7 Tage Ausgaben tracken", category: "disziplin", difficulty: "mittel", effect: 0, xp: 120,
+    desc: "Notiere eine Woche lang jede einzelne Ausgabe." },
+  { id: "d2", title: "5 Tage zu Hause kochen", category: "disziplin", difficulty: "leicht", effect: 25, xp: 80,
+    desc: "Kein Essen bestellen oder auswärts essen." },
+  { id: "d3", title: "14 Tage Konsum-Stopp", category: "disziplin", difficulty: "mittel", effect: 50, xp: 140,
+    desc: "Zwei Wochen lang nichts Unnötiges kaufen." },
+  { id: "d4", title: "Notgroschen aufbauen", category: "disziplin", difficulty: "schwer", effect: 0, xp: 250,
+    desc: "Lege ein Polster von 1.000€ als Notreserve an." },
+];
+
+const CATEGORY_LABEL = {
+  sparen: "Sparen", verdienen: "Verdienen", vertraege: "Verträge",
+  investieren: "Investieren", disziplin: "Disziplin"
+};
+
+/* ---------- State / Storage ---------- */
+const STORAGE_KEY = "wealthmission_state_v1";
+
+let state = null;
+const defaultState = () => ({
+  onboarded: false,
+  character: { name: "", gender: "male", style: "hybrid" },
+  level: 1,
+  xp: 0,
+  totalXp: 0,
+  wealth: { cash: 0, bank: 0, depot: 0, gold: 0, debt: 0 },
+  missions: [],
+  history: [], // { date, net }
+  stats: { missionsDone: 0, moneyEarned: 0 },
+  streak: { count: 0, lastDate: null }, // YYYY-MM-DD
+});
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return defaultState();
+    const obj = JSON.parse(raw);
+    return Object.assign(defaultState(), obj);
+  } catch (e) {
+    return defaultState();
+  }
+}
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+/* ---------- Hilfsfunktionen ---------- */
+const fmt = (n) => {
+  const sign = n < 0 ? "-" : "";
+  const abs = Math.abs(Math.round(n));
+  return sign + abs.toLocaleString("de-DE") + " €";
+};
+const todayISO = () => new Date().toISOString().slice(0, 10);
+
+function netWorth() {
+  const w = state.wealth;
+  return (w.cash || 0) + (w.bank || 0) + (w.depot || 0) + (w.gold || 0) - (w.debt || 0);
+}
+
+function currentEquipmentTier() {
+  const list = EQUIPMENT[state.character.style] || EQUIPMENT.hybrid;
+  let current = list[0];
+  for (const e of list) if (state.level >= e.lvl) current = e;
+  return current;
+}
+
+function nextEquipmentTier() {
+  const list = EQUIPMENT[state.character.style] || EQUIPMENT.hybrid;
+  for (const e of list) if (state.level < e.lvl) return e;
+  return null;
+}
+
+/* ---------- Onboarding-Logik ---------- */
+const onboardingEl = document.getElementById("onboarding");
+let obData = { gender: null, name: "", style: null };
+
+document.querySelectorAll("[data-gender]").forEach(el => {
+  el.addEventListener("click", () => {
+    document.querySelectorAll("[data-gender]").forEach(e => e.classList.remove("selected"));
+    el.classList.add("selected");
+    obData.gender = el.dataset.gender;
+  });
+});
+document.querySelectorAll("[data-style]").forEach(el => {
+  el.addEventListener("click", () => {
+    document.querySelectorAll("[data-style]").forEach(e => e.classList.remove("selected"));
+    el.classList.add("selected");
+    obData.style = el.dataset.style;
+  });
+});
+
+document.querySelectorAll("[data-next]").forEach(b => b.addEventListener("click", () => {
+  const step = parseInt(b.dataset.next, 10);
+  if (step === 1 && !obData.gender) { toast("Bitte wähle einen Charaktertyp."); return; }
+  if (step === 2) {
+    const v = document.getElementById("ob-name").value.trim();
+    if (!v) { toast("Bitte gib einen Namen ein."); return; }
+    obData.name = v;
+  }
+  goStep(step + 1);
+}));
+document.querySelectorAll("[data-back]").forEach(b => b.addEventListener("click", () => {
+  goStep(parseInt(b.dataset.back, 10) - 1);
+}));
+function goStep(n) {
+  document.querySelectorAll(".ob-step").forEach(s => s.classList.remove("active"));
+  const el = document.querySelector('[data-step="' + n + '"]');
+  if (el) el.classList.add("active");
+}
+
+document.getElementById("ob-finish").addEventListener("click", () => {
+  if (!obData.style) { toast("Bitte wähle einen Stil."); return; }
+  state.character.gender = obData.gender;
+  state.character.name = obData.name;
+  state.character.style = obData.style;
+  state.onboarded = true;
+  // Startmissionen vorschlagen
+  addRecommendedMissions(true);
+  save();
+  enterApp();
+});
+
+/* ---------- App-Navigation ---------- */
+function enterApp() {
+  onboardingEl.classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  renderAll();
+}
+
+document.querySelectorAll("[data-go]").forEach(b => {
+  b.addEventListener("click", () => switchView(b.dataset.go));
+});
+function switchView(name) {
+  document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.dataset.view === name));
+  document.querySelectorAll(".tabnav .tab").forEach(t => t.classList.toggle("active", t.dataset.go === name));
+  window.scrollTo({ top: 0, behavior: "instant" });
+  renderAll();
+}
+
+/* ---------- Charakter-Avatar rendern ---------- */
+function renderAvatar(targetFrame) {
+  // Optional: erlaubt es, einen anderen Frame (z.B. Charakter-Tab) zu rendern,
+  // indem das Markup geklont wird.
+  // Standardmäßig wird der Hauptframe aktualisiert.
+  const style = state.character.style;
+  const lvl = state.level;
+  const gender = state.character.gender;
+
+  // Szene bestimmen
+  let scene = "fantasy";
+  if (style === "sims") {
+    if (lvl >= 50) scene = "penthouse";
+    else if (lvl >= 30) scene = "luxury";
+    else scene = "casual";
+  } else if (style === "hybrid") {
+    if (lvl >= 50) scene = "penthouse";
+    else if (lvl >= 30) scene = "luxury";
+    else scene = "fantasy";
+  }
+
+  // Outfit-Farben pro Stufe
+  const tier = currentEquipmentTier();
+  const colors = computeOutfitColors(style, tier.lvl);
+
+  // Hauptframe (Dashboard)
+  const frame = document.getElementById("avatar-frame");
+  frame.classList.toggle("gold-border", lvl >= 50);
+  document.getElementById("scene").className = "scene " + scene;
+
+  const charEl = document.getElementById("char");
+  charEl.classList.toggle("glow", lvl >= 30);
+  charEl.style.setProperty("--outfit", colors.outfit);
+  charEl.style.setProperty("--pants", colors.pants);
+  charEl.style.setProperty("--accent", colors.accent);
+  charEl.style.setProperty("--hair", gender === "female" ? "#5a2f1c" : "#2a1a10");
+
+  const head = document.getElementById("char-head");
+  head.classList.remove("male", "female");
+  head.classList.add(gender);
+
+  document.getElementById("char-acc").style.background = colors.accent;
+  document.getElementById("char-crown").textContent = lvl >= 50 ? "👑" : (lvl >= 30 ? "✨" : "");
+
+  // Klon für Charakter-Tab
+  const frame2 = document.getElementById("avatar-frame-2");
+  frame2.innerHTML = frame.innerHTML;
+  frame2.className = frame.className;
+}
+
+// Outfit-Farben passend zu Stufe + Stil
+function computeOutfitColors(style, lvl) {
+  if (style === "rpg" || style === "hybrid") {
+    if (lvl >= 50) return { outfit: "linear-gradient(180deg,#f0d690,#b8862c)", pants: "#6a5018", accent: "#fff2b8" };
+    if (lvl >= 30) return { outfit: "linear-gradient(180deg,#9b6dff,#4b2a8a)", pants: "#2a1a55", accent: "#c9a8ff" };
+    if (lvl >= 20) return { outfit: "linear-gradient(180deg,#cfd6e3,#5a6680)", pants: "#2c3142", accent: "#7aa2ff" };
+    if (lvl >= 10) return { outfit: "linear-gradient(180deg,#aab1bf,#5d6373)", pants: "#2c3142", accent: "#9aa3b8" };
+    if (lvl >= 5)  return { outfit: "linear-gradient(180deg,#7a4a22,#3f2511)", pants: "#2a1a10", accent: "#a86a30" };
+    return { outfit: "#5a5a66", pants: "#2a2a35", accent: "transparent" };
+  }
+  // sims
+  if (lvl >= 50) return { outfit: "linear-gradient(180deg,#1a1a22,#000)", pants: "#0d0d12", accent: "#e8c468" };
+  if (lvl >= 30) return { outfit: "linear-gradient(180deg,#3a2a4a,#1a1228)", pants: "#1a1228", accent: "#e8c468" };
+  if (lvl >= 20) return { outfit: "linear-gradient(180deg,#222,#000)", pants: "#111", accent: "#e8c468" };
+  if (lvl >= 10) return { outfit: "linear-gradient(180deg,#384155,#1c2230)", pants: "#1a1f2c", accent: "#aab" };
+  if (lvl >= 5)  return { outfit: "linear-gradient(180deg,#5a7a55,#2a3f28)", pants: "#3a4a55", accent: "transparent" };
+  return { outfit: "#7a8295", pants: "#2a2a35", accent: "transparent" };
+}
+
+/* ---------- Render-Funktionen ---------- */
+function renderHeader() {
+  const c = state.character;
+  document.getElementById("char-name").textContent = c.name || "Held";
+  document.getElementById("char-meta").textContent =
+    (c.gender === "female" ? "Heldin" : "Held") + " • " +
+    (c.style === "rpg" ? "Fantasy" : c.style === "sims" ? "Luxus" : "Hybrid");
+  document.getElementById("char-rank").textContent = rankForLevel(state.level);
+  document.getElementById("char-level").textContent = state.level;
+
+  // Char-Tab Klone
+  document.getElementById("char-name-2").textContent = c.name || "Held";
+  document.getElementById("char-meta-2").textContent = document.getElementById("char-meta").textContent;
+  document.getElementById("char-rank-2").textContent = rankForLevel(state.level);
+
+  // Streak
+  document.getElementById("streak-count").textContent = state.streak.count;
+}
+
+function renderXp() {
+  const need = xpForLevel(state.level);
+  const pct = Math.min(100, Math.round((state.xp / need) * 100));
+  document.getElementById("xp-current").textContent = state.xp;
+  document.getElementById("xp-needed").textContent = need;
+  document.getElementById("xp-percent").textContent = pct + "%";
+  document.getElementById("xp-bar").style.width = pct + "%";
+
+  const next = nextEquipmentTier();
+  if (next) {
+    document.getElementById("nu-level").textContent = next.lvl;
+    document.getElementById("nu-desc").textContent = next.name + " schaltet sich frei";
+    document.getElementById("next-upgrade").style.display = "";
+  } else {
+    document.getElementById("next-upgrade").style.display = "none";
+  }
+}
+
+function renderWealth() {
+  const net = netWorth();
+  document.getElementById("net-worth").textContent = fmt(net);
+  document.getElementById("net-worth-2").textContent = fmt(net);
+  document.getElementById("net-sub").textContent =
+    net <= 0 ? "Lass uns dein Vermögen aufbauen." : "Solider Stand. Weiter so!";
+
+  // Goal
+  const goal = nextWealthGoal(net);
+  const pct = Math.min(100, Math.max(0, Math.round((net / goal) * 100)));
+  document.getElementById("goal-value").textContent = fmt(goal);
+  document.getElementById("goal-percent").textContent = pct + "%";
+  document.getElementById("goal-bar").style.width = pct + "%";
+
+  // Inputs vorbefüllen
+  document.getElementById("w-cash").value  = state.wealth.cash  || "";
+  document.getElementById("w-bank").value  = state.wealth.bank  || "";
+  document.getElementById("w-depot").value = state.wealth.depot || "";
+  document.getElementById("w-gold").value  = state.wealth.gold  || "";
+  document.getElementById("w-debt").value  = state.wealth.debt  || "";
+
+  // Aufteilung
+  const grid = document.getElementById("wealth-grid");
+  const items = [
+    ["💵 Bargeld", state.wealth.cash, false],
+    ["🏦 Bank",    state.wealth.bank, false],
+    ["📈 Depot",   state.wealth.depot, false],
+    ["🪙 Gold",    state.wealth.gold, false],
+    ["💳 Schulden", state.wealth.debt, true],
+  ];
+  grid.innerHTML = items.map(([k, v, isDebt]) =>
+    '<div class="wealth-item' + (isDebt ? ' debt' : '') + '">' +
+      '<div class="k">' + k + '</div>' +
+      '<div class="v">' + fmt(v || 0) + '</div>' +
+    '</div>'
+  ).join("");
+
+  // Stats
+  document.getElementById("stat-mission-money").textContent = fmt(state.stats.moneyEarned);
+  document.getElementById("stat-mission-count").textContent = state.stats.missionsDone;
+
+  // History
+  const hist = document.getElementById("history-list");
+  if (!state.history.length) {
+    hist.innerHTML = '<div class="empty">Noch kein Verlauf. Speichere dein erstes Vermögen.</div>';
+  } else {
+    hist.innerHTML = state.history.slice(-30).reverse().map(h =>
+      '<div class="history-row"><span class="date">' + h.date + '</span><span class="net">' + fmt(h.net) + '</span></div>'
+    ).join("");
+  }
+}
+
+/* ---------- Missionen ---------- */
+let activeMissionTab = "alle";
+
+function addRecommendedMissions(initial = false) {
+  const recs = recommendMissionIds();
+  // Nur die hinzufügen, die noch nicht in der Liste sind (auch nicht erledigt)
+  const existingIds = new Set(state.missions.map(m => m.templateId));
+  let added = 0;
+  recs.forEach(id => {
+    if (!existingIds.has(id)) {
+      const tpl = MISSION_TEMPLATES.find(t => t.id === id);
+      if (tpl) { state.missions.push(makeMissionFromTemplate(tpl)); added++; }
+    }
+  });
+  if (!initial && added > 0) toast(added + " neue Quest" + (added > 1 ? "s" : "") + " hinzugefügt!");
+  if (!initial && added === 0) toast("Keine neuen passenden Quests verfügbar.");
+}
+
+function makeMissionFromTemplate(t) {
+  return {
+    uid: "m_" + Math.random().toString(36).slice(2, 9),
+    templateId: t.id,
+    title: t.title, desc: t.desc, category: t.category,
+    difficulty: t.difficulty, effect: t.effect, xp: t.xp,
+    done: false, doneDate: null,
+    addedDate: todayISO(),
+  };
+}
+
+// Empfehlung anhand Finanzlage
+function recommendMissionIds() {
+  const net = netWorth();
+  const w = state.wealth;
+  const recs = new Set();
+
+  // Keine Eingaben gemacht → Startmissionen
+  const noEntries = !w.cash && !w.bank && !w.depot && !w.gold && !w.debt;
+  if (noEntries) {
+    ["s3", "c1", "d1", "i3"].forEach(id => recs.add(id));
+  }
+  // Wenig Vermögen → Sparen + Verkaufen
+  if (net < 1000) {
+    ["s1", "s2", "v1", "v2"].forEach(id => recs.add(id));
+  }
+  // Schulden → Schuldenabbau-fokussierte Missionen (Sparen+Verträge)
+  if ((w.debt || 0) > 0) {
+    ["c2", "c3", "s4", "d3"].forEach(id => recs.add(id));
+  }
+  // Kein Depot → ETF-Missionen
+  if (!w.depot) {
+    ["i1", "i2", "i3"].forEach(id => recs.add(id));
+  }
+  // Hohe Fixkosten heuristisch durch wenig Bank trotz Einkommen → Vertragsoptimierung
+  if (w.bank && w.bank < 500) {
+    ["c1", "c2", "c4"].forEach(id => recs.add(id));
+  }
+  // Falls niemand zutrifft, schlage diese Mix vor
+  if (recs.size === 0) {
+    ["s2", "i4", "d2", "v1"].forEach(id => recs.add(id));
+  }
+  return Array.from(recs);
+}
+
+function renderMissions() {
+  const list = document.getElementById("missions-list");
+  let items = state.missions.slice();
+
+  if (activeMissionTab === "erledigt") {
+    items = items.filter(m => m.done);
+  } else if (activeMissionTab === "empfohlen") {
+    const recs = new Set(recommendMissionIds());
+    items = items.filter(m => !m.done && recs.has(m.templateId));
+  } else if (activeMissionTab !== "alle") {
+    items = items.filter(m => m.category === activeMissionTab && !m.done);
+  } else {
+    items = items.filter(m => !m.done);
+  }
+
+  if (!items.length) {
+    list.innerHTML = '<div class="empty">Keine Quests in dieser Kategorie.<br/>Tippe unten auf „Empfohlene Quests laden“.</div>';
+    return;
+  }
+
+  list.innerHTML = items.map(m => renderMissionCard(m)).join("");
+
+  // Buttons binden
+  list.querySelectorAll("[data-done]").forEach(b => {
+    b.addEventListener("click", () => completeMission(b.dataset.done));
+  });
+  list.querySelectorAll("[data-del]").forEach(b => {
+    b.addEventListener("click", () => deleteMission(b.dataset.del));
+  });
+}
+
+function renderMissionCard(m) {
+  const effectTag = m.effect > 0
+    ? '<span class="tag green">+' + m.effect + '€ Effekt</span>'
+    : '';
+  return '<div class="mission cat-' + m.category + (m.done ? ' done' : '') + '">' +
+    (m.done ? '' : '<button class="delete-btn" data-del="' + m.uid + '" aria-label="Löschen">✕</button>') +
+    '<div class="mission-head"><h3 class="mission-title">' + escapeHTML(m.title) + '</h3></div>' +
+    '<div class="mission-desc">' + escapeHTML(m.desc) + '</div>' +
+    '<div class="mission-tags">' +
+      '<span class="tag">' + CATEGORY_LABEL[m.category] + '</span>' +
+      '<span class="tag diff-' + m.difficulty + '">' + m.difficulty + '</span>' +
+      '<span class="tag gold">+' + m.xp + ' XP</span>' +
+      effectTag +
+    '</div>' +
+    (m.done
+      ? '<div class="mission-actions"><button class="btn-ghost" disabled>✅ Erledigt am ' + (m.doneDate || '') + '</button></div>'
+      : '<div class="mission-actions"><button class="btn-success" data-done="' + m.uid + '">Mission erledigt</button></div>'
+    ) +
+  '</div>';
+}
+
+function renderDashboardMissions() {
+  const open = state.missions.filter(m => !m.done).slice(0, 3);
+  const wrap = document.getElementById("dashboard-missions");
+  if (!open.length) {
+    wrap.innerHTML = '<div class="empty">Alle Quests erledigt – starke Leistung!</div>';
+    return;
+  }
+  wrap.innerHTML = open.map(renderMissionCard).join("");
+  wrap.querySelectorAll("[data-done]").forEach(b => {
+    b.addEventListener("click", () => completeMission(b.dataset.done));
+  });
+  wrap.querySelectorAll("[data-del]").forEach(b => {
+    b.addEventListener("click", () => deleteMission(b.dataset.del));
+  });
+}
+
+function renderEquipment() {
+  const list = EQUIPMENT[state.character.style] || EQUIPMENT.hybrid;
+  const wrap = document.getElementById("equipment-list");
+  wrap.innerHTML = list.map(e => {
+    const unlocked = state.level >= e.lvl;
+    const isCurrent = (currentEquipmentTier().lvl === e.lvl);
+    return '<div class="next-upgrade" style="margin-top:8px;' + (unlocked ? '' : 'opacity:.5;') + '">' +
+      '<div class="nu-icon">' + (unlocked ? e.icon : '🔒') + '</div>' +
+      '<div class="nu-text">' +
+        '<div class="t">' + escapeHTML(e.name) + (isCurrent ? ' <span class="tag gold" style="margin-left:4px;">aktuell</span>' : '') + '</div>' +
+        '<div class="s">Level ' + e.lvl + ' • ' + escapeHTML(e.desc) + '</div>' +
+      '</div></div>';
+  }).join("");
+}
+
+/* ---------- Mission-Aktionen ---------- */
+function completeMission(uid) {
+  const m = state.missions.find(x => x.uid === uid);
+  if (!m || m.done) return;
+
+  m.done = true;
+  m.doneDate = todayISO();
+
+  // XP gutschreiben
+  const oldLevel = state.level;
+  state.totalXp += m.xp;
+  state.xp += m.xp;
+  // Level-Ups verarbeiten (mehrfach möglich)
+  while (state.xp >= xpForLevel(state.level)) {
+    state.xp -= xpForLevel(state.level);
+    state.level++;
+  }
+
+  // Geld-Effekt: erhöht Bargeld optional
+  if (m.effect > 0) {
+    state.wealth.cash = (state.wealth.cash || 0) + m.effect;
+    state.stats.moneyEarned += m.effect;
+  }
+  state.stats.missionsDone++;
+
+  // Streak aktualisieren
+  updateStreak();
+
+  // Verlauf speichern
+  pushHistory();
+
+  save();
+  renderAll();
+  toast("+ " + m.xp + " XP" + (m.effect > 0 ? " · +" + m.effect + "€" : ""));
+
+  if (state.level > oldLevel) {
+    showLevelUp(state.level);
+  }
+}
+
+function deleteMission(uid) {
+  state.missions = state.missions.filter(m => m.uid !== uid);
+  save();
+  renderAll();
+}
+
+function updateStreak() {
+  const today = todayISO();
+  const last = state.streak.lastDate;
+  if (last === today) return;
+  if (last) {
+    const diff = (Date.parse(today) - Date.parse(last)) / 86400000;
+    if (diff === 1) state.streak.count++;
+    else if (diff > 1) state.streak.count = 1;
+  } else {
+    state.streak.count = 1;
+  }
+  state.streak.lastDate = today;
+}
+
+function pushHistory() {
+  const today = todayISO();
+  const net = netWorth();
+  const last = state.history[state.history.length - 1];
+  if (last && last.date === today) {
+    last.net = net;
+  } else {
+    state.history.push({ date: today, net });
+  }
+}
+
+/* ---------- Level-Up Pop-up ---------- */
+function showLevelUp(lvl) {
+  const tier = currentEquipmentTier();
+  const newRank = rankForLevel(lvl);
+  const root = document.getElementById("modal-root");
+  root.innerHTML =
+    '<div class="modal-bg" id="lvlup-bg">' +
+      '<div class="modal">' +
+        '<div class="levelup-icon">🎉</div>' +
+        '<h2>Level ' + lvl + '!</h2>' +
+        '<p><strong>Neuer Rang:</strong> ' + newRank + '<br/>' +
+          '<strong>Aktuelle Ausrüstung:</strong> ' + tier.icon + ' ' + escapeHTML(tier.name) +
+        '</p>' +
+        '<button class="btn-primary" id="lvlup-close">Weiter</button>' +
+      '</div>' +
+    '</div>';
+  document.getElementById("lvlup-close").onclick = () => root.innerHTML = "";
+  document.getElementById("lvlup-bg").addEventListener("click", (e) => {
+    if (e.target.id === "lvlup-bg") root.innerHTML = "";
+  });
+}
+
+/* ---------- Toast ---------- */
+function toast(msg) {
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+
+/* ---------- Wealth Save ---------- */
+document.getElementById("save-wealth").addEventListener("click", () => {
+  const num = (id) => {
+    const v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) ? 0 : v;
+  };
+  state.wealth = {
+    cash: num("w-cash"),
+    bank: num("w-bank"),
+    depot: num("w-depot"),
+    gold: num("w-gold"),
+    debt: num("w-debt"),
+  };
+  pushHistory();
+  // Bei jeder Eingabe ein paar passende Empfehlungen vorschlagen
+  addRecommendedMissions(true);
+  save();
+  renderAll();
+  toast("Vermögen gespeichert.");
+});
+
+/* ---------- Mission Tabs ---------- */
+document.querySelectorAll("#mission-tabs .mission-tab").forEach(t => {
+  t.addEventListener("click", () => {
+    document.querySelectorAll("#mission-tabs .mission-tab").forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    activeMissionTab = t.dataset.cat;
+    renderMissions();
+  });
+});
+
+document.getElementById("add-suggested").addEventListener("click", () => {
+  addRecommendedMissions(false);
+  save();
+  renderMissions();
+  renderDashboardMissions();
+});
+
+/* ---------- Stil ändern ---------- */
+document.querySelectorAll("[data-set-style]").forEach(el => {
+  el.addEventListener("click", () => {
+    state.character.style = el.dataset.setStyle;
+    save();
+    renderAll();
+    toast("Stil aktualisiert.");
+  });
+});
+
+/* ---------- Reset ---------- */
+document.getElementById("reset-btn").addEventListener("click", () => {
+  if (confirm("Wirklich alles zurücksetzen? Dein Charakter und alle Daten gehen verloren.")) {
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+  }
+});
+
+/* ---------- Sicherheit: HTML escapen ---------- */
+function escapeHTML(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+/* ---------- Render All ---------- */
+function renderAll() {
+  renderHeader();
+  renderXp();
+  renderWealth();
+  renderMissions();
+  renderDashboardMissions();
+  renderEquipment();
+  renderAvatar();
+  // Markiere aktuell ausgewählten Stil im Charakter-Tab
+  document.querySelectorAll("[data-set-style]").forEach(el =>
+    el.classList.toggle("selected", el.dataset.setStyle === state.character.style)
+  );
+}
+
+/* ---------- Init ---------- */
+state = load();
+if (state.onboarded) {
+  enterApp();
+} else {
+  // Onboarding: keinen Charakter speichern bis bestätigt
+  // Standard-Auswahl visualisieren
+  document.querySelector('[data-gender="male"]').classList.add("selected");
+  obData.gender = "male";
+  document.querySelector('[data-style="hybrid"]').classList.add("selected");
+  obData.style = "hybrid";
+}
+</script>
+</body>
+</html>
