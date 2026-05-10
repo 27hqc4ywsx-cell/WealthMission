@@ -1254,9 +1254,12 @@
 
     <!-- Wealth Card -->
     <div class="card">
-      <div class="card-title">Nettovermögen</div>
+      <div class="card-title">Nettovermögen <button id="show-calc-btn" style="width:auto;min-height:0;padding:4px 10px;font-size:11px;background:transparent;border:1px solid var(--glass-border);">Rechnung</button></div>
       <div class="wealth-net" id="net-worth">0 €</div>
-      <div class="wealth-sub" id="net-sub">Tippe „Vermögen“ um deine Werte zu pflegen.</div>
+      <div class="wealth-sub" id="net-sub">Tippe „Vermögen” um deine Werte zu pflegen.</div>
+
+      <!-- Aufklappbare Rechen-Aufschlüsselung -->
+      <div id="calc-breakdown" style="display:none;margin-top:14px;padding:14px;background:rgba(0,0,0,0.3);border-radius:14px;border:1px solid var(--glass-border);font-variant-numeric:tabular-nums;font-size:14px;line-height:1.8;"></div>
 
       <div class="bar-row">
         <div class="bar-label">
@@ -1268,7 +1271,7 @@
 
       <div class="stat-grid">
         <div class="stat gold">
-          <div class="k">🔒 Im Tresor</div>
+          <div class="k">🔒 davon geschützt</div>
           <div class="v" id="stat-locked">0 €</div>
         </div>
         <div class="stat violet">
@@ -1424,6 +1427,12 @@
       <div class="card-title">Profil & Finanzen <button id="profile-edit-btn" style="width:auto;min-height:0;padding:4px 12px;font-size:11px;background:transparent;border:1px solid var(--glass-border);">Bearbeiten</button></div>
       <div id="profile-display"></div>
     </div>
+
+    <div class="card">
+      <div class="card-title">Wartung</div>
+      <div class="text-muted text-small" style="line-height:1.5;margin-bottom:10px;">Falls Zahlen nicht stimmen oder „NaN €" angezeigt wird, repariert dieser Knopf den Daten-Stand. Deine Werte bleiben erhalten, nur kaputte Felder werden auf 0 gesetzt und der Tresor an Bargeld+Bank angepasst.</div>
+      <button class="btn-ghost" id="repair-btn">🛠️ Daten reparieren</button>
+    </div>
   </section>
 
   <!-- Bottom Tab Nav -->
@@ -1524,7 +1533,7 @@ const MILESTONES = [
   { at: 100, title: "Erste 100 €",
     facts: ["Du hast bewiesen: Sparen ist kein Mythos.", "Reicht für ca. 3 Tage Lebenshaltung."] },
   { at: 500, title: "500er-Marke",
-    facts: ["Eine Woche Notpolster.", "Du gehörst nicht mehr zur Gruppe „kein Erspartes“."] },
+    facts: ["Eine Woche Notpolster.", "Du gehörst nicht mehr zur Gruppe „kein Erspartes”."] },
   { at: 1000, title: "Erster 1.000er",
     facts: ["Mehr als ca. 5 % der Deutschen unter 30.", "Reicht für ca. 10 Tage Lebenshaltung."] },
   { at: 2500, title: "2.500 € geknackt",
@@ -1813,9 +1822,8 @@ function load() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultState();
     const obj = JSON.parse(raw);
-    // Deep merge mit defaults, damit Bestandsnutzer ohne neue Felder migriert werden
     const def = defaultState();
-    return Object.assign(def, obj, {
+    const merged = Object.assign(def, obj, {
       character: Object.assign(def.character, obj.character || {}),
       wealth: Object.assign(def.wealth, obj.wealth || {}),
       stats: Object.assign(def.stats, obj.stats || {}),
@@ -1826,9 +1834,68 @@ function load() {
       locked: Object.assign(def.locked, obj.locked || {}),
       decay: Object.assign(def.decay, obj.decay || {}),
     });
+    return sanitizeState(merged);
   } catch (e) {
     return defaultState();
   }
+}
+
+// Stellt sicher, dass alle Zahlenfelder echte Zahlen sind.
+// Heilt korrupte Daten aus alten App-Versionen.
+function sanitizeState(s) {
+  const safeNum = (v) => {
+    if (typeof v === "number" && !isNaN(v)) return Math.max(0, v);
+    const f = parseFloat(v);
+    return isNaN(f) ? 0 : Math.max(0, f);
+  };
+  ["cash", "bank", "depot", "gold", "debt"].forEach(k => { s.wealth[k] = safeNum(s.wealth[k]); });
+  ["income", "fixed", "variable", "savings"].forEach(k => { s.cashflow[k] = safeNum(s.cashflow[k]); });
+  s.goals.target = safeNum(s.goals.target) || 1000;
+  s.locked.total = safeNum(s.locked.total);
+  if (!Array.isArray(s.locked.deposits)) s.locked.deposits = [];
+  if (!Array.isArray(s.locked.withdrawals)) s.locked.withdrawals = [];
+  s.locked.deposits = s.locked.deposits.map(d => ({ ...d, amount: safeNum(d.amount) })).filter(d => d.amount > 0);
+  s.locked.withdrawals = s.locked.withdrawals.map(w => ({ ...w, amount: safeNum(w.amount) }));
+
+  // Tresor darf nicht größer sein als Bargeld+Bank
+  const liquid = s.wealth.cash + s.wealth.bank;
+  const depositSum = s.locked.deposits.reduce((a, d) => a + d.amount, 0);
+  // locked.total = Summe der Deposits (autoritativ)
+  s.locked.total = depositSum;
+  if (s.locked.total > liquid) {
+    // Deposits proportional kürzen
+    let cap = liquid;
+    s.locked.deposits = s.locked.deposits.map(d => {
+      if (cap <= 0) return null;
+      if (d.amount <= cap) { cap -= d.amount; return d; }
+      const adj = { ...d, amount: cap }; cap = 0; return adj;
+    }).filter(Boolean);
+    s.locked.total = liquid;
+  }
+
+  // XP/Level/Stats
+  s.level = Math.max(1, parseInt(s.level, 10) || 1);
+  s.xp = safeNum(s.xp);
+  s.totalXp = safeNum(s.totalXp);
+  s.stats.missionsDone = safeNum(s.stats.missionsDone);
+  s.stats.moneyEarned = safeNum(s.stats.moneyEarned);
+  s.stats.lockedTotal = safeNum(s.stats.lockedTotal);
+  s.streak.count = safeNum(s.streak.count);
+  s.profile.age = parseInt(s.profile.age, 10) || 0;
+
+  // History bereinigen
+  if (!Array.isArray(s.history)) s.history = [];
+  s.history = s.history.map(h => ({ date: String(h.date || ""), net: safeNum(h.net) })).filter(h => h.date);
+
+  // Missions bereinigen
+  if (!Array.isArray(s.missions)) s.missions = [];
+  s.missions = s.missions.map(m => ({
+    ...m,
+    effect: safeNum(m.effect),
+    xp: safeNum(m.xp),
+  }));
+
+  return s;
 }
 function save() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -1838,8 +1905,10 @@ function save() {
    HILFSFUNKTIONEN
    ========================================================= */
 const fmt = (n) => {
-  const sign = n < 0 ? "-" : "";
-  const abs = Math.abs(Math.round(n));
+  // Defensiv: undefined/null/NaN/string -> 0 €
+  const num = (typeof n === "number" && !isNaN(n)) ? n : (parseFloat(n) || 0);
+  const sign = num < 0 ? "-" : "";
+  const abs = Math.abs(Math.round(num));
   return sign + abs.toLocaleString("de-DE") + " €";
 };
 const fmtShort = (n) => {
@@ -2266,8 +2335,27 @@ function renderXp() {
    ========================================================= */
 function renderWealth() {
   const net = netWorth();
+  const w = state.wealth;
   document.getElementById("net-worth").textContent = fmt(net);
   document.getElementById("net-worth-2").textContent = fmt(net);
+
+  // Sichtbare Rechen-Aufschlüsselung (nur wenn aufgeklappt)
+  const breakdown = document.getElementById("calc-breakdown");
+  if (breakdown) {
+    const free = net - (state.locked.total || 0);
+    breakdown.innerHTML =
+      '<div style="display:flex;justify-content:space-between;"><span>💵 Bargeld</span><span>' + fmt(w.cash) + '</span></div>' +
+      '<div style="display:flex;justify-content:space-between;"><span>+ 🏦 Bank</span><span>' + fmt(w.bank) + '</span></div>' +
+      '<div style="display:flex;justify-content:space-between;"><span>+ 📈 Depot</span><span>' + fmt(w.depot) + '</span></div>' +
+      '<div style="display:flex;justify-content:space-between;"><span>+ 🪙 Gold</span><span>' + fmt(w.gold) + '</span></div>' +
+      '<div style="display:flex;justify-content:space-between;color:var(--red);"><span>− 💳 Schulden</span><span>' + fmt(w.debt) + '</span></div>' +
+      '<div style="border-top:1px dashed var(--glass-border);margin:6px 0;"></div>' +
+      '<div style="display:flex;justify-content:space-between;font-weight:800;color:var(--gold);"><span>= Nettovermögen</span><span>' + fmt(net) + '</span></div>' +
+      '<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--glass-border);font-size:12px;color:var(--muted);">' +
+      '<div style="display:flex;justify-content:space-between;"><span>🔒 davon im Tresor (geschützt)</span><span>' + fmt(state.locked.total) + '</span></div>' +
+      '<div style="display:flex;justify-content:space-between;"><span>🆓 frei verfügbar</span><span>' + fmt(free) + '</span></div>' +
+      '</div>';
+  }
   document.getElementById("net-sub").textContent =
     net <= 0 ? "Lass uns dein Vermögen aufbauen." :
     net < state.goals.target ? "Auf Kurs zum Ziel." : "Ziel erreicht – setze ein neues!";
@@ -2734,6 +2822,21 @@ function updateStreak() {
 }
 
 function pushHistory() {
+  // Selbstheilung: locked.total IMMER aus deposits ableiten
+  state.locked.total = (state.locked.deposits || []).reduce((a, d) => a + (parseFloat(d.amount) || 0), 0);
+  // Plausibilität: Tresor darf nie größer sein als Bargeld+Bank
+  const liquid = (state.wealth.cash || 0) + (state.wealth.bank || 0);
+  if (state.locked.total > liquid) {
+    let cap = liquid;
+    state.locked.deposits = (state.locked.deposits || []).map(d => {
+      if (cap <= 0) return null;
+      const a = parseFloat(d.amount) || 0;
+      if (a <= cap) { cap -= a; return d; }
+      const adj = { ...d, amount: cap }; cap = 0; return adj;
+    }).filter(Boolean);
+    state.locked.total = liquid;
+  }
+
   const today = todayISO();
   const net = netWorth();
   const last = state.history[state.history.length - 1];
@@ -2742,9 +2845,7 @@ function pushHistory() {
   } else {
     state.history.push({ date: today, net });
   }
-  // Tier neu berechnen
   state.userTier = computeUserTier();
-  // Meilensteine prüfen
   checkMilestones();
 }
 
@@ -2907,13 +3008,13 @@ function showDecayModal(amount, penalty, isEarly) {
 
 function showWelcomeModal() {
   modalShell(
-    '<div class=”big-icon”>⚔️</div>' +
+    '<div class="big-icon">⚔️</div>' +
     '<h2>Willkommen, ' + escapeHTML(state.character.name) + '!</h2>' +
     '<p>Dein Charakter ist erschaffen. Wir haben dir bereits passende Quests bereitgelegt – starte mit der ersten unter „Quests”.</p>' +
-    '<p><strong style=”color:var(--gold)”>Dein Tier:</strong> ' + TIER_NAMES[state.userTier] + '</p>' +
-    '<div class=”btn-row” style=”margin-top:6px;”>' +
-      '<button class=”btn-ghost” onclick=”closeModal();showHelpModal();”>Wie funktioniert das?</button>' +
-      '<button class=”btn-primary” onclick=”closeModal()”>Reise beginnen</button>' +
+    '<p><strong style="color:var(--gold)">Dein Tier:</strong> ' + TIER_NAMES[state.userTier] + '</p>' +
+    '<div class="btn-row" style="margin-top:6px;">' +
+      '<button class="btn-ghost" onclick="closeModal();showHelpModal();">Wie funktioniert das?</button>' +
+      '<button class="btn-primary" onclick="closeModal()">Reise beginnen</button>' +
     '</div>'
   );
   fireConfetti(30);
@@ -2929,7 +3030,7 @@ function showVaultDepositDialog() {
     '<p>Markiert einen Teil deines <strong>bestehenden</strong> Bargelds/Bankkontos als geschützt.<br/>Dein Vermögen ändert sich nicht – aber du verpflichtest dich, diesen Teil nicht anzufassen.</p>' +
     '<div class="text-small text-muted" style="margin:8px 0;">Bargeld + Bank: ' + fmt(liquid) + ' · davon noch frei (nicht im Tresor): <strong>' + fmt(free) + '</strong></div>' +
     '<input type="number" inputmode="decimal" id="vault-dep-amount" placeholder="Betrag €" style="margin:8px 0;" />' +
-    '<input type="text" id="vault-dep-note" placeholder="Wo liegt es? z.B. „Festgeld DKB" (optional)" style="margin-bottom:12px;" />' +
+    '<input type="text" id="vault-dep-note" placeholder="Wo liegt es? z.B. „Festgeld DKB” (optional)" style="margin-bottom:12px;" />' +
     '<div class="btn-row">' +
       '<button class="btn-ghost" onclick="closeModal()">Abbrechen</button>' +
       '<button class="btn-primary" onclick="handleVaultDeposit()">Markieren</button>' +
@@ -3027,8 +3128,8 @@ function showHelpModal() {
       '<p><strong style="color:var(--gold)">💰 Nettovermögen</strong><br/>' +
         'Bargeld + Bankkonto + Depot + Gold − Schulden. <u>Die einzige Vermögenszahl.</u> Alles andere ist nur Detail.</p>' +
       '<p><strong style="color:var(--gold)">🔒 Tresor</strong><br/>' +
-        'Markierung, dass ein Teil deines Bargelds/Bankkontos „geschützt" ist (separates Konto, Schließfach, Festgeld). ' +
-        '<strong>Kein zusätzliches Vermögen!</strong> Wenn du 500 € auf der Bank hast und 200 € als Tresor markierst, hast du immer noch 500 € – aber 200 € davon sind „Hände weg". ' +
+        'Markierung, dass ein Teil deines Bargelds/Bankkontos „geschützt” ist (separates Konto, Schließfach, Festgeld). ' +
+        '<strong>Kein zusätzliches Vermögen!</strong> Wenn du 500 € auf der Bank hast und 200 € als Tresor markierst, hast du immer noch 500 € – aber 200 € davon sind „Hände weg”. ' +
         'Wenn du Tresor-Geld entnimmst, sinkt deine Bank UND der Tresor. Entnahme < 30 Tage seit Einzahlung = doppelte XP-Strafe.</p>' +
       '<p><strong style="color:var(--violet-soft)">🎯 Tier (finanzielle Stufe)</strong><br/>' +
         'Berechnet aus deiner Sparrate und deinem Nettovermögen:<br/>' +
@@ -3044,7 +3145,7 @@ function showHelpModal() {
         '<i>Sparrate</i> = was du laut deiner Vorgabe sparen willst.<br/>' +
         'Rechnerisch frei = Einnahmen − Fix − Variabel. Sollte ungefähr deiner Sparrate entsprechen. Wenn nicht, bekommst du einen Hinweis im Dashboard.</p>' +
       '<p><strong style="color:var(--gold)">🏆 Meilensteine</strong><br/>' +
-        'Bei 100 € / 500 € / 1.000 € … 1.000.000 € Nettovermögen poppt eine Glückwunsch-Karte mit Kontext-Fakten auf („mehr als 30 % der Deutschen", „3 Monate ohne Einkommen", …).</p>' +
+        'Bei 100 € / 500 € / 1.000 € … 1.000.000 € Nettovermögen poppt eine Glückwunsch-Karte mit Kontext-Fakten auf („mehr als 30 % der Deutschen”, „3 Monate ohne Einkommen”, …).</p>' +
       '<p><strong style="color:var(--gold)">⚔️ Quests</strong><br/>' +
         'Konkrete Aufgaben passend zu deiner Lage und deinen Schwächen. Erledigen = XP. ' +
         'Bei Quests mit €-Effekt kannst du beim Abschluss eingeben, wie viel du wirklich gespart hast – das erscheint dann auf deinem Bankkonto und wird im Tresor geschützt.</p>' +
@@ -3130,6 +3231,18 @@ document.getElementById("vault-deposit-btn").addEventListener("click", showVault
 document.getElementById("vault-withdraw-btn").addEventListener("click", showVaultWithdrawDialog);
 document.getElementById("profile-edit-btn").addEventListener("click", showProfileEditDialog);
 document.getElementById("help-btn").addEventListener("click", showHelpModal);
+document.getElementById("show-calc-btn").addEventListener("click", () => {
+  const el = document.getElementById("calc-breakdown");
+  el.style.display = el.style.display === "none" ? "" : "none";
+});
+document.getElementById("repair-btn").addEventListener("click", () => {
+  state = sanitizeState(state);
+  state.userTier = computeUserTier();
+  pushHistory();
+  save();
+  renderAll();
+  toast("✓ Daten repariert");
+});
 
 document.querySelectorAll("#mission-tabs .mission-tab").forEach(t => {
   t.addEventListener("click", () => {
