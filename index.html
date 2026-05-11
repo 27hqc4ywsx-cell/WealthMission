@@ -1034,63 +1034,86 @@
                 </defs>
                 <!-- Ground shadow -->
                 <ellipse cx="50" cy="137" rx="22" ry="2.2" fill="#000" fill-opacity="0.22"/>
-                <!-- Legs (shorter, more visible below torso) -->
+                <!-- Legs (longer for human proportions) -->
                 <g filter="url(#softShadow)">
-                  <rect x="37" y="98" width="11" height="32" rx="3" fill="url(#pantsG)"/>
-                  <rect x="52" y="98" width="11" height="32" rx="3" fill="url(#pantsG)"/>
+                  <path id="char-leg-l" d="M 40 92 L 47 92 L 47 132 Q 47 134 45 134 L 42 134 Q 40 134 40 132 Z" fill="url(#pantsG)"/>
+                  <path id="char-leg-r" d="M 53 92 L 60 92 L 60 132 Q 60 134 58 134 L 55 134 Q 53 134 53 132 Z" fill="url(#pantsG)"/>
                 </g>
-                <!-- Shoes (larger, visible) -->
-                <ellipse cx="42.5" cy="132" rx="7.5" ry="3" fill="#1A1F2C"/>
-                <ellipse cx="57.5" cy="132" rx="7.5" ry="3" fill="#1A1F2C"/>
-                <!-- Arms drawn BEHIND torso, overlapping body sides so they appear attached at shoulder -->
-                <path d="M 32 58 Q 26 60 22 66 L 19 90 Q 18 95 22 95 L 30 95 Q 33 95 33 91 L 33 58 Z" fill="url(#outfitG)" filter="url(#softShadow)"/>
-                <path d="M 68 58 Q 74 60 78 66 L 81 90 Q 82 95 78 95 L 70 95 Q 67 95 67 91 L 67 58 Z" fill="url(#outfitG)" filter="url(#softShadow)"/>
-                <!-- Torso with shoulder slope (drawn AFTER arms so it covers inner edge) -->
-                <path d="M 40 56 Q 32 58 30 64 L 30 96 Q 30 100 34 100 L 66 100 Q 70 100 70 96 L 70 64 Q 68 58 60 56 Z" fill="url(#outfitG)" filter="url(#softShadow)"/>
-                <!-- Body left highlight -->
-                <path d="M 38 58 Q 33 60 32 64 L 32 96 Q 32 99 34 99 L 38 99 L 38 58 Z" fill="#fff" fill-opacity="0.16"/>
-                <!-- Body right shadow -->
-                <path d="M 62 58 Q 67 60 68 64 L 68 96 Q 68 99 66 99 L 62 99 Z" fill="#000" fill-opacity="0.12"/>
-                <!-- Neckline (v-shape) -->
-                <path d="M 43 58 Q 50 63 57 58" stroke="#000" stroke-width="0.8" stroke-opacity="0.25" fill="none" stroke-linecap="round"/>
-                <!-- Accessory belt -->
-                <rect id="char-accessory" x="30" y="82" width="40" height="4.5" fill="transparent" rx="1.5"/>
-                <!-- Hands (at hip level, just below body sides) -->
-                <circle cx="22" cy="96" r="4.5" fill="url(#skinG)" filter="url(#softShadow)"/>
-                <circle cx="78" cy="96" r="4.5" fill="url(#skinG)" filter="url(#softShadow)"/>
-                <!-- Neck (short, tapering) -->
-                <path d="M 44 50 L 56 50 Q 57 54 57 58 L 43 58 Q 43 54 44 50 Z" fill="url(#skinG)"/>
-                <!-- Neck shadow under jaw -->
-                <path d="M 44 50 L 56 50 Q 56 52.5 55 53.5 L 45 53.5 Q 44 52.5 44 50 Z" fill="#000" fill-opacity="0.18"/>
-                <!-- Head (BIG chibi head) -->
-                <ellipse cx="50" cy="28" rx="21" ry="23" fill="url(#skinG)" filter="url(#softShadow)"/>
-                <!-- Head highlight (subtle 3D top-left) -->
-                <ellipse cx="42" cy="16" rx="6" ry="4" fill="#fff" fill-opacity="0.18"/>
-                <!-- Head right shadow (subtler, doesn't look like blush) -->
-                <ellipse cx="64" cy="40" rx="5" ry="8" fill="#000" fill-opacity="0.04"/>
-                <!-- Hair: MALE (cap covers top half of head) -->
-                <path id="char-hair-male" d="M 29 26 Q 26 6 50 4 Q 74 6 71 26 L 68 24 Q 65 16 50 16 Q 35 16 32 24 L 29 26 Z" fill="url(#hairG)"/>
-                <!-- Hair: FEMALE (long with side strands) -->
-                <path id="char-hair-female" d="M 27 30 Q 24 4 50 3 Q 76 4 73 30 L 73 52 Q 70 48 68 48 L 68 28 Q 67 16 50 16 Q 33 16 32 28 L 32 48 Q 30 48 27 52 Z" fill="url(#hairG)" style="display:none;"/>
-                <!-- Hair shine (curved lens, follows head crown) -->
-                <path d="M 40 8 Q 50 5 60 8 Q 58 10.5 50 10.5 Q 42 10.5 40 8 Z" fill="#fff" fill-opacity="0.28"/>
+                <!-- Shoes -->
+                <ellipse cx="43.5" cy="134" rx="6" ry="2.5" fill="#1A1F2C"/>
+                <ellipse cx="56.5" cy="134" rx="6" ry="2.5" fill="#1A1F2C"/>
+                <!-- Female skirt (visible only for female + when displayed) -->
+                <path id="char-skirt" style="display:none" d="M 32 84 L 22 110 L 78 110 L 68 84 Z" fill="url(#outfitG)" filter="url(#softShadow)"/>
+                <!-- Arms (drawn behind torso, will be partially covered) -->
+                <path id="char-arm-l" d="M 30 44 Q 24 46 22 52 L 19 86 Q 18 91 22 92 L 28 92 Q 32 92 33 88 L 33 44 Z" fill="url(#outfitG)" filter="url(#softShadow)"/>
+                <path id="char-arm-r" d="M 70 44 Q 76 46 78 52 L 81 86 Q 82 91 78 92 L 72 92 Q 68 92 67 88 L 67 44 Z" fill="url(#outfitG)" filter="url(#softShadow)"/>
+                <!-- Torso: MALE (broad shoulders, slight V-taper to hips) -->
+                <path id="char-torso-male" d="M 30 44 Q 27 44 26 48 L 28 88 Q 28 92 32 92 L 68 92 Q 72 92 72 88 L 74 48 Q 73 44 70 44 Z" fill="url(#outfitG)" filter="url(#softShadow)"/>
+                <!-- Torso: FEMALE (same outline as male to avoid gaps - feminine via hair/lashes/lips/skirt) -->
+                <path id="char-torso-female" style="display:none" d="M 33 44 Q 31 44 31 47 L 33 72 Q 35 80 34 90 Q 34 92 36 92 L 64 92 Q 66 92 66 90 Q 65 80 67 72 L 69 47 Q 69 44 67 44 Z" fill="url(#outfitG)" filter="url(#softShadow)"/>
+                <!-- Neckline -->
+                <path d="M 43 44 Q 50 48 57 44" stroke="#000" stroke-width="0.7" stroke-opacity="0.25" fill="none" stroke-linecap="round"/>
+                <!-- Accessory belt/sash -->
+                <rect id="char-accessory" x="30" y="74" width="40" height="4" fill="transparent" rx="1.5"/>
+                <!-- Cape (Lvl 30+, hidden by default) -->
+                <path id="char-cape" style="display:none" d="M 28 44 L 22 92 L 30 88 L 30 44 Z M 72 44 L 78 92 L 70 88 L 70 44 Z" fill="url(#outfitG)" fill-opacity="0.85"/>
+                <!-- Hands -->
+                <circle cx="25" cy="93" r="4.5" fill="url(#skinG)" filter="url(#softShadow)"/>
+                <circle cx="75" cy="93" r="4.5" fill="url(#skinG)" filter="url(#softShadow)"/>
+                <!-- Neck -->
+                <path d="M 45 32 L 55 32 Q 56 38 56 44 L 44 44 Q 44 38 45 32 Z" fill="url(#skinG)"/>
+                <path d="M 45 32 L 55 32 Q 55 34 54 35 L 46 35 Q 45 34 45 32 Z" fill="#000" fill-opacity="0.18"/>
+                <!-- Head (smaller, human proportions: roughly 1/3 of body) -->
+                <ellipse cx="50" cy="18" rx="14" ry="16" fill="url(#skinG)" filter="url(#softShadow)"/>
+                <!-- Head highlight (3D top-left) -->
+                <ellipse cx="44" cy="9" rx="4.5" ry="3" fill="#fff" fill-opacity="0.20"/>
+                <!-- Head right shadow (subtle) -->
+                <ellipse cx="60" cy="24" rx="4" ry="7" fill="#000" fill-opacity="0.05"/>
+                <!-- Hair: MALE (short, masculine cut) -->
+                <path id="char-hair-male" d="M 36 18 Q 34 3 50 1 Q 66 3 64 18 L 62 14 Q 60 8 50 8 Q 40 8 38 14 L 36 18 Z" fill="url(#hairG)"/>
+                <!-- Hair: FEMALE (long with shoulder-length side strands) -->
+                <path id="char-hair-female" style="display:none" d="M 34 20 Q 32 1 50 0 Q 68 1 66 20 L 66 44 Q 64 40 62 38 L 62 12 Q 60 6 50 6 Q 40 6 38 12 L 38 38 Q 36 40 34 44 Z" fill="url(#hairG)"/>
+                <!-- Hair shine -->
+                <path d="M 42 4 Q 50 2 58 4 Q 56 7 50 7 Q 44 7 42 4 Z" fill="#fff" fill-opacity="0.30"/>
                 <!-- Eyebrows -->
-                <path d="M 36 22 Q 41 19.5 46 22" stroke="#2A1A10" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.90"/>
-                <path d="M 54 22 Q 59 19.5 64 22" stroke="#2A1A10" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.90"/>
-                <!-- Eyes (bigger, chibi style) -->
-                <ellipse cx="41.5" cy="28" rx="2.2" ry="2.8" fill="#1F2937"/>
-                <ellipse cx="58.5" cy="28" rx="2.2" ry="2.8" fill="#1F2937"/>
-                <circle cx="42.2" cy="27.1" r="0.9" fill="#fff"/>
-                <circle cx="59.2" cy="27.1" r="0.9" fill="#fff"/>
-                <circle cx="40.7" cy="29.2" r="0.5" fill="#fff" fill-opacity="0.70"/>
-                <circle cx="57.7" cy="29.2" r="0.5" fill="#fff" fill-opacity="0.70"/>
+                <path id="char-eyebrow-l" d="M 41 14 Q 44 12 47 14" stroke="#2A1A10" stroke-width="0.9" fill="none" stroke-linecap="round" opacity="0.90"/>
+                <path id="char-eyebrow-r" d="M 53 14 Q 56 12 59 14" stroke="#2A1A10" stroke-width="0.9" fill="none" stroke-linecap="round" opacity="0.90"/>
+                <!-- Eyes -->
+                <ellipse cx="43.5" cy="19" rx="1.5" ry="2" fill="#1F2937"/>
+                <ellipse cx="56.5" cy="19" rx="1.5" ry="2" fill="#1F2937"/>
+                <circle cx="44" cy="18.3" r="0.6" fill="#fff"/>
+                <circle cx="57" cy="18.3" r="0.6" fill="#fff"/>
+                <!-- Eyelashes (female only) -->
+                <g id="char-eyelashes" style="display:none">
+                  <path d="M 41.5 17.4 L 41 16.4" stroke="#1F2937" stroke-width="0.5" stroke-linecap="round"/>
+                  <path d="M 43 17 L 43 15.8" stroke="#1F2937" stroke-width="0.5" stroke-linecap="round"/>
+                  <path d="M 44.5 17 L 45 16" stroke="#1F2937" stroke-width="0.5" stroke-linecap="round"/>
+                  <path d="M 55 17 L 55 15.8" stroke="#1F2937" stroke-width="0.5" stroke-linecap="round"/>
+                  <path d="M 56.5 17 L 57 15.8" stroke="#1F2937" stroke-width="0.5" stroke-linecap="round"/>
+                  <path d="M 58 17.4 L 58.5 16.4" stroke="#1F2937" stroke-width="0.5" stroke-linecap="round"/>
+                </g>
                 <!-- Nose hint -->
-                <ellipse cx="50" cy="33" rx="1" ry="1.5" fill="#000" fill-opacity="0.10"/>
-                <!-- Cheeks (higher position) -->
-                <ellipse cx="36" cy="35" rx="3.2" ry="1.8" fill="#F87171" fill-opacity="0.45"/>
-                <ellipse cx="64" cy="35" rx="3.2" ry="1.8" fill="#F87171" fill-opacity="0.45"/>
-                <!-- Mouth (small smile) -->
-                <path d="M 45 39 Q 50 41.5 55 39" stroke="#7C2D12" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                <ellipse cx="50" cy="22" rx="0.7" ry="1.2" fill="#000" fill-opacity="0.10"/>
+                <!-- Cheeks -->
+                <ellipse cx="40" cy="24" rx="2.2" ry="1.3" fill="#F87171" fill-opacity="0.40"/>
+                <ellipse cx="60" cy="24" rx="2.2" ry="1.3" fill="#F87171" fill-opacity="0.40"/>
+                <!-- Mouth: MALE (subtle smile) -->
+                <path id="char-mouth-male" d="M 46 27 Q 50 28.5 54 27" stroke="#7C2D12" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+                <!-- Mouth: FEMALE (rose lips, slightly thicker) -->
+                <path id="char-mouth-female" style="display:none" d="M 46 27 Q 50 29 54 27" stroke="#9F1239" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+                <!-- Helmet (Lvl 20+ RPG/Hybrid, hidden by default) - iron metal look -->
+                <g id="char-helmet" style="display:none">
+                  <!-- Helmet covers head fully, including sides/ears -->
+                  <path d="M 32 18 Q 30 -2 50 -2 Q 70 -2 68 18 Q 68 24 64 28 L 60 26 Q 62 18 62 14 Q 60 8 50 8 Q 40 8 38 14 Q 38 18 40 26 L 36 28 Q 32 24 32 18 Z" fill="#94A3B8" stroke="#334155" stroke-width="0.5"/>
+                  <!-- Eye slit gap (will be hidden by face features drawn after this) -->
+                  <!-- Highlight -->
+                  <ellipse cx="42" cy="6" rx="7" ry="4" fill="#fff" fill-opacity="0.30"/>
+                  <!-- Top spike -->
+                  <path d="M 48 -2 L 52 -2 L 50 -7 Z" fill="#64748B"/>
+                  <!-- Cross emblem on forehead -->
+                  <rect x="49" y="10" width="2" height="6" fill="#475569"/>
+                  <rect x="47" y="12" width="6" height="2" fill="#475569"/>
+                </g>
               </svg>
             </div>
           </div>
@@ -2177,15 +2200,41 @@ function renderAvatar() {
   setStop("hair-stop-light", gender === "female" ? "#7A4523" : "#3D2818");
   setStop("hair-stop-dark", gender === "female" ? "#3D2010" : "#1F1108");
 
-  // Haar-Pfad je Geschlecht umschalten
-  const maleHair = document.getElementById("char-hair-male");
-  const femaleHair = document.getElementById("char-hair-female");
-  if (maleHair) maleHair.style.display = gender === "female" ? "none" : "";
-  if (femaleHair) femaleHair.style.display = gender === "female" ? "" : "none";
+  // Gender-spezifische Elemente umschalten
+  const isFem = gender === "female";
+  const toggle = (id, show) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = show ? "" : "none";
+  };
+  toggle("char-hair-male", !isFem);
+  toggle("char-hair-female", isFem);
+  toggle("char-torso-male", !isFem);
+  toggle("char-torso-female", isFem);
+  toggle("char-mouth-male", !isFem);
+  toggle("char-mouth-female", isFem);
+  toggle("char-eyelashes", isFem);
 
-  // Accessoire-Farbe
+  // Rock immer für Frau sichtbar (klares feminines Markenzeichen)
+  toggle("char-skirt", isFem);
+
+  // Helm ab Lvl 20 im RPG-Stil (versteckt Haare wenn aktiv)
+  const showHelmet = style !== "sims" && lvl >= 20;
+  toggle("char-helmet", showHelmet);
+  if (showHelmet) {
+    // Haare unter Helm verstecken
+    toggle("char-hair-male", false);
+    toggle("char-hair-female", false);
+  }
+
+  // Cape ab Lvl 30 im RPG-Stil
+  toggle("char-cape", style !== "sims" && lvl >= 30);
+
+  // Accessoire-Farbe (Sash/Belt sichtbar ab Lvl 5)
   const acc = document.getElementById("char-accessory");
-  if (acc) acc.setAttribute("fill", colors.accent === "transparent" ? "transparent" : colors.accent);
+  if (acc) {
+    const showAcc = lvl >= 5 && colors.accent !== "transparent";
+    acc.setAttribute("fill", showAcc ? colors.accent : "transparent");
+  }
 
   // Krone / Funkeln über dem Kopf (HTML-Overlay)
   const crownEl = document.getElementById("char-crown");
