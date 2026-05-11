@@ -1203,6 +1203,17 @@
 
   <!-- ============== DASHBOARD ============== -->
   <section class="view active" data-view="dashboard">
+
+    <!-- Krisen-Banner: nur bei Cashflow-Defizit sichtbar -->
+    <div class="card" id="crisis-banner" style="display:none;border-color:var(--red);background:linear-gradient(180deg,rgba(248,113,113,0.18),rgba(248,113,113,0.04));box-shadow:var(--shadow-card),0 0 60px rgba(248,113,113,0.25);">
+      <div class="card-title" style="color:var(--red);">🚨 Cashflow im Minus</div>
+      <div style="font-size:14px;line-height:1.5;margin-bottom:10px;">
+        Du gibst monatlich <strong id="crisis-deficit-amount" style="color:var(--red);">0 €</strong> mehr aus als du einnimmst.<br/>
+        Wahrscheinlich rutscht dein Konto in den Dispo. Wir haben dir Notbremse-Quests bereitgelegt.
+      </div>
+      <button class="btn-danger" id="crisis-open-btn">Notbremse-Plan ansehen</button>
+    </div>
+
     <!-- Character Card -->
     <div class="card char-card gold">
       <div class="char-top">
@@ -1475,6 +1486,17 @@ const TIER_NAMES = [
   "Vermögensaufbauer", "Investor", "Kapitalstratege"
 ];
 
+// Erkennt akute Cashflow-Krise: User gibt mehr aus als er einnimmt.
+// Das ist KEIN Daten-Fehler, sondern eine reale Lebenslage (Dispo!).
+function isCashflowCrisis() {
+  const cf = state.cashflow;
+  return (cf.income || 0) > 0 && ((cf.fixed || 0) + (cf.variable || 0)) > (cf.income || 0);
+}
+function cashflowDeficit() {
+  const cf = state.cashflow;
+  return Math.max(0, (cf.fixed || 0) + (cf.variable || 0) - (cf.income || 0));
+}
+
 function computeUserTier() {
   const savings = state.cashflow.savings || 0;
   const net = netWorth();
@@ -1680,6 +1702,30 @@ const MISSION_TEMPLATES = [
   { id: "d4", title: "Notgroschen aufbauen (1.000€)", category: "disziplin", baseDifficulty: "schwer", effect: 0, xp: 250,
     tierMin: 1, tierMax: 5,
     desc: "Lege Schritt für Schritt 1.000€ als Notreserve in den Tresor. Alles, was kommt – rein in den Tresor." },
+
+  // --- NOTBREMSE (Cashflow-Krise: Ausgaben > Einnahmen) ---
+  // Diese werden NUR automatisch hinzugefügt, wenn der User in der Krise ist.
+  { id: "n1", title: "🚨 Notbremse: 7 Tage Konsum-STOPP", category: "disziplin", baseDifficulty: "schwer", effect: 0, xp: 250,
+    tierMin: 0, tierMax: 5, crisis: true,
+    desc: "Sofort 7 Tage Notbremse. Erlaubt: Lebensmittel (Aldi-Standard), Hygiene, Pflicht-Mobilität (zur Arbeit, Schule). NICHT erlaubt: Lieferservice, Restaurant, To-Go-Kaffee, Online-Shopping, Streaming-Erweiterungen, App-Käufe, Tanken über Pflicht hinaus. Ziel: das Bluten stoppen, bevor wir den Rest planen." },
+  { id: "n2", title: "🚨 Kompletter Fixkosten-Audit", category: "vertraege", baseDifficulty: "mittel", effect: 0, xp: 200,
+    tierMin: 0, tierMax: 5, crisis: true,
+    desc: "Setz dich 60 Minuten hin. Zettel + Banking-App. Schreibe JEDE Fixkost auf: Miete, Nebenkosten, Strom, Gas, Wasser, Internet, Mobilfunk, Versicherungen, Abos, Mitgliedschaften, Apps. Pro Punkt: ist es kündbar? Wechselbar? Verhandelbar? Markiere die Top 3 zum Kürzen." },
+  { id: "n3", title: "🚨 Dispo-Zinssatz checken & notieren", category: "schulden", baseDifficulty: "leicht", effect: 0, xp: 150,
+    tierMin: 0, tierMax: 5, crisis: true,
+    desc: "Banking-App öffnen oder Bank anrufen: wie hoch ist dein Dispo-Zinssatz? Meist 9–14 %. Diese Zahl ist dein teuerster Feind. Schreib sie sichtbar auf. Plus: wieviel Dispo nutzt du gerade?" },
+  { id: "n4", title: "🚨 Mindestens 2 Abos heute kündigen", category: "vertraege", baseDifficulty: "leicht", effect: 30, xp: 180,
+    tierMin: 0, tierMax: 5, crisis: true,
+    desc: "Heute, nicht morgen. Streaming, Gym, Lieferservice-Prime, Magazine, Cloud-Speicher, Apps. Mindestens 2 raus. Sofort. Du kannst sie immer noch neu abschließen, wenn die Krise vorbei ist." },
+  { id: "n5", title: "🚨 50€ extra einnehmen (7 Tage)", category: "verdienen", baseDifficulty: "mittel", effect: 50, xp: 200,
+    tierMin: 0, tierMax: 5, crisis: true,
+    desc: "In 7 Tagen 50€ extra reinholen. Verkaufe 3–5 Sachen (Kleinanzeigen, Vinted), biete 2h Hilfsarbeit an, frag bei Verwandten ob du was tun kannst (Garten, Renovierung, Hund hüten). Ziel ist nicht Reichtum – Ziel ist Bewegung." },
+  { id: "n6", title: "🚨 Keine neuen Kredite 30 Tage", category: "disziplin", baseDifficulty: "schwer", effect: 0, xp: 250,
+    tierMin: 0, tierMax: 5, crisis: true,
+    desc: "30 Tage hartes Verbot: keine neue Kreditkarte, keine 0%-Finanzierung („Klarna in 3 Raten”), kein Privatkredit. Schulden löst man nicht mit neuen Schulden – sonst zahlst du am Ende doppelt." },
+  { id: "n7", title: "🚨 Schuldnerberatung anrufen (kostenlos)", category: "schulden", baseDifficulty: "mittel", effect: 0, xp: 300,
+    tierMin: 0, tierMax: 5, crisis: true,
+    desc: "Bei echter Schuldensituation: ruf eine kostenlose Schuldnerberatung an. Caritas, Diakonie, Verbraucherzentrale, AWO – alle kostenlos, alle vertraulich. Schämen ist umsonst – die Berater haben alles schon gesehen. Ein Termin ändert oft alles." },
 ];
 
 /* =========================================================
@@ -2175,11 +2221,21 @@ document.getElementById("ob-finish").addEventListener("click", () => {
 
   // Initiale Quests laden: passende Standard-Missionen + Schwächen-System-Quests
   loadInitialQuests();
+  // Bei Cashflow-Krise: Notbremse-Quests auto-aktivieren
+  if (isCashflowCrisis()) {
+    addEmergencyMissions();
+  }
   pushHistory();
   save();
   enterApp();
-  // Welcome-Popup
-  setTimeout(() => showWelcomeModal(), 500);
+  // Welcome zuerst, dann ggf. Krisen-Modal kettenförmig
+  setTimeout(() => {
+    if (isCashflowCrisis()) {
+      showCashflowCrisisModal();
+    } else {
+      showWelcomeModal();
+    }
+  }, 500);
 });
 
 function loadInitialQuests() {
@@ -2409,25 +2465,43 @@ function renderWealth() {
 
 function renderCashflow() {
   const cf = state.cashflow;
-  // Korrekte Berechnung: Einnahmen - Fix - Variabel
   const calcFree = (cf.income || 0) - (cf.fixed || 0) - (cf.variable || 0);
   document.getElementById("cashflow-savings").textContent = fmt(cf.savings || 0);
   document.getElementById("cashflow-free").textContent = fmt(calcFree);
   document.getElementById("cashflow-tier").textContent = TIER_NAMES[state.userTier];
 
-  // Konsistenzhinweis
+  // Krisen-Banner auf Dashboard
+  const banner = document.getElementById("crisis-banner");
+  const crisis = isCashflowCrisis();
+  if (banner) {
+    banner.style.display = crisis ? "" : "none";
+    if (crisis) {
+      document.getElementById("crisis-deficit-amount").textContent = fmt(cashflowDeficit());
+    }
+  }
+
+  // Hinweis-Text unter Cashflow-Karte
   const hint = document.getElementById("cashflow-hint");
   if (hint) {
-    const diff = (cf.savings || 0) - calcFree;
-    if (cf.income > 0 && Math.abs(diff) > 20) {
+    if (crisis) {
+      // Wichtigste Stufe: Defizit-Warnung
       hint.style.display = "";
-      if (diff > 0) {
-        hint.textContent = "⚠️ Sparrate (" + fmt(cf.savings) + ") ist " + fmt(diff) + " höher als rechnerisch frei. Prüf deine Werte unter Held → Profil bearbeiten.";
-      } else {
-        hint.textContent = "💡 Du könntest theoretisch " + fmt(-diff) + " mehr sparen (rechnerisch frei: " + fmt(calcFree) + ").";
-      }
+      hint.style.color = "var(--red)";
+      hint.innerHTML = "🚨 <strong>Du gibst " + fmt(cashflowDeficit()) + " mehr aus als du einnimmst.</strong> " +
+        "Wahrscheinlich rutscht dein Konto in den Dispo. Tippe oben auf „Notbremse-Plan ansehen”.";
     } else {
-      hint.style.display = "none";
+      hint.style.color = "";
+      const diff = (cf.savings || 0) - calcFree;
+      if (cf.income > 0 && Math.abs(diff) > 20) {
+        hint.style.display = "";
+        if (diff > 0) {
+          hint.textContent = "⚠️ Deine angegebene Sparrate (" + fmt(cf.savings) + ") ist " + fmt(diff) + " höher als rechnerisch frei. Prüfe deine Werte unter Held → Profil bearbeiten.";
+        } else {
+          hint.textContent = "💡 Du könntest theoretisch " + fmt(-diff) + " mehr sparen (rechnerisch frei: " + fmt(calcFree) + ").";
+        }
+      } else {
+        hint.style.display = "none";
+      }
     }
   }
 }
@@ -3006,6 +3080,55 @@ function showDecayModal(amount, penalty, isEarly) {
   vibrate(40);
 }
 
+// Fügt alle 7 Notbremse-Quests hinzu (idempotent)
+function addEmergencyMissions() {
+  const ids = ["n1", "n2", "n3", "n4", "n5", "n6", "n7"];
+  let added = 0;
+  ids.forEach(id => {
+    const tpl = allTemplates().find(t => t.id === id);
+    if (tpl && !state.missions.find(m => m.templateId === id && !m.done)) {
+      state.missions.push(makeMissionFromTemplate(tpl));
+      added++;
+    }
+  });
+  return added;
+}
+
+// Spezial-Modal für Menschen, die monatlich mehr ausgeben als einnehmen
+function showCashflowCrisisModal() {
+  const cf = state.cashflow;
+  const deficit = cashflowDeficit();
+  modalShell(
+    '<div class="big-icon">🚨</div>' +
+    '<h2 style="background:linear-gradient(135deg,#fca5a5,#ef4444);-webkit-background-clip:text;background-clip:text;color:transparent;">Wichtiger Hinweis</h2>' +
+    '<p style="text-align:left;">Deine monatlichen Ausgaben (<strong>' + fmt((cf.fixed||0) + (cf.variable||0)) + '</strong>) sind höher als deine Einnahmen (<strong>' + fmt(cf.income) + '</strong>).<br/><br/>' +
+       'Das heißt: jeden Monat fehlen dir <strong style="color:var(--red);font-size:18px;">' + fmt(deficit) + '</strong>. Wahrscheinlich rutscht eines dieser Dinge gerade:</p>' +
+    '<ul class="fact-list">' +
+      '<li>Dein Konto rutscht jeden Monat tiefer in den Dispo</li>' +
+      '<li>Du nutzt regelmäßig Kreditkarten oder Klarna</li>' +
+      '<li>Du gleichst es mit Erspartem aus – das schmilzt schnell</li>' +
+    '</ul>' +
+    '<p style="text-align:left;">Das ist kein Drama – aber dringend. Wir haben dir <strong>7 Notbremse-Quests</strong> aktiviert, die genau aus dieser Lage rausführen:</p>' +
+    '<ul class="fact-list">' +
+      '<li>🚨 7 Tage Konsum-STOPP (Bluten stoppen)</li>' +
+      '<li>🚨 Fixkosten-Audit (wo verliert man wirklich Geld)</li>' +
+      '<li>🚨 Dispo-Zinssatz checken</li>' +
+      '<li>🚨 2 Abos sofort kündigen</li>' +
+      '<li>🚨 50€ in 7 Tagen extra einnehmen</li>' +
+      '<li>🚨 30 Tage kein neuer Kredit</li>' +
+      '<li>🚨 Kostenlose Schuldnerberatung anrufen</li>' +
+    '</ul>' +
+    '<p style="text-align:left;color:var(--text-soft);font-size:13px;"><strong>Kein Urteil von uns.</strong> Niemand kommt dahin, weil er „dumm” ist. Aber raus kommst du nur mit Plan. Diese Quests sind dein Plan.</p>' +
+    '<div class="btn-row" style="margin-top:14px;">' +
+      '<button class="btn-ghost" onclick="closeModal()">Später</button>' +
+      '<button class="btn-primary" onclick="closeModal();switchView(\'missions\');">Notbremse starten</button>' +
+    '</div>',
+    { variant: "danger" }
+  );
+  vibrate(40);
+}
+window.showCashflowCrisisModal = showCashflowCrisisModal;
+
 function showWelcomeModal() {
   modalShell(
     '<div class="big-icon">⚔️</div>' +
@@ -3030,7 +3153,7 @@ function showVaultDepositDialog() {
     '<p>Markiert einen Teil deines <strong>bestehenden</strong> Bargelds/Bankkontos als geschützt.<br/>Dein Vermögen ändert sich nicht – aber du verpflichtest dich, diesen Teil nicht anzufassen.</p>' +
     '<div class="text-small text-muted" style="margin:8px 0;">Bargeld + Bank: ' + fmt(liquid) + ' · davon noch frei (nicht im Tresor): <strong>' + fmt(free) + '</strong></div>' +
     '<input type="number" inputmode="decimal" id="vault-dep-amount" placeholder="Betrag €" style="margin:8px 0;" />' +
-    '<input type="text" id="vault-dep-note" placeholder="Wo liegt es? z.B. „Festgeld DKB” (optional)" style="margin-bottom:12px;" />' +
+    '<input type="text" id="vault-dep-note" placeholder="Wo liegt es? z.B. „Festgeld DKB” (optional)” style=”margin-bottom:12px;" />' +
     '<div class="btn-row">' +
       '<button class="btn-ghost" onclick="closeModal()">Abbrechen</button>' +
       '<button class="btn-primary" onclick="handleVaultDeposit()">Markieren</button>' +
@@ -3103,6 +3226,7 @@ function handleProfileSave() {
     const v = parseFloat(raw);
     return isNaN(v) ? 0 : Math.max(0, v);
   };
+  const wasInCrisis = isCashflowCrisis();
   const newName = document.getElementById("pe-name").value.trim();
   if (newName) state.character.name = newName;
   state.profile.age = parseInt(document.getElementById("pe-age").value, 10) || state.profile.age;
@@ -3114,10 +3238,18 @@ function handleProfileSave() {
   const goal = parseNum("pe-goal");
   if (goal > 0) state.goals.target = goal;
   state.userTier = computeUserTier();
+  // Bei NEUER Krise: Notbremse-Quests aktivieren und Modal zeigen
+  const isInCrisis = isCashflowCrisis();
+  if (isInCrisis) {
+    addEmergencyMissions();
+  }
   save();
   renderAll();
   closeModal();
   toast("Profil aktualisiert.");
+  if (isInCrisis && !wasInCrisis) {
+    setTimeout(() => showCashflowCrisisModal(), 400);
+  }
 }
 
 // Großes Erklärungs-Modal: erklärt alle Begriffe und Berechnungen
@@ -3160,6 +3292,7 @@ window.handleVaultDeposit = handleVaultDeposit;
 window.handleVaultWithdraw = handleVaultWithdraw;
 window.handleProfileSave = handleProfileSave;
 window.showHelpModal = showHelpModal;
+window.switchView = switchView;
 
 /* =========================================================
    CONFETTI
@@ -3243,6 +3376,7 @@ document.getElementById("repair-btn").addEventListener("click", () => {
   renderAll();
   toast("✓ Daten repariert");
 });
+document.getElementById("crisis-open-btn").addEventListener("click", showCashflowCrisisModal);
 
 document.querySelectorAll("#mission-tabs .mission-tab").forEach(t => {
   t.addEventListener("click", () => {
