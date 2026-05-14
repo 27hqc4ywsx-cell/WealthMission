@@ -761,6 +761,39 @@
   @keyframes toastOut { to { opacity: 0; transform: translate(-50%, 20px); } }
 
   /* =========================================================
+     QUICK TRACK – Schnell-Tap Konsum-Tracking
+     ========================================================= */
+  .quick-track-info {
+    font-size: 13.5px; color: var(--text-soft);
+    line-height: 1.55; margin-bottom: 14px;
+  }
+  .quick-track-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  }
+  .quick-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    padding: 14px 6px; border-radius: 16px;
+    background: var(--surface); border: 1.5px solid var(--line);
+    cursor: pointer; transition: transform .08s, background .15s, border-color .15s;
+    min-height: 78px; width: 100%;
+    box-shadow: var(--shadow-sm);
+  }
+  .quick-btn:active { transform: scale(0.95); background: var(--surface-2); }
+  .quick-btn.has-today { border-color: var(--primary); background: var(--primary-bg); }
+  .quick-btn .qb-icon { font-size: 26px; line-height: 1; }
+  .quick-btn .qb-label { font-size: 10.5px; font-weight: 700; color: var(--text-soft); text-align: center; line-height: 1.2; }
+  .quick-btn.has-today .qb-label { color: var(--primary); }
+  .quick-btn .qb-today { font-size: 11px; color: var(--primary); font-weight: 800; margin-top: 1px; font-variant-numeric: tabular-nums; }
+  .quick-track-summary {
+    margin-top: 14px; padding: 12px 14px;
+    background: rgba(255,255,255,0.55); border-radius: 12px;
+    font-size: 13px; border: 1px solid var(--line);
+  }
+  .qts-row { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 0; }
+  .qts-row .qts-label { color: var(--text-soft); font-weight: 600; }
+  .qts-row .qts-val { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text); }
+
+  /* =========================================================
      ACTION PLAN CARDS – klare Marschbefehle
      ========================================================= */
   .action-card {
@@ -1374,7 +1407,17 @@
   <!-- ============== CHAR ============== -->
   <!-- ============== ANALYSE ============== -->
   <section class="view" data-view="analyse">
-    <!-- Aktionsplan – steht ganz oben, klare Marschbefehle -->
+    <!-- Schnell-Tracking – optional, belohnt mit XP -->
+    <div class="card emerald">
+      <div class="card-title">📲 Schnell-Tracking <span class="accent">Optional · +5 XP pro Tap</span></div>
+      <div class="quick-track-info">
+        Tippe einfach an, was du heute ausgegeben hast. <strong>Je mehr du trackst, desto schärfer wird dein Aktionsplan</strong> – wir passen dann Quests + Missionen exakt an deine Realität an. Außerdem: jeder Tap gibt XP für deinen Charakter.
+      </div>
+      <div class="quick-track-grid" id="quick-track-grid"></div>
+      <div class="quick-track-summary" id="quick-track-summary"></div>
+    </div>
+
+    <!-- Aktionsplan – klare Marschbefehle -->
     <div class="card">
       <div class="card-title">🎯 Dein Aktionsplan <span class="accent">Konkrete Schritte</span></div>
       <div id="action-plan"></div>
@@ -1841,6 +1884,22 @@ const CATEGORY_LABEL = {
 };
 
 /* =========================================================
+   SCHNELL-TRACKING – Quick-Tap Konsum-Kategorien
+   Optional fuer User, mapped auf Aktionsplan-Hebel
+   ========================================================= */
+const QUICK_LOG_CATEGORIES = [
+  { id: "essen",       icon: "🍔", label: "Essen unterwegs", planId: "essen_unterwegs" },
+  { id: "konsum",      icon: "🛍️", label: "Shopping",        planId: "impulskaufe" },
+  { id: "kleidung",    icon: "👔", label: "Kleidung",        planId: "kleidung_status" },
+  { id: "freizeit",    icon: "🍻", label: "Bar / Freizeit",  planId: "impulskaufe" },
+  { id: "abo",         icon: "📺", label: "Abo / App",       planId: "abos_vergessen" },
+  { id: "mobilitaet",  icon: "🚗", label: "Mobilität",       planId: null },
+  { id: "geschenke",   icon: "🎁", label: "Geschenke",       planId: null },
+  { id: "gesundheit",  icon: "💊", label: "Gesundheit",      planId: null },
+  { id: "sonstiges",   icon: "💬", label: "Sonstiges",       planId: null }
+];
+
+/* =========================================================
    AKTIONSPLAN-KATALOG (Hebel mit klaren Anweisungen)
    severity: "tox" = klar drängen, "invest" = sanft, "crisis" = sofort
    ========================================================= */
@@ -1965,6 +2024,7 @@ const defaultState = () => ({
   milestonesReached: [],
   decay: { lastDamageDate: null, isDamaged: false },
   behavior: { acceptedPatterns: [], workingOnPatterns: [] },
+  expenseLog: [],
 });
 
 function load() {
@@ -2037,6 +2097,12 @@ function sanitizeState(s) {
   // History bereinigen
   if (!Array.isArray(s.history)) s.history = [];
   s.history = s.history.map(h => ({ date: String(h.date || ""), net: safeNum(h.net) })).filter(h => h.date);
+
+  // ExpenseLog bereinigen
+  if (!Array.isArray(s.expenseLog)) s.expenseLog = [];
+  s.expenseLog = s.expenseLog
+    .map(e => ({ id: e.id || ('e_' + Math.random().toString(36).slice(2, 9)), date: String(e.date || ''), category: String(e.category || ''), amount: safeNum(e.amount) }))
+    .filter(e => e.date && e.category && e.amount > 0);
 
   // Missions bereinigen
   if (!Array.isArray(s.missions)) s.missions = [];
@@ -2853,6 +2919,96 @@ function renderBars(containerId, bars, opts) {
 }
 
 /* =========================================================
+   SCHNELL-TRACKING – Tap to log expenses
+   ========================================================= */
+function logExpense(catId, amount) {
+  if (!amount || amount <= 0) return;
+  state.expenseLog.push({
+    id: "e_" + Math.random().toString(36).slice(2, 9),
+    date: todayISO(),
+    category: catId,
+    amount: amount
+  });
+  // Belohnung: +5 XP fuer Tracking
+  awardXp(5);
+  updateStreak();
+  save();
+  renderAll();
+  toast("+5 XP · " + fmt(amount) + " getrackt");
+}
+
+function showQuickLogDialog(catId) {
+  const cat = QUICK_LOG_CATEGORIES.find(c => c.id === catId);
+  if (!cat) return;
+  modalShell(
+    '<div class="big-icon">' + cat.icon + '</div>' +
+    '<h2>' + escapeHTML(cat.label) + '</h2>' +
+    '<p>Wie viel hast du dafür ausgegeben?</p>' +
+    '<input type="number" inputmode="decimal" id="ql-amount" placeholder="Betrag €" style="margin:8px 0;" />' +
+    '<div class="btn-row">' +
+      '<button class="btn-ghost" onclick="closeModal()">Abbrechen</button>' +
+      '<button class="btn-primary" onclick="confirmQuickLog(' + "'" + catId + "'" + ')">Tracken (+5 XP)</button>' +
+    '</div>'
+  );
+  setTimeout(() => {
+    const inp = document.getElementById("ql-amount");
+    if (inp) inp.focus();
+  }, 100);
+}
+
+function confirmQuickLog(catId) {
+  const raw = String(document.getElementById("ql-amount").value || "").replace(",", ".").trim();
+  const v = parseFloat(raw);
+  if (isNaN(v) || v <= 0) { toast("Bitte gib einen Betrag ein."); return; }
+  logExpense(catId, v);
+  closeModal();
+}
+window.confirmQuickLog = confirmQuickLog;
+
+function renderQuickTrack() {
+  const grid = document.getElementById("quick-track-grid");
+  if (!grid) return;
+  const today = todayISO();
+  const todayLog = (state.expenseLog || []).filter(e => e.date === today);
+  const todayByCat = {};
+  todayLog.forEach(e => { todayByCat[e.category] = (todayByCat[e.category] || 0) + e.amount; });
+
+  grid.innerHTML = QUICK_LOG_CATEGORIES.map(cat => {
+    const todayTotal = todayByCat[cat.id] || 0;
+    const hasToday = todayTotal > 0 ? " has-today" : "";
+    return '<button class="quick-btn' + hasToday + '" data-quick-cat="' + cat.id + '">' +
+      '<span class="qb-icon">' + cat.icon + '</span>' +
+      '<span class="qb-label">' + escapeHTML(cat.label) + '</span>' +
+      (todayTotal > 0 ? '<span class="qb-today">' + fmt(todayTotal) + '</span>' : '') +
+    '</button>';
+  }).join("");
+
+  grid.querySelectorAll("[data-quick-cat]").forEach(b => {
+    b.addEventListener("click", () => showQuickLogDialog(b.dataset.quickCat));
+  });
+
+  // Summary
+  const todayTotal = todayLog.reduce((a, e) => a + e.amount, 0);
+  const last30 = (state.expenseLog || []).filter(e => {
+    const d = daysBetween(e.date, today);
+    return d >= 0 && d < 30;
+  });
+  const last30Total = last30.reduce((a, e) => a + e.amount, 0);
+  const trackedDays = new Set((state.expenseLog || []).map(e => e.date)).size;
+  const summary = document.getElementById("quick-track-summary");
+  if (summary) {
+    if (trackedDays === 0) {
+      summary.innerHTML = '<div class="qts-row"><span class="qts-label">Noch nichts getrackt</span><span class="qts-val">Tippe oben an</span></div>';
+    } else {
+      summary.innerHTML =
+        '<div class="qts-row"><span class="qts-label">Heute</span><span class="qts-val">' + fmt(todayTotal) + '</span></div>' +
+        '<div class="qts-row"><span class="qts-label">Letzte 30 Tage</span><span class="qts-val">' + fmt(last30Total) + '</span></div>' +
+        '<div class="qts-row"><span class="qts-label">Tracked-Days insgesamt</span><span class="qts-val">' + trackedDays + '</span></div>';
+    }
+  }
+}
+
+/* =========================================================
    AKTIONSPLAN – läuft im Hintergrund, User sieht nur Ergebnisse
    ========================================================= */
 function computeActionPlan() {
@@ -2888,6 +3044,26 @@ function computeActionPlan() {
   // 3) Vermögen / Schulden
   if ((w.debt || 0) > 0) add("schulden", 6);
   if ((w.depot || 0) === 0 && (cf.savings || 0) >= 50) add("kein_depot", 3);
+
+  // 4) Schnell-Tracking-Daten der letzten 30 Tage (starkes Signal!)
+  const today = todayISO();
+  const trackingByPlan = {};
+  (state.expenseLog || []).forEach(e => {
+    const days = daysBetween(e.date, today);
+    if (days < 30 && days >= 0) {
+      const cat = QUICK_LOG_CATEGORIES.find(c => c.id === e.category);
+      if (cat && cat.planId) {
+        trackingByPlan[cat.planId] = (trackingByPlan[cat.planId] || 0) + e.amount;
+      }
+    }
+  });
+  Object.keys(trackingByPlan).forEach(planId => {
+    const amount = trackingByPlan[planId];
+    if (amount > 50) {
+      // Reason-Score = 7 base + bis zu 4 mehr je nach Beträgen (starkes Echtdaten-Signal)
+      add(planId, 7 + Math.min(4, Math.floor(amount / 100)));
+    }
+  });
 
   // Score = Impact (€/Monat) × Toxicity-Faktor × Reason-Bonus
   const ranked = Object.values(found).map(({ plan, reasonScore }) => {
@@ -2972,6 +3148,7 @@ function dismissActionPlan(planId) {
 }
 
 function renderAnalysis() {
+  renderQuickTrack();
   renderActionPlan();
   // 1) Vermögensverteilung (Donut)
   const wealthSlices = [
