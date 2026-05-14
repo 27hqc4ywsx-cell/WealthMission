@@ -761,6 +761,47 @@
   @keyframes toastOut { to { opacity: 0; transform: translate(-50%, 20px); } }
 
   /* =========================================================
+     CHARTS (Pie / Bar) - pure SVG, kein Framework
+     ========================================================= */
+  .pie-chart {
+    width: 200px; height: 200px;
+    display: block;
+    margin: 0 auto 4px;
+    overflow: visible;
+  }
+  .bar-chart {
+    width: 100%; height: auto;
+    display: block;
+    overflow: visible;
+  }
+  .chart-legend {
+    display: flex; flex-direction: column; gap: 8px;
+    margin-top: 14px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13.5px;
+    padding: 6px 10px;
+    background: var(--surface-2);
+    border-radius: 10px;
+  }
+  .legend-item .dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .legend-item .label { flex: 1; color: var(--text); font-weight: 600; }
+  .legend-item .val { color: var(--text-soft); font-weight: 700; font-variant-numeric: tabular-nums; font-size: 12.5px; }
+  .chart-empty {
+    text-align: center; padding: 32px 16px;
+    color: var(--muted-deep);
+    background: var(--surface-2);
+    border-radius: var(--radius);
+    font-size: 14px; line-height: 1.5;
+  }
+
+  /* =========================================================
      UTILITIES
      ========================================================= */
   .row-flex { display: flex; gap: 8px; align-items: center; }
@@ -1282,6 +1323,34 @@
   </section>
 
   <!-- ============== CHAR ============== -->
+  <!-- ============== ANALYSE ============== -->
+  <section class="view" data-view="analyse">
+    <div class="card">
+      <div class="card-title">Vermögensverteilung</div>
+      <div id="chart-wealth"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Vermögensverlauf <span class="accent" id="chart-history-period">letzte Tage</span></div>
+      <div id="chart-history"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Konsumverhalten <span class="accent">pro Monat</span></div>
+      <div id="chart-cashflow"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Erledigte Quests pro Bereich</div>
+      <div id="chart-missions"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Kennzahlen</div>
+      <div class="stat-grid" id="analysis-stats"></div>
+    </div>
+  </section>
+
   <section class="view" data-view="char">
     <div class="card char-card gold">
       <div class="char-top">
@@ -1331,6 +1400,7 @@
     <button class="tab active" data-go="dashboard"><span class="ico">🏰</span><span>HOME</span></button>
     <button class="tab" data-go="wealth"><span class="ico">💰</span><span>VERMÖGEN</span></button>
     <button class="tab" data-go="missions"><span class="ico">⚔️</span><span>QUESTS</span></button>
+    <button class="tab" data-go="analyse"><span class="ico">📊</span><span>ANALYSE</span></button>
     <button class="tab" data-go="char"><span class="ico">🛡️</span><span>HELD</span></button>
   </nav>
 </div>
@@ -2510,6 +2580,200 @@ function renderEquipment() {
 }
 
 /* =========================================================
+   CHARTS – Pure SVG (Pie + Bar)
+   ========================================================= */
+
+// Erzeugt SVG-Pfad-Arc für Pie-Slice
+function pieArcPath(cx, cy, r, startAngle, endAngle) {
+  const polar = (deg) => ({
+    x: cx + r * Math.cos((deg - 90) * Math.PI / 180),
+    y: cy + r * Math.sin((deg - 90) * Math.PI / 180)
+  });
+  const start = polar(startAngle);
+  const end = polar(endAngle);
+  const largeArc = endAngle - startAngle > 180 ? 1 : 0;
+  return "M " + cx + "," + cy +
+         " L " + start.x.toFixed(2) + "," + start.y.toFixed(2) +
+         " A " + r + "," + r + " 0 " + largeArc + ",1 " + end.x.toFixed(2) + "," + end.y.toFixed(2) +
+         " Z";
+}
+
+function renderPie(containerId, slices, opts) {
+  opts = opts || {};
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  const positive = slices.filter(s => (s.value || 0) > 0);
+  const total = positive.reduce((a, s) => a + s.value, 0);
+  if (total <= 0) {
+    wrap.innerHTML = '<div class="chart-empty">Noch keine Daten – pflege deine Werte unter „Vermögen" und „Held → Profil".</div>';
+    return;
+  }
+  let acc = 0;
+  let paths = "";
+  positive.forEach(s => {
+    const startAng = (acc / total) * 360;
+    acc += s.value;
+    const endAng = (acc / total) * 360;
+    if (endAng - startAng >= 359.99) {
+      paths += '<circle cx="50" cy="50" r="40" fill="' + s.color + '"/>';
+    } else if (endAng - startAng > 0.01) {
+      paths += '<path d="' + pieArcPath(50, 50, 40, startAng, endAng) + '" fill="' + s.color + '"/>';
+    }
+  });
+  let donut = "";
+  if (opts.donut !== false) {
+    donut += '<circle cx="50" cy="50" r="22" fill="var(--surface)"/>';
+    if (opts.centerLabel) {
+      donut += '<text x="50" y="49" text-anchor="middle" font-size="7.5" font-weight="800" fill="var(--text)">' + escapeHTML(opts.centerLabel) + '</text>';
+    }
+    if (opts.centerSubLabel) {
+      donut += '<text x="50" y="58" text-anchor="middle" font-size="4.5" fill="var(--muted-deep)" letter-spacing="0.8">' + escapeHTML(opts.centerSubLabel) + '</text>';
+    }
+  }
+  let legend = '<div class="chart-legend">';
+  positive.forEach(s => {
+    const pct = Math.round((s.value / total) * 100);
+    legend += '<div class="legend-item">' +
+      '<span class="dot" style="background:' + s.color + '"></span>' +
+      '<span class="label">' + escapeHTML(s.label) + '</span>' +
+      '<span class="val">' + (opts.formatVal ? opts.formatVal(s.value) : fmt(s.value)) + ' · ' + pct + '%</span>' +
+    '</div>';
+  });
+  legend += '</div>';
+  wrap.innerHTML = '<svg viewBox="0 0 100 100" class="pie-chart">' + paths + donut + '</svg>' + legend;
+}
+
+function renderBars(containerId, bars, opts) {
+  opts = opts || {};
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  if (!bars.length) {
+    wrap.innerHTML = '<div class="chart-empty">Noch keine Daten.</div>';
+    return;
+  }
+  const positive = bars.filter(b => (b.value || 0) > 0);
+  if (!positive.length) {
+    wrap.innerHTML = '<div class="chart-empty">Noch keine erfassten Werte.</div>';
+    return;
+  }
+  const w = 320;
+  const h = 100;
+  const padding = 24;
+  const innerW = w - padding * 2;
+  const innerH = h;
+  const maxVal = Math.max.apply(null, bars.map(b => b.value || 0).concat([1]));
+  const barSlot = innerW / bars.length;
+  const barW = Math.max(2, barSlot * 0.7);
+  let svg = '<svg viewBox="0 0 ' + w + ' ' + (h + 28) + '" class="bar-chart">';
+  // Grid lines (3 horizontal)
+  for (let i = 1; i <= 3; i++) {
+    const y = (i / 4) * innerH;
+    svg += '<line x1="' + padding + '" y1="' + y.toFixed(1) + '" x2="' + (w - padding) + '" y2="' + y.toFixed(1) + '" stroke="var(--line)" stroke-width="0.4" stroke-dasharray="2 2"/>';
+  }
+  bars.forEach((bar, i) => {
+    const val = bar.value || 0;
+    const barH = val > 0 ? Math.max(1, (val / maxVal) * innerH) : 0;
+    const x = padding + i * barSlot + (barSlot - barW) / 2;
+    const y = h - barH;
+    if (barH > 0) {
+      svg += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + barW.toFixed(1) + '" height="' + barH.toFixed(1) + '" fill="' + (bar.color || '#0F766E') + '" rx="2"/>';
+    }
+  });
+  // Baseline
+  svg += '<line x1="' + padding + '" y1="' + h + '" x2="' + (w - padding) + '" y2="' + h + '" stroke="var(--line-strong)" stroke-width="0.6"/>';
+  // X-Labels (every Nth + last)
+  if (opts.showLabels) {
+    const step = Math.max(1, Math.ceil(bars.length / 6));
+    bars.forEach((bar, i) => {
+      if (i % step === 0 || i === bars.length - 1) {
+        const x = padding + i * barSlot + barSlot / 2;
+        svg += '<text x="' + x.toFixed(1) + '" y="' + (h + 14) + '" text-anchor="middle" font-size="6.5" fill="var(--muted-deep)" font-weight="700">' + escapeHTML(String(bar.label || '')) + '</text>';
+      }
+    });
+  }
+  // Max value label
+  svg += '<text x="' + (padding - 2) + '" y="6" text-anchor="end" font-size="6" fill="var(--muted-deep)">' + (opts.formatY ? opts.formatY(maxVal) : fmt(maxVal)) + '</text>';
+  svg += '</svg>';
+  wrap.innerHTML = svg;
+}
+
+function renderAnalysis() {
+  // 1) Vermögensverteilung (Donut)
+  const wealthSlices = [
+    { label: '💵 Bargeld', value: state.wealth.cash || 0, color: '#FBBF24' },
+    { label: '🏦 Bankkonto', value: state.wealth.bank || 0, color: '#10B981' },
+    { label: '📈 Depot/ETF', value: state.wealth.depot || 0, color: '#8B5CF6' },
+    { label: '🪙 Gold/Sachwerte', value: state.wealth.gold || 0, color: '#F59E0B' },
+  ];
+  renderPie('chart-wealth', wealthSlices, {
+    donut: true,
+    centerLabel: fmt(netWorth()),
+    centerSubLabel: 'NETTO'
+  });
+
+  // 2) Vermögensverlauf (Balken letzte 30 Tage)
+  const recent = (state.history || []).slice(-30);
+  const histBars = recent.map(h => ({
+    label: h.date ? h.date.substring(5) : '',
+    value: Math.max(0, h.net || 0),
+    color: '#0F766E'
+  }));
+  renderBars('chart-history', histBars, { showLabels: true });
+  const periodLabel = document.getElementById('chart-history-period');
+  if (periodLabel) periodLabel.textContent = recent.length + (recent.length === 1 ? ' Eintrag' : ' Einträge');
+
+  // 3) Konsumverhalten (Cashflow-Donut)
+  const cf = state.cashflow;
+  const cfSlices = [
+    { label: '📌 Fixkosten', value: cf.fixed || 0, color: '#EF4444' },
+    { label: '🛍️ Variable Ausgaben', value: cf.variable || 0, color: '#F59E0B' },
+    { label: '💎 Sparrate', value: cf.savings || 0, color: '#10B981' },
+  ];
+  renderPie('chart-cashflow', cfSlices, {
+    donut: true,
+    centerLabel: fmt(cf.income || 0),
+    centerSubLabel: 'EINNAHMEN'
+  });
+
+  // 4) Quests pro Kategorie (Balken)
+  const cats = [
+    { key: 'sparen', color: '#10B981' },
+    { key: 'verdienen', color: '#F59E0B' },
+    { key: 'vertraege', color: '#38BDF8' },
+    { key: 'investieren', color: '#8B5CF6' },
+    { key: 'disziplin', color: '#FB7185' },
+    { key: 'schulden', color: '#EF4444' },
+  ];
+  const missionBars = cats.map(c => ({
+    label: (CATEGORY_LABEL[c.key] || c.key).substring(0, 5),
+    value: state.missions.filter(m => m.category === c.key && m.done).length,
+    color: c.color
+  }));
+  renderBars('chart-missions', missionBars, { showLabels: true, formatY: (v) => Math.round(v) + 'x' });
+
+  // 5) Kennzahlen
+  const sparquote = (cf.income || 0) > 0 ? Math.round((cf.savings / cf.income) * 100) : 0;
+  const fixquote = (cf.income || 0) > 0 ? Math.round((cf.fixed / cf.income) * 100) : 0;
+  const goalProgress = (state.goals.target || 0) > 0 ? Math.min(100, Math.round((netWorth() / state.goals.target) * 100)) : 0;
+  const stats = [
+    { k: '⭐ Gesamt-XP', v: (state.totalXp || 0).toLocaleString('de-DE'), cls: 'gold' },
+    { k: '⚔️ Quests erledigt', v: state.stats.missionsDone || 0, cls: 'violet' },
+    { k: '🔒 Im Tresor', v: fmt(state.locked.total), cls: 'gold' },
+    { k: '🔥 Streak', v: (state.streak.count || 0) + ' Tage', cls: '' },
+    { k: '💎 Sparquote', v: sparquote + '%', cls: 'green' },
+    { k: '📌 Fix-Quote', v: fixquote + '%', cls: '' },
+    { k: '🎯 Zielfortschritt', v: goalProgress + '%', cls: 'green' },
+    { k: '🏆 Tier', v: TIER_NAMES[state.userTier], cls: 'violet' },
+  ];
+  const wrap = document.getElementById('analysis-stats');
+  if (wrap) {
+    wrap.innerHTML = stats.map(s =>
+      '<div class="stat ' + s.cls + '"><div class="k">' + escapeHTML(s.k) + '</div><div class="v">' + escapeHTML(String(s.v)) + '</div></div>'
+    ).join('');
+  }
+}
+
+/* =========================================================
    MISSIONEN
    ========================================================= */
 let activeMissionTab = "empfohlen";
@@ -3355,6 +3619,7 @@ function renderAll() {
   renderDashboardMissions();
   renderEquipment();
   renderProfile();
+  renderAnalysis();
   renderAvatar();
   document.querySelectorAll("[data-set-style]").forEach(el =>
     el.classList.toggle("selected", el.dataset.setStyle === state.character.style)
