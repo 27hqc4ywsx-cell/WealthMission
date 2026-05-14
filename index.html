@@ -761,6 +761,55 @@
   @keyframes toastOut { to { opacity: 0; transform: translate(-50%, 20px); } }
 
   /* =========================================================
+     ACTION PLAN CARDS – klare Marschbefehle
+     ========================================================= */
+  .action-card {
+    background: var(--surface);
+    border: 1.5px solid var(--line);
+    border-left-width: 5px;
+    border-radius: var(--radius);
+    padding: 16px 16px 16px 18px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+  .action-card.sev-tox { border-left-color: var(--coral); background: linear-gradient(180deg, var(--coral-bg) 0%, var(--surface) 50%); }
+  .action-card.sev-crisis { border-left-color: var(--rose); background: linear-gradient(180deg, var(--rose-bg) 0%, var(--surface) 50%); }
+  .action-card.sev-invest { border-left-color: var(--mint); background: linear-gradient(180deg, var(--mint-bg) 0%, var(--surface) 50%); }
+
+  .action-head { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px; }
+  .action-icon { font-size: 28px; line-height: 1; flex-shrink: 0; }
+  .action-meta { flex: 1; min-width: 0; }
+  .action-sev {
+    font-size: 10.5px; font-weight: 800; letter-spacing: 1.4px;
+    color: var(--muted-deep); text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .action-card.sev-tox .action-sev { color: #C2410C; }
+  .action-card.sev-crisis .action-sev { color: #9F1239; }
+  .action-card.sev-invest .action-sev { color: #047857; }
+  .action-title { font-size: 16px; font-weight: 800; color: var(--text); line-height: 1.25; margin: 0; }
+  .action-impact {
+    font-size: 13px; color: var(--text-soft);
+    background: rgba(255,255,255,0.6);
+    border-radius: 10px;
+    padding: 6px 12px;
+    margin-bottom: 10px;
+    font-variant-numeric: tabular-nums;
+  }
+  .action-instruction {
+    font-size: 14px; line-height: 1.55;
+    color: var(--text); font-weight: 600;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+  .action-actions { display: flex; gap: 8px; }
+  .action-actions > * { flex: 1; }
+  .action-actions .btn-primary, .action-actions .btn-ghost { padding: 11px 14px; min-height: 44px; font-size: 14px; }
+
+  /* =========================================================
      CHARTS (Pie / Bar) - pure SVG, kein Framework
      ========================================================= */
   .pie-chart {
@@ -1325,6 +1374,13 @@
   <!-- ============== CHAR ============== -->
   <!-- ============== ANALYSE ============== -->
   <section class="view" data-view="analyse">
+    <!-- Aktionsplan – steht ganz oben, klare Marschbefehle -->
+    <div class="card">
+      <div class="card-title">🎯 Dein Aktionsplan <span class="accent">Konkrete Schritte</span></div>
+      <div id="action-plan"></div>
+      <button class="btn-ghost mt-12" id="action-plan-reset" style="display:none;">Ausgeblendete wieder anzeigen</button>
+    </div>
+
     <div class="card">
       <div class="card-title">Vermögensverteilung</div>
       <div id="chart-wealth"></div>
@@ -1783,6 +1839,103 @@ const CATEGORY_LABEL = {
   sparen: "Sparen", verdienen: "Verdienen", vertraege: "Verträge",
   investieren: "Investieren", disziplin: "Disziplin", schulden: "Schulden"
 };
+
+/* =========================================================
+   AKTIONSPLAN-KATALOG (Hebel mit klaren Anweisungen)
+   severity: "tox" = klar drängen, "invest" = sanft, "crisis" = sofort
+   ========================================================= */
+const ACTION_PLANS = {
+  // --- Toxische Hebel (klar drängen) ---
+  essen_unterwegs: {
+    id: "essen_unterwegs", icon: "🍔", title: "Konsum-Stopp: Essen unterwegs",
+    severity: "tox", toxicity: 3,
+    instruction: "Diese 7 Tage: kein Lieferservice, kein Restaurant, kein To-Go-Kaffee. Sonntag 90 Min Meal-Prep für die Woche. Lieferservice-Apps deinstallieren.",
+    estimatedSavingMonthly: 200,
+    questIds: ["we1", "we2", "we3"]
+  },
+  impulskaufe: {
+    id: "impulskaufe", icon: "💸", title: "Konsum-Stopp: Impulskäufe",
+    severity: "tox", toxicity: 3,
+    instruction: "JETZT: Notiz-App öffnen, Wunschliste anlegen. Jeder spontane Kauf über 50 € kommt 48 Stunden auf die Liste. Shopping-Apps deinstallieren. Karte daheim lassen.",
+    estimatedSavingMonthly: 150,
+    questIds: ["wi1", "wi2", "wi3", "wi4"]
+  },
+  abos_vergessen: {
+    id: "abos_vergessen", icon: "📺", title: "Verträge: Abo-Audit",
+    severity: "tox", toxicity: 2,
+    instruction: "JETZT Banking-App öffnen. Letzte 3 Monate alle wiederkehrenden Abbuchungen listen. Mindestens 2 unnütze Abos heute kündigen. Kalender-Reminder 7 Tage vor jeder Verlängerung anlegen.",
+    estimatedSavingMonthly: 40,
+    questIds: ["wa1", "wa2", "wa3"]
+  },
+  kleidung_status: {
+    id: "kleidung_status", icon: "👔", title: "Markenkonsum stoppen",
+    severity: "tox", toxicity: 3,
+    instruction: "30 Tage: keine neue Kleidung, kein Markenkauf. Bestehende Sachen durchsehen, was du wirklich anziehst. Bei Bedarf: Vinted / Kleinanzeigen statt Neukauf.",
+    estimatedSavingMonthly: 100,
+    questIds: ["d3"]
+  },
+  schulden: {
+    id: "schulden", icon: "🔗", title: "Schulden: Tilgungsplan",
+    severity: "crisis", toxicity: 3,
+    instruction: "Schreibe alle Schulden auf einen Zettel: Betrag + Zinssatz. Sortiere nach Zinssatz absteigend. Diesen Monat: tilge die teuerste doppelt. Dispo-Zins prüfen – meist 10–14 %, sofortige Priorität.",
+    estimatedSavingMonthly: 50,
+    questIds: ["ws1", "ws2", "ws3", "ws4"]
+  },
+  fixkosten_hoch: {
+    id: "fixkosten_hoch", icon: "📌", title: "Fixkosten-Audit",
+    severity: "tox", toxicity: 2,
+    instruction: "Setz dich 60 Min hin mit Zettel + Banking-App. Schreibe JEDE Fixkost auf (Miete, Strom, Gas, Internet, Mobilfunk, Versicherungen, Abos). Markiere Top 3 zum Kürzen oder Wechseln.",
+    estimatedSavingMonthly: 80,
+    questIds: ["n2", "c1", "c5", "c6"]
+  },
+  // --- Investment-Hebel (sanft, Lebensqualität erhalten) ---
+  sparrate_niedrig: {
+    id: "sparrate_niedrig", icon: "💎", title: "Notgroschen: Pay-Yourself-First",
+    severity: "invest", toxicity: 0,
+    instruction: "Diesen 1. des Monats: Dauerauftrag einrichten – 100 € sofort auf separates Sparkonto, BEVOR du sie ausgibst. Klein anfangen ist besser als gar nichts.",
+    estimatedSavingMonthly: 100,
+    questIds: ["d4", "i4"]
+  },
+  kein_depot: {
+    id: "kein_depot", icon: "📈", title: "Investieren: Depot eröffnen",
+    severity: "invest", toxicity: 0,
+    instruction: "Diese Woche: Trade Republic / Scalable / ING-App laden. Depot eröffnen (10 Min, kostenlos). ETF-Sparplan auf MSCI World einrichten, 50 €/Monat. Erst eröffnen, dann verstehen.",
+    estimatedSavingMonthly: 0,
+    longTermGain: "60.000 € in 30 Jahren (50 €/Monat × 7 % p.a.)",
+    questIds: ["i1", "i2", "i3", "wv1", "wv2"]
+  },
+  kein_uberblick: {
+    id: "kein_uberblick", icon: "🧭", title: "Geld-Überblick gewinnen",
+    severity: "tox", toxicity: 2,
+    instruction: "Diese 7 Tage: jede einzelne Ausgabe in eine Notiz-App, auch 2,50 € Brötchen. Sonntag: 10 Min Auswertung, größte Posten markieren.",
+    estimatedSavingMonthly: 60,
+    questIds: ["wu1", "wu2"]
+  },
+  keine_disziplin: {
+    id: "keine_disziplin", icon: "⏰", title: "Disziplin-Streak",
+    severity: "tox", toxicity: 2,
+    instruction: "Ab morgen 30 Tage Streak: jeden Tag 60 Sekunden WealthMission öffnen, eine Mini-Quest abhaken. Gewohnheit schlägt Motivation.",
+    estimatedSavingMonthly: 50,
+    questIds: ["wk1", "wk2", "wk3"]
+  },
+  zu_wenig_einkommen: {
+    id: "zu_wenig_einkommen", icon: "💼", title: "Einkommen erhöhen",
+    severity: "invest", toxicity: 0,
+    instruction: "Diese Woche 1 Stunde investieren: 1 Skill lernen, der dein Einkommen heben kann (Excel, Englisch, Coden, Marketing). Plus 1 Bewerbung diese Woche auf besser bezahlten Job/Side-Hustle.",
+    estimatedSavingMonthly: 0,
+    longTermGain: "+200 €/Monat möglich – langfristig der größte Hebel",
+    questIds: ["wz1", "wz2", "wz3"]
+  },
+  investieren_unklar: {
+    id: "investieren_unklar", icon: "📊", title: "Investieren verstehen",
+    severity: "invest", toxicity: 0,
+    instruction: "Diese 30 Minuten: Finanzfluss YouTube anschauen „ETF erklärt”. Demo-Depot eröffnen. 1 € echt investieren um den Prozess durchzumachen.",
+    estimatedSavingMonthly: 0,
+    longTermGain: "Wissen = lebenslanger ROI",
+    questIds: ["wv1", "wv2", "wv3", "i3", "i6"]
+  }
+};
+
 
 /* =========================================================
    STATE / STORAGE
@@ -2607,7 +2760,7 @@ function renderPie(containerId, slices, opts) {
   const positive = slices.filter(s => (s.value || 0) > 0);
   const total = positive.reduce((a, s) => a + s.value, 0);
   if (total <= 0) {
-    wrap.innerHTML = '<div class="chart-empty">Noch keine Daten – pflege deine Werte unter „Vermögen" und „Held → Profil".</div>';
+    wrap.innerHTML = '<div class="chart-empty">Noch keine Daten – pflege deine Werte unter „Vermögen” und „Held → Profil”.</div>';
     return;
   }
   let acc = 0;
@@ -2699,7 +2852,127 @@ function renderBars(containerId, bars, opts) {
   wrap.innerHTML = svg;
 }
 
+/* =========================================================
+   AKTIONSPLAN – läuft im Hintergrund, User sieht nur Ergebnisse
+   ========================================================= */
+function computeActionPlan() {
+  const cf = state.cashflow || {};
+  const w = state.wealth || {};
+  const challenges = (state.profile && state.profile.challenges) || [];
+  const accepted = (state.behavior && state.behavior.acceptedPatterns) || [];
+  const found = {}; // dedupe per plan-id
+
+  function add(planId, reasonScore) {
+    if (accepted.includes(planId)) return;
+    const plan = ACTION_PLANS[planId];
+    if (!plan) return;
+    if (!found[planId] || found[planId].reasonScore < reasonScore) {
+      found[planId] = { plan, reasonScore };
+    }
+  }
+
+  // 1) Schwächen aus Onboarding → direkt 1:1 mappen (psychoanalytischer Layer)
+  challenges.forEach(ch => add(ch, 5));
+
+  // 2) Cashflow-Analyse
+  if (cf.income > 0) {
+    const fixRatio = (cf.fixed || 0) / cf.income;
+    const varRatio = (cf.variable || 0) / cf.income;
+    const sparRatio = (cf.savings || 0) / cf.income;
+    if (sparRatio < 0.05) add("sparrate_niedrig", 4);
+    if (fixRatio > 0.55) add("fixkosten_hoch", 4);
+    if (varRatio > 0.30) add("essen_unterwegs", 3);
+  }
+  if (!cf.income || cf.income < 800) add("zu_wenig_einkommen", 4);
+
+  // 3) Vermögen / Schulden
+  if ((w.debt || 0) > 0) add("schulden", 6);
+  if ((w.depot || 0) === 0 && (cf.savings || 0) >= 50) add("kein_depot", 3);
+
+  // Score = Impact (€/Monat) × Toxicity-Faktor × Reason-Bonus
+  const ranked = Object.values(found).map(({ plan, reasonScore }) => {
+    const impact = plan.estimatedSavingMonthly || 30;
+    const toxMul = 1 + (plan.toxicity || 0) * 0.5;
+    const score = impact * toxMul + reasonScore * 10;
+    return { plan, score, reasonScore };
+  });
+  ranked.sort((a, b) => b.score - a.score);
+  return ranked.slice(0, 5).map(r => r.plan);
+}
+
+function renderActionPlan() {
+  const wrap = document.getElementById("action-plan");
+  if (!wrap) return;
+  // Reset-Button nur zeigen, wenn etwas akzeptiert/ausgeblendet wurde
+  const resetBtn = document.getElementById("action-plan-reset");
+  if (resetBtn) {
+    const hasAccepted = (state.behavior.acceptedPatterns || []).length > 0;
+    resetBtn.style.display = hasAccepted ? "" : "none";
+  }
+  const plans = computeActionPlan();
+  if (!plans.length) {
+    wrap.innerHTML = '<div class="chart-empty">Aktuell keine kritischen Hebel erkannt. Stark gemacht – weiter so!</div>';
+    return;
+  }
+  wrap.innerHTML = plans.map(p => {
+    const sevClass = "action-card sev-" + p.severity;
+    const impactLine = p.estimatedSavingMonthly > 0
+      ? '<div class="action-impact">≈ <strong>' + fmt(p.estimatedSavingMonthly) + '/Monat</strong> · ' + fmt(p.estimatedSavingMonthly * 12) + '/Jahr</div>'
+      : (p.longTermGain ? '<div class="action-impact">📈 ' + escapeHTML(p.longTermGain) + '</div>' : '');
+    const sevLabel = p.severity === 'crisis' ? '🚨 SOFORT' : (p.severity === 'tox' ? '🎯 HEBEL' : '💚 INVEST');
+    const showDismiss = p.severity === 'invest';
+    return '<div class="' + sevClass + '">' +
+      '<div class="action-head"><span class="action-icon">' + p.icon + '</span>' +
+        '<div class="action-meta"><div class="action-sev">' + sevLabel + '</div><h3 class="action-title">' + escapeHTML(p.title) + '</h3></div>' +
+      '</div>' +
+      impactLine +
+      '<div class="action-instruction">' + escapeHTML(p.instruction) + '</div>' +
+      '<div class="action-actions">' +
+        '<button class="btn-primary" data-plan-do="' + p.id + '">✓ Mach ich</button>' +
+        (showDismiss ? '<button class="btn-ghost" data-plan-dismiss="' + p.id + '">Bewusst gewählt</button>' : '') +
+      '</div>' +
+    '</div>';
+  }).join("");
+
+  wrap.querySelectorAll("[data-plan-do]").forEach(b => {
+    b.addEventListener("click", () => activateActionPlan(b.dataset.planDo));
+  });
+  wrap.querySelectorAll("[data-plan-dismiss]").forEach(b => {
+    b.addEventListener("click", () => dismissActionPlan(b.dataset.planDismiss));
+  });
+}
+
+function activateActionPlan(planId) {
+  const plan = ACTION_PLANS[planId];
+  if (!plan) return;
+  let added = 0;
+  (plan.questIds || []).forEach(qid => {
+    const tpl = allTemplates().find(t => t.id === qid);
+    if (tpl && !state.missions.find(m => m.templateId === qid && !m.done)) {
+      state.missions.push(makeMissionFromTemplate(tpl));
+      added++;
+    }
+  });
+  if (!state.behavior.workingOnPatterns.includes(planId)) {
+    state.behavior.workingOnPatterns.push(planId);
+  }
+  save();
+  renderAll();
+  toast(added > 0 ? "+ " + added + " Quest" + (added > 1 ? "s" : "") + " aktiviert" : "Quest schon aktiv");
+  setTimeout(() => switchView("missions"), 400);
+}
+
+function dismissActionPlan(planId) {
+  if (!state.behavior.acceptedPatterns.includes(planId)) {
+    state.behavior.acceptedPatterns.push(planId);
+  }
+  save();
+  renderAll();
+  toast("OK – respektiert.");
+}
+
 function renderAnalysis() {
+  renderActionPlan();
   // 1) Vermögensverteilung (Donut)
   const wealthSlices = [
     { label: '💵 Bargeld', value: state.wealth.cash || 0, color: '#FBBF24' },
@@ -3345,7 +3618,7 @@ function showVaultDepositDialog() {
     '<p>Markiert einen Teil deines <strong>bestehenden</strong> Bargelds/Bankkontos als geschützt.<br/>Dein Vermögen ändert sich nicht – aber du verpflichtest dich, diesen Teil nicht anzufassen.</p>' +
     '<div class="text-small text-muted" style="margin:8px 0;">Bargeld + Bank: ' + fmt(liquid) + ' · davon noch frei (nicht im Tresor): <strong>' + fmt(free) + '</strong></div>' +
     '<input type="number" inputmode="decimal" id="vault-dep-amount" placeholder="Betrag €" style="margin:8px 0;" />' +
-    '<input type="text" id="vault-dep-note" placeholder="Wo liegt es? z.B. „Festgeld DKB” (optional)” style=”margin-bottom:12px;" />' +
+    '<input type="text" id="vault-dep-note" placeholder="Wo liegt es? z.B. „Festgeld DKB” (optional)” style=”margin-bottom:12px;” />' +
     '<div class="btn-row">' +
       '<button class="btn-ghost" onclick="closeModal()">Abbrechen</button>' +
       '<button class="btn-primary" onclick="handleVaultDeposit()">Markieren</button>' +
@@ -3556,6 +3829,12 @@ document.getElementById("vault-deposit-btn").addEventListener("click", showVault
 document.getElementById("vault-withdraw-btn").addEventListener("click", showVaultWithdrawDialog);
 document.getElementById("profile-edit-btn").addEventListener("click", showProfileEditDialog);
 document.getElementById("help-btn").addEventListener("click", showHelpModal);
+document.getElementById("action-plan-reset").addEventListener("click", () => {
+  state.behavior.acceptedPatterns = [];
+  save();
+  renderAll();
+  toast("Alle Hebel wieder aktiv.");
+});
 document.getElementById("show-calc-btn").addEventListener("click", () => {
   const el = document.getElementById("calc-breakdown");
   el.style.display = el.style.display === "none" ? "" : "none";
