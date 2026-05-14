@@ -1811,6 +1811,7 @@ const defaultState = () => ({
   locked: { total: 0, deposits: [], withdrawals: [] },
   milestonesReached: [],
   decay: { lastDamageDate: null, isDamaged: false },
+  behavior: { acceptedPatterns: [], workingOnPatterns: [] },
 });
 
 function load() {
@@ -1829,6 +1830,7 @@ function load() {
       goals: Object.assign(def.goals, obj.goals || {}),
       locked: Object.assign(def.locked, obj.locked || {}),
       decay: Object.assign(def.decay, obj.decay || {}),
+      behavior: Object.assign(def.behavior, obj.behavior || {}),
     });
     return sanitizeState(merged);
   } catch (e) {
