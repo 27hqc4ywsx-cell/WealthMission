@@ -1050,8 +1050,8 @@
       Alles pro Monat. Faustregel: <em>Einnahmen − Fixkosten − Variable = was du sparen kannst.</em><br/>
       Gib unten deinen tatsächlichen Sparbetrag ein – wenn er stark abweicht, bekommst du im Dashboard einen Hinweis.
     </p>
-    <label>💰 Einnahmen €/Monat</label>
-    <input type="number" inputmode="decimal" id="ob-income" placeholder="Gehalt, Job, Rente, BAföG..." />
+    <label>💰 Einnahmen €/Monat <span style="color:var(--muted-deep);font-weight:500;text-transform:none;letter-spacing:0;">(0 € OK – wir passen den Plan an)</span></label>
+    <input type="number" inputmode="decimal" id="ob-income" placeholder="Gehalt, Taschengeld, Rente, BAföG, 0 wenn nichts..." />
     <label>📌 Fixkosten €/Monat</label>
     <input type="number" inputmode="decimal" id="ob-fixed" placeholder="Miete, Strom, Versicherungen, Abos" />
     <label>🛍️ Variable Ausgaben €/Monat</label>
@@ -1720,11 +1720,23 @@ const MISSION_TEMPLATES = [
     tierMin: 0, tierMax: 5, ageMin: 10, ageMax: 17,
     desc: "Sprich mit deinen Eltern: ein Junior-Sparkonto (z. B. DKB Junior) oder Junior-Depot eröffnen. Schon kleine Beträge wachsen über Jahre. Lehrreich + Vermögen ab Tag 1." },
   { id: "t5", title: "Babysitting / Nachbarschaftshilfe anbieten", category: "verdienen", baseDifficulty: "mittel", effect: 30, xp: 100,
-    tierMin: 0, tierMax: 5, ageMin: 12, ageMax: 17,
-    desc: "Frag Nachbarn, Verwandte, Eltern-Freunde: brauchen sie Hilfe? Babysitten, Hundeausführen, Rasen mähen, Einkaufen für Senioren – Stundenlohn 5–10 €." },
+    tierMin: 0, tierMax: 5, ageMin: 13, ageMax: 17,
+    desc: "Ab 13 erlaubt (max 2h/Tag, Eltern-OK nötig): Babysitten, Hundeausführen, Rasen mähen, Einkaufen für Senioren. Stundenlohn 5–10 €." },
   { id: "t6", title: "30 Tage Taschengeld-Tagebuch", category: "disziplin", baseDifficulty: "mittel", effect: 0, xp: 120,
     tierMin: 0, tierMax: 5, ageMin: 10, ageMax: 17,
     desc: "30 Tage: jede Ausgabe in einer Notiz-App (auch 50 Cent Süßigkeiten). Am Monatsende: anschauen, wofür dein Taschengeld geht. Erste finanzielle Selbstkenntnis." },
+  { id: "t7", title: "Zeitungen / Werbung austragen", category: "verdienen", baseDifficulty: "mittel", effect: 60, xp: 120,
+    tierMin: 0, tierMax: 5, ageMin: 13, ageMax: 17,
+    desc: "Ab 13 erlaubt mit Eltern-OK (max 2h/Tag): Lokalzeitung oder Werbeprospekte austragen. Frag in der Lokalredaktion oder bei Verteiler-Firmen. 30–80 € pro Woche möglich." },
+  { id: "t8", title: "Nachhilfe für Jüngere geben", category: "verdienen", baseDifficulty: "mittel", effect: 60, xp: 120,
+    tierMin: 0, tierMax: 5, ageMin: 13, ageMax: 17,
+    desc: "Was kannst du gut? Mathe, Englisch, Deutsch? Frag in der Schule oder Nachbarschaft. Schon 8–15 €/Stunde. 4 Stunden/Woche = 30–60 €." },
+  { id: "t9", title: "Ferienjob im Sommer planen", category: "verdienen", baseDifficulty: "schwer", effect: 400, xp: 250,
+    tierMin: 0, tierMax: 5, ageMin: 15, ageMax: 17,
+    desc: "Ab 15: bis zu 4 Wochen pro Jahr Ferienjob, 8h/Tag. Supermarkt, Eisdiele, Lager, Festivals. Bewirb dich bereits 2–3 Monate vorher (März für Sommerferien). 400–1.200 € im Monat sind realistisch." },
+  { id: "t10", title: "Online-Skill verkaufen", category: "verdienen", baseDifficulty: "mittel", effect: 50, xp: 100,
+    tierMin: 0, tierMax: 5, ageMin: 14, ageMax: 17,
+    desc: "Was kannst du? Zeichnen, Video schneiden, Übersetzen, Gaming-Coaching, Social-Media-Tipps für ältere Verwandte. Anbieten in der Schule, Freundeskreis, ggf. Plattformen mit Eltern-Account." },
   { id: "v4", title: "Kleine Dienstleistung anbieten", category: "verdienen", baseDifficulty: "mittel", effect: 80, xp: 130,
     tierMin: 0, tierMax: 4,
     desc: "Nachhilfe, Babysitting, Hundesitting, Putzen, Gartenarbeit – starte mit einem Aushang oder Inserat." },
@@ -2028,14 +2040,32 @@ const ACTION_PLANS = {
     longTermGain: "Wissen = lebenslanger ROI",
     questIds: ["wv1", "wv2", "wv3", "i3", "i6"]
   },
-  // --- Teen-spezifischer Aktionsplan (10–17) ---
+  // --- Teen 10–13: Taschengeld, Sammeln, Verkaufen (kein Job legal) ---
   taschengeld_start: {
     id: "taschengeld_start", icon: "🎒", title: "Taschengeld-Start: dein erstes Vermögen",
-    severity: "invest", toxicity: 0, ageMin: 10, ageMax: 17,
-    instruction: "Diese Woche: 5 € vom Taschengeld in eine separate Spardose. Verkauf 3 alte Sachen mit Eltern bei Kleinanzeigen. Sprecht über ein Junior-Sparkonto. Vermögensaufbau beginnt JETZT, nicht mit 18.",
-    estimatedSavingMonthly: 30,
-    longTermGain: "30 €/Monat ab 14 → mit 65 ca. 250.000 € (7 % ETF-Rendite)",
+    severity: "invest", toxicity: 0, ageMin: 10, ageMax: 13,
+    instruction: "Diese Woche: 5 € vom Taschengeld in eine separate Spardose. Verkauf 3 alte Sachen mit Eltern bei Kleinanzeigen. Sammel eine Woche Pfandflaschen. Sprecht über ein Junior-Sparkonto. Vermögensaufbau beginnt JETZT, nicht mit 18.",
+    estimatedSavingMonthly: 25,
+    longTermGain: "25 €/Monat ab 12 → mit 65 ca. 280.000 € (7 % ETF-Rendite)",
     questIds: ["t1", "t2", "t3", "t4", "t6"]
+  },
+  // --- Teen 13–14: erste leichte Tätigkeiten erlaubt (mit Eltern-OK) ---
+  teen_leichtarbeit: {
+    id: "teen_leichtarbeit", icon: "📰", title: "Erste eigene Einnahmen (mit Eltern-OK)",
+    severity: "invest", toxicity: 0, ageMin: 13, ageMax: 14,
+    instruction: "Ab 13 sind in DE 2 h/Tag leichte Tätigkeiten erlaubt (Eltern-Einverständnis nötig). Diese Woche: 1) Zeitungs/Werbung-Verteiler kontaktieren ODER Nachhilfe für Jüngere anbieten ODER Babysitten in der Nachbarschaft. Ziel: 30–60 € im ersten Monat. Davon 50 % in den Tresor.",
+    estimatedSavingMonthly: 50,
+    longTermGain: "Erste eigene Einnahme ist der größte Hebel deiner Generation",
+    questIds: ["t7", "t8", "t5", "t1"]
+  },
+  // --- Teen 15–17: Ferienjob + regulärer Minijob möglich ---
+  teen_minijob: {
+    id: "teen_minijob", icon: "💼", title: "Ferienjob + Minijob nutzen",
+    severity: "invest", toxicity: 0, ageMin: 15, ageMax: 17,
+    instruction: "Ab 15 darfst du bis zu 4 Wochen Ferienjob/Jahr machen (8 h/Tag), plus regulären Minijob. JETZT planen: Bewirb dich 2–3 Monate vor den Sommerferien (Supermarkt, Eisdiele, Lager, Festival). Pro Ferienmonat 400–1.200 € möglich. 80 % davon direkt in ETF-Sparplan.",
+    estimatedSavingMonthly: 300,
+    longTermGain: "Mit 16 starten + 200 €/Monat ETF → mit 65 über 1 Million €",
+    questIds: ["t9", "t10", "t8", "t1", "t4"]
   }
 };
 
@@ -2401,7 +2431,7 @@ function validateObStep(step) {
   if (step === 6) {
     obData.income = num("ob-income"); obData.fixed = num("ob-fixed");
     obData.variable = num("ob-variable"); obData.savings = num("ob-savings");
-    if (!obData.income) { toast("Bitte gib deine monatlichen Einnahmen ein."); return false; }
+    // Einnahmen sind optional – 0 € ist legitim (Schüler, arbeitsuchend, Pause)
   }
   if (step === 7) {
     const custom = parseFloat(document.getElementById("ob-goal-custom").value);
@@ -3200,16 +3230,19 @@ function computeActionPlan() {
     if (fixRatio > 0.55) add("fixkosten_hoch", 4);
     if (varRatio > 0.30) add("essen_unterwegs", 3);
   }
-  if (!cf.income || cf.income < 800) add("zu_wenig_einkommen", 4);
+  // "Zu wenig Einkommen" nur für Erwachsene – Minderjährige bekommen Teen-Pläne
+  const age = (state.profile && state.profile.age) || 0;
+  if (age >= 18 && (!cf.income || cf.income < 800)) add("zu_wenig_einkommen", 4);
 
   // 3) Vermögen / Schulden
   if ((w.debt || 0) > 0) add("schulden", 6);
   if ((w.depot || 0) === 0 && (cf.savings || 0) >= 50) add("kein_depot", 3);
 
-  // 4) Teen-spezifischer Auto-Trigger (10–17 Jahre)
-  const age = (state.profile && state.profile.age) || 0;
+  // 4) Teen-Pläne (10–17 Jahre) – Altersfilter wählt je Band den passenden aus
   if (age >= 10 && age <= 17) {
-    add("taschengeld_start", 6);
+    add("taschengeld_start", 6);   // ageMin 10, ageMax 13
+    add("teen_leichtarbeit", 7);   // ageMin 13, ageMax 14
+    add("teen_minijob", 7);        // ageMin 15, ageMax 17
   }
 
   // 5) Schnell-Tracking-Daten der letzten 30 Tage (starkes Signal!)
