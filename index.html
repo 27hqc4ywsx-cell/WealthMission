@@ -784,6 +784,20 @@
   .quick-btn .qb-label { font-size: 10.5px; font-weight: 700; color: var(--text-soft); text-align: center; line-height: 1.2; }
   .quick-btn.has-today .qb-label { color: var(--primary); }
   .quick-btn .qb-today { font-size: 11px; color: var(--primary); font-weight: 800; margin-top: 1px; font-variant-numeric: tabular-nums; }
+  .quick-btn.quick-add-btn {
+    background: var(--surface-2);
+    border: 1.5px dashed var(--line-strong);
+    color: var(--muted-deep);
+  }
+  .quick-btn.quick-add-btn:active { background: var(--primary-bg); border-color: var(--primary); }
+  .quick-btn.quick-add-btn .qb-icon { color: var(--primary); }
+  .qt-manage-link {
+    display: block; text-align: center; padding: 8px;
+    margin-top: 8px; font-size: 12.5px; font-weight: 700;
+    color: var(--muted-deep); background: transparent;
+    border: none; cursor: pointer; width: 100%;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
   .quick-track-summary {
     margin-top: 14px; padding: 12px 14px;
     background: rgba(255,255,255,0.55); border-radius: 12px;
@@ -1414,6 +1428,7 @@
         Tippe einfach an, was du heute ausgegeben hast. <strong>Je mehr du trackst, desto schärfer wird dein Aktionsplan</strong> – wir passen dann Quests + Missionen exakt an deine Realität an. Außerdem: jeder Tap gibt XP für deinen Charakter.
       </div>
       <div class="quick-track-grid" id="quick-track-grid"></div>
+      <button class="qt-manage-link" id="qt-manage-link" style="display:none;">Eigene Kategorien verwalten</button>
       <div class="quick-track-summary" id="quick-track-summary"></div>
     </div>
 
@@ -1668,7 +1683,7 @@ const EQUIPMENT = {
 const MISSION_TEMPLATES = [
   // --- Sparen ---
   { id: "s1", title: "30 Tage ohne To-Go-Kaffee", category: "sparen", baseDifficulty: "mittel", effect: 90, xp: 150,
-    tierMin: 1, tierMax: 5, weakness: "essen_unterwegs",
+    tierMin: 1, tierMax: 5, weakness: "essen_unterwegs", ageMin: 16,
     desc: "Verzichte einen Monat lang auf gekauften Kaffee unterwegs. Brauchst du Koffein? Mach ihn zuhause." },
   { id: "s2", title: "3 No-Spend-Days diese Woche", category: "sparen", baseDifficulty: "leicht", effect: 30, xp: 60,
     tierMin: 0, tierMax: 5,
@@ -1688,8 +1703,28 @@ const MISSION_TEMPLATES = [
     tierMin: 0, tierMax: 5,
     desc: "Vinted, Flohmarkt oder Second-Hand-Laden – mach Cash aus deinem Schrank." },
   { id: "v3", title: "Wochenendjob suchen", category: "verdienen", baseDifficulty: "schwer", effect: 250, xp: 300,
-    tierMin: 0, tierMax: 2, notFor: ["rentner", "vollzeit", "selbststaendig"],
+    tierMin: 0, tierMax: 2, ageMin: 14, notFor: ["rentner", "vollzeit", "selbststaendig"],
     desc: "Recherchiere und bewirb dich diese Woche für einen Nebenjob am Wochenende." },
+
+  // --- TEEN-Quests (nur für Nutzer 10–17) ---
+  { id: "t1", title: "Taschengeld-Spar-Challenge: 5 € diese Woche", category: "sparen", baseDifficulty: "leicht", effect: 5, xp: 60,
+    tierMin: 0, tierMax: 5, ageMin: 10, ageMax: 17,
+    desc: "Lege diese Woche 5 € von deinem Taschengeld in eine separate Box / Sparbüchse. Nicht anrühren bis nächste Woche." },
+  { id: "t2", title: "Verkauf 3 alte Sachen", category: "verdienen", baseDifficulty: "leicht", effect: 30, xp: 80,
+    tierMin: 0, tierMax: 5, ageMin: 10, ageMax: 17,
+    desc: "Schau in dein Zimmer: 3 Spielsachen, Bücher oder Klamotten, die du nicht mehr brauchst. Mit Eltern bei Kleinanzeigen / Flohmarkt verkaufen." },
+  { id: "t3", title: "Pfandflaschen-Sammler (1 Woche)", category: "verdienen", baseDifficulty: "leicht", effect: 8, xp: 50,
+    tierMin: 0, tierMax: 5, ageMin: 10, ageMax: 17,
+    desc: "Sammle eine Woche lang alle Pfandflaschen (zu Hause, beim Spielplatz, beim Joggen). Erfahrungsgemäß 5–15 € pro Woche." },
+  { id: "t4", title: "Junior-Sparkonto mit Eltern eröffnen", category: "investieren", baseDifficulty: "mittel", effect: 0, xp: 150,
+    tierMin: 0, tierMax: 5, ageMin: 10, ageMax: 17,
+    desc: "Sprich mit deinen Eltern: ein Junior-Sparkonto (z. B. DKB Junior) oder Junior-Depot eröffnen. Schon kleine Beträge wachsen über Jahre. Lehrreich + Vermögen ab Tag 1." },
+  { id: "t5", title: "Babysitting / Nachbarschaftshilfe anbieten", category: "verdienen", baseDifficulty: "mittel", effect: 30, xp: 100,
+    tierMin: 0, tierMax: 5, ageMin: 12, ageMax: 17,
+    desc: "Frag Nachbarn, Verwandte, Eltern-Freunde: brauchen sie Hilfe? Babysitten, Hundeausführen, Rasen mähen, Einkaufen für Senioren – Stundenlohn 5–10 €." },
+  { id: "t6", title: "30 Tage Taschengeld-Tagebuch", category: "disziplin", baseDifficulty: "mittel", effect: 0, xp: 120,
+    tierMin: 0, tierMax: 5, ageMin: 10, ageMax: 17,
+    desc: "30 Tage: jede Ausgabe in einer Notiz-App (auch 50 Cent Süßigkeiten). Am Monatsende: anschauen, wofür dein Taschengeld geht. Erste finanzielle Selbstkenntnis." },
   { id: "v4", title: "Kleine Dienstleistung anbieten", category: "verdienen", baseDifficulty: "mittel", effect: 80, xp: 130,
     tierMin: 0, tierMax: 4,
     desc: "Nachhilfe, Babysitting, Hundesitting, Putzen, Gartenarbeit – starte mit einem Aushang oder Inserat." },
@@ -1705,24 +1740,24 @@ const MISSION_TEMPLATES = [
     tierMin: 0, tierMax: 5, weakness: "abos_vergessen",
     desc: "Kündige heute eines, das du selten nutzt. Spotify Family statt Single? Netflix-Pause?" },
   { id: "c3", title: "Handyvertrag verhandeln", category: "vertraege", baseDifficulty: "mittel", effect: 15, xp: 110,
-    tierMin: 0, tierMax: 5,
+    tierMin: 0, tierMax: 5, ageMin: 16,
     desc: "Ruf deinen Anbieter an, frag nach besseren Tarifen oder Kündigung. 80 % der Kunden bekommen einen Rabatt." },
   { id: "c4", title: "Versicherungen vergleichen", category: "vertraege", baseDifficulty: "mittel", effect: 30, xp: 110,
-    tierMin: 1, tierMax: 5,
+    tierMin: 1, tierMax: 5, ageMin: 18,
     desc: "Eine Versicherung pro Monat checken. Check24, Verivox, oder direkt beim Anbieter neu anfragen." },
   { id: "c5", title: "Strom/Gas wechseln", category: "vertraege", baseDifficulty: "mittel", effect: 80, xp: 130,
-    tierMin: 1, tierMax: 5,
+    tierMin: 1, tierMax: 5, ageMin: 18,
     desc: "Strom- oder Gasanbieter wechseln. Oft 100–300€ pro Jahr Ersparnis." },
   { id: "c6", title: "Bankgebühren-Check", category: "vertraege", baseDifficulty: "leicht", effect: 60, xp: 80,
-    tierMin: 0, tierMax: 5,
+    tierMin: 0, tierMax: 5, ageMin: 16,
     desc: "Zahlst du Kontoführungsgebühren? Wechsle zu DKB, ING, Comdirect – kostenlos." },
 
   // --- Investieren ---
   { id: "i1", title: "Depot eröffnen", category: "investieren", baseDifficulty: "mittel", effect: 0, xp: 200,
-    tierMin: 1, tierMax: 5, weakness: "investieren_unklar",
-    desc: "Trade Republic, Scalable, Comdirect, ING – such dir einen Broker und eröffne ein Depot." },
+    tierMin: 1, tierMax: 5, weakness: "investieren_unklar", ageMin: 16,
+    desc: "Trade Republic, Scalable, Comdirect, ING – such dir einen Broker und eröffne ein Depot. Bis 18 zusammen mit den Eltern (Junior-Depot)." },
   { id: "i2", title: "ETF-Sparplan einrichten", category: "investieren", baseDifficulty: "mittel", effect: 0, xp: 250,
-    tierMin: 2, tierMax: 5, weakness: "investieren_unklar",
+    tierMin: 2, tierMax: 5, weakness: "investieren_unklar", ageMin: 16,
     desc: "Lege einen monatlichen Sparplan auf MSCI World oder FTSE All-World an. Ab 25€ möglich." },
   { id: "i3", title: "30 Min ETF-Wissen", category: "investieren", baseDifficulty: "leicht", effect: 0, xp: 60,
     tierMin: 0, tierMax: 5, weakness: "investieren_unklar",
@@ -1755,25 +1790,25 @@ const MISSION_TEMPLATES = [
   // --- NOTBREMSE (Cashflow-Krise: Ausgaben > Einnahmen) ---
   // Diese werden NUR automatisch hinzugefügt, wenn der User in der Krise ist.
   { id: "n1", title: "🚨 Notbremse: 7 Tage Konsum-STOPP", category: "disziplin", baseDifficulty: "schwer", effect: 0, xp: 250,
-    tierMin: 0, tierMax: 5, crisis: true,
+    tierMin: 0, tierMax: 5, crisis: true, ageMin: 18,
     desc: "Sofort 7 Tage Notbremse. Erlaubt: Lebensmittel (Aldi-Standard), Hygiene, Pflicht-Mobilität (zur Arbeit, Schule). NICHT erlaubt: Lieferservice, Restaurant, To-Go-Kaffee, Online-Shopping, Streaming-Erweiterungen, App-Käufe, Tanken über Pflicht hinaus. Ziel: das Bluten stoppen, bevor wir den Rest planen." },
   { id: "n2", title: "🚨 Kompletter Fixkosten-Audit", category: "vertraege", baseDifficulty: "mittel", effect: 0, xp: 200,
-    tierMin: 0, tierMax: 5, crisis: true,
+    tierMin: 0, tierMax: 5, crisis: true, ageMin: 18,
     desc: "Setz dich 60 Minuten hin. Zettel + Banking-App. Schreibe JEDE Fixkost auf: Miete, Nebenkosten, Strom, Gas, Wasser, Internet, Mobilfunk, Versicherungen, Abos, Mitgliedschaften, Apps. Pro Punkt: ist es kündbar? Wechselbar? Verhandelbar? Markiere die Top 3 zum Kürzen." },
   { id: "n3", title: "🚨 Dispo-Zinssatz checken & notieren", category: "schulden", baseDifficulty: "leicht", effect: 0, xp: 150,
-    tierMin: 0, tierMax: 5, crisis: true,
+    tierMin: 0, tierMax: 5, crisis: true, ageMin: 18,
     desc: "Banking-App öffnen oder Bank anrufen: wie hoch ist dein Dispo-Zinssatz? Meist 9–14 %. Diese Zahl ist dein teuerster Feind. Schreib sie sichtbar auf. Plus: wieviel Dispo nutzt du gerade?" },
   { id: "n4", title: "🚨 Mindestens 2 Abos heute kündigen", category: "vertraege", baseDifficulty: "leicht", effect: 30, xp: 180,
-    tierMin: 0, tierMax: 5, crisis: true,
+    tierMin: 0, tierMax: 5, crisis: true, ageMin: 18,
     desc: "Heute, nicht morgen. Streaming, Gym, Lieferservice-Prime, Magazine, Cloud-Speicher, Apps. Mindestens 2 raus. Sofort. Du kannst sie immer noch neu abschließen, wenn die Krise vorbei ist." },
   { id: "n5", title: "🚨 50€ extra einnehmen (7 Tage)", category: "verdienen", baseDifficulty: "mittel", effect: 50, xp: 200,
-    tierMin: 0, tierMax: 5, crisis: true,
+    tierMin: 0, tierMax: 5, crisis: true, ageMin: 18,
     desc: "In 7 Tagen 50€ extra reinholen. Verkaufe 3–5 Sachen (Kleinanzeigen, Vinted), biete 2h Hilfsarbeit an, frag bei Verwandten ob du was tun kannst (Garten, Renovierung, Hund hüten). Ziel ist nicht Reichtum – Ziel ist Bewegung." },
   { id: "n6", title: "🚨 Keine neuen Kredite 30 Tage", category: "disziplin", baseDifficulty: "schwer", effect: 0, xp: 250,
-    tierMin: 0, tierMax: 5, crisis: true,
+    tierMin: 0, tierMax: 5, crisis: true, ageMin: 18,
     desc: "30 Tage hartes Verbot: keine neue Kreditkarte, keine 0%-Finanzierung („Klarna in 3 Raten”), kein Privatkredit. Schulden löst man nicht mit neuen Schulden – sonst zahlst du am Ende doppelt." },
   { id: "n7", title: "🚨 Schuldnerberatung anrufen (kostenlos)", category: "schulden", baseDifficulty: "mittel", effect: 0, xp: 300,
-    tierMin: 0, tierMax: 5, crisis: true,
+    tierMin: 0, tierMax: 5, crisis: true, ageMin: 18,
     desc: "Bei echter Schuldensituation: ruf eine kostenlose Schuldnerberatung an. Caritas, Diakonie, Verbraucherzentrale, AWO – alle kostenlos, alle vertraulich. Schämen ist umsonst – die Berater haben alles schon gesehen. Ein Termin ändert oft alles." },
 ];
 
@@ -1842,16 +1877,16 @@ const WEAKNESS_QUESTS = {
   ],
   schulden: [
     { id: "ws1", title: "Schulden-Snowball-Liste", category: "schulden", baseDifficulty: "mittel", effect: 0, xp: 150,
-      tierMin: 0, tierMax: 5,
+      tierMin: 0, tierMax: 5, ageMin: 18,
       desc: "Liste alle Schulden mit Betrag + Zinssatz. Sortiere nach Höhe (Snowball) oder Zins (Avalanche). Plan an die Wand." },
     { id: "ws2", title: "Doppelte Tilgung kleinste Schuld", category: "schulden", baseDifficulty: "schwer", effect: 0, xp: 250,
-      tierMin: 1, tierMax: 5,
+      tierMin: 1, tierMax: 5, ageMin: 18,
       desc: "Zahle diesen Monat doppelt so viel auf die kleinste Schuld. Schnellste Schuld weg = Motivation." },
     { id: "ws3", title: "Zinssatz-Vergleich Kredit", category: "schulden", baseDifficulty: "mittel", effect: 0, xp: 180,
-      tierMin: 1, tierMax: 5,
+      tierMin: 1, tierMax: 5, ageMin: 18,
       desc: "Hast du einen Kredit > 7 % Zins? Frag bei deiner Bank oder Check24 nach Umschuldung. Kann hunderte sparen." },
     { id: "ws4", title: "Dispo komplett ablösen", category: "schulden", baseDifficulty: "schwer", effect: 0, xp: 300,
-      tierMin: 1, tierMax: 5,
+      tierMin: 1, tierMax: 5, ageMin: 18,
       desc: "Dispo-Zinsen sind Wucher (10–15 %). Plan: Dispo komplett ablösen innerhalb 3 Monaten." },
   ],
   keine_disziplin: [
@@ -1907,7 +1942,7 @@ const ACTION_PLANS = {
   // --- Toxische Hebel (klar drängen) ---
   essen_unterwegs: {
     id: "essen_unterwegs", icon: "🍔", title: "Konsum-Stopp: Essen unterwegs",
-    severity: "tox", toxicity: 3,
+    severity: "tox", toxicity: 3, ageMin: 13,
     instruction: "Diese 7 Tage: kein Lieferservice, kein Restaurant, kein To-Go-Kaffee. Sonntag 90 Min Meal-Prep für die Woche. Lieferservice-Apps deinstallieren.",
     estimatedSavingMonthly: 200,
     questIds: ["we1", "we2", "we3"]
@@ -1921,7 +1956,7 @@ const ACTION_PLANS = {
   },
   abos_vergessen: {
     id: "abos_vergessen", icon: "📺", title: "Verträge: Abo-Audit",
-    severity: "tox", toxicity: 2,
+    severity: "tox", toxicity: 2, ageMin: 16,
     instruction: "JETZT Banking-App öffnen. Letzte 3 Monate alle wiederkehrenden Abbuchungen listen. Mindestens 2 unnütze Abos heute kündigen. Kalender-Reminder 7 Tage vor jeder Verlängerung anlegen.",
     estimatedSavingMonthly: 40,
     questIds: ["wa1", "wa2", "wa3"]
@@ -1935,14 +1970,14 @@ const ACTION_PLANS = {
   },
   schulden: {
     id: "schulden", icon: "🔗", title: "Schulden: Tilgungsplan",
-    severity: "crisis", toxicity: 3,
+    severity: "crisis", toxicity: 3, ageMin: 18,
     instruction: "Schreibe alle Schulden auf einen Zettel: Betrag + Zinssatz. Sortiere nach Zinssatz absteigend. Diesen Monat: tilge die teuerste doppelt. Dispo-Zins prüfen – meist 10–14 %, sofortige Priorität.",
     estimatedSavingMonthly: 50,
     questIds: ["ws1", "ws2", "ws3", "ws4"]
   },
   fixkosten_hoch: {
     id: "fixkosten_hoch", icon: "📌", title: "Fixkosten-Audit",
-    severity: "tox", toxicity: 2,
+    severity: "tox", toxicity: 2, ageMin: 18,
     instruction: "Setz dich 60 Min hin mit Zettel + Banking-App. Schreibe JEDE Fixkost auf (Miete, Strom, Gas, Internet, Mobilfunk, Versicherungen, Abos). Markiere Top 3 zum Kürzen oder Wechseln.",
     estimatedSavingMonthly: 80,
     questIds: ["n2", "c1", "c5", "c6"]
@@ -1957,7 +1992,7 @@ const ACTION_PLANS = {
   },
   kein_depot: {
     id: "kein_depot", icon: "📈", title: "Investieren: Depot eröffnen",
-    severity: "invest", toxicity: 0,
+    severity: "invest", toxicity: 0, ageMin: 16,
     instruction: "Diese Woche: Trade Republic / Scalable / ING-App laden. Depot eröffnen (10 Min, kostenlos). ETF-Sparplan auf MSCI World einrichten, 50 €/Monat. Erst eröffnen, dann verstehen.",
     estimatedSavingMonthly: 0,
     longTermGain: "60.000 € in 30 Jahren (50 €/Monat × 7 % p.a.)",
@@ -1979,7 +2014,7 @@ const ACTION_PLANS = {
   },
   zu_wenig_einkommen: {
     id: "zu_wenig_einkommen", icon: "💼", title: "Einkommen erhöhen",
-    severity: "invest", toxicity: 0,
+    severity: "invest", toxicity: 0, ageMin: 14,
     instruction: "Diese Woche 1 Stunde investieren: 1 Skill lernen, der dein Einkommen heben kann (Excel, Englisch, Coden, Marketing). Plus 1 Bewerbung diese Woche auf besser bezahlten Job/Side-Hustle.",
     estimatedSavingMonthly: 0,
     longTermGain: "+200 €/Monat möglich – langfristig der größte Hebel",
@@ -1987,11 +2022,20 @@ const ACTION_PLANS = {
   },
   investieren_unklar: {
     id: "investieren_unklar", icon: "📊", title: "Investieren verstehen",
-    severity: "invest", toxicity: 0,
+    severity: "invest", toxicity: 0, ageMin: 14,
     instruction: "Diese 30 Minuten: Finanzfluss YouTube anschauen „ETF erklärt”. Demo-Depot eröffnen. 1 € echt investieren um den Prozess durchzumachen.",
     estimatedSavingMonthly: 0,
     longTermGain: "Wissen = lebenslanger ROI",
     questIds: ["wv1", "wv2", "wv3", "i3", "i6"]
+  },
+  // --- Teen-spezifischer Aktionsplan (10–17) ---
+  taschengeld_start: {
+    id: "taschengeld_start", icon: "🎒", title: "Taschengeld-Start: dein erstes Vermögen",
+    severity: "invest", toxicity: 0, ageMin: 10, ageMax: 17,
+    instruction: "Diese Woche: 5 € vom Taschengeld in eine separate Spardose. Verkauf 3 alte Sachen mit Eltern bei Kleinanzeigen. Sprecht über ein Junior-Sparkonto. Vermögensaufbau beginnt JETZT, nicht mit 18.",
+    estimatedSavingMonthly: 30,
+    longTermGain: "30 €/Monat ab 14 → mit 65 ca. 250.000 € (7 % ETF-Rendite)",
+    questIds: ["t1", "t2", "t3", "t4", "t6"]
   }
 };
 
@@ -2025,6 +2069,7 @@ const defaultState = () => ({
   decay: { lastDamageDate: null, isDamaged: false },
   behavior: { acceptedPatterns: [], workingOnPatterns: [] },
   expenseLog: [],
+  customCategories: [],
 });
 
 function load() {
@@ -2103,6 +2148,12 @@ function sanitizeState(s) {
   s.expenseLog = s.expenseLog
     .map(e => ({ id: e.id || ('e_' + Math.random().toString(36).slice(2, 9)), date: String(e.date || ''), category: String(e.category || ''), amount: safeNum(e.amount) }))
     .filter(e => e.date && e.category && e.amount > 0);
+
+  // Custom Kategorien bereinigen
+  if (!Array.isArray(s.customCategories)) s.customCategories = [];
+  s.customCategories = s.customCategories
+    .map(c => ({ id: String(c.id || ('custom_' + Math.random().toString(36).slice(2, 9))), icon: String(c.icon || '🏷️').slice(0, 4), label: String(c.label || '').slice(0, 22), planId: c.planId || null }))
+    .filter(c => c.label);
 
   // Missions bereinigen
   if (!Array.isArray(s.missions)) s.missions = [];
@@ -2937,8 +2988,14 @@ function logExpense(catId, amount) {
   toast("+5 XP · " + fmt(amount) + " getrackt");
 }
 
+// Findet eine Kategorie (built-in ODER custom)
+function findCategory(catId) {
+  return QUICK_LOG_CATEGORIES.find(c => c.id === catId) ||
+         (state.customCategories || []).find(c => c.id === catId);
+}
+
 function showQuickLogDialog(catId) {
-  const cat = QUICK_LOG_CATEGORIES.find(c => c.id === catId);
+  const cat = findCategory(catId);
   if (!cat) return;
   modalShell(
     '<div class="big-icon">' + cat.icon + '</div>' +
@@ -2955,6 +3012,75 @@ function showQuickLogDialog(catId) {
     if (inp) inp.focus();
   }, 100);
 }
+
+// ====== Custom-Kategorien erstellen / verwalten ======
+function showNewCategoryDialog() {
+  modalShell(
+    '<div class="big-icon">🏷️</div>' +
+    '<h2>Eigene Kategorie</h2>' +
+    '<p>Für persönliche Hebel – z.B. „Rosen", „Vape", „Gym", „Tinder", „Schmuck".</p>' +
+    '<label>Name</label>' +
+    '<input type="text" id="nc-label" placeholder="z.B. Rosen" maxlength="22" />' +
+    '<label>Symbol (Emoji)</label>' +
+    '<input type="text" id="nc-icon" placeholder="🌹" maxlength="4" />' +
+    '<div class="btn-row" style="margin-top:14px;">' +
+      '<button class="btn-ghost" onclick="closeModal()">Abbrechen</button>' +
+      '<button class="btn-primary" onclick="confirmNewCategory()">Erstellen</button>' +
+    '</div>'
+  );
+  setTimeout(() => {
+    const inp = document.getElementById("nc-label");
+    if (inp) inp.focus();
+  }, 100);
+}
+function confirmNewCategory() {
+  const label = String(document.getElementById("nc-label").value || "").trim();
+  let icon = String(document.getElementById("nc-icon").value || "").trim();
+  if (!label) { toast("Bitte gib einen Namen ein."); return; }
+  if (!icon) icon = "🏷️";
+  state.customCategories.push({
+    id: "custom_" + Math.random().toString(36).slice(2, 9),
+    icon: icon.slice(0, 4),
+    label: label.slice(0, 22),
+    planId: null
+  });
+  save();
+  renderAll();
+  closeModal();
+  toast("✓ Kategorie „" + label + "\" erstellt");
+}
+
+function showManageCategoriesDialog() {
+  const list = state.customCategories || [];
+  let content = '<h2 style="margin-bottom:14px;">Eigene Kategorien</h2>';
+  if (list.length === 0) {
+    content += '<p>Noch keine eigenen Kategorien angelegt.</p>';
+  } else {
+    content += '<div style="text-align:left;">' + list.map(c =>
+      '<div class="vault-row">' +
+        '<div class="meta"><span class="label">' + escapeHTML(c.icon) + '  ' + escapeHTML(c.label) + '</span></div>' +
+        '<button class="btn-ghost" style="width:auto;min-height:0;padding:6px 12px;font-size:12px;" ' +
+        'onclick="confirmDeleteCustomCategory(' + "'" + c.id + "'" + ')">Löschen</button>' +
+      '</div>'
+    ).join("") + '</div>';
+  }
+  content += '<div class="btn-row" style="margin-top:14px;">' +
+    '<button class="btn-ghost" onclick="closeModal()">Schließen</button>' +
+    '<button class="btn-primary" onclick="closeModal();showNewCategoryDialog();">+ Neue</button>' +
+  '</div>';
+  modalShell(content);
+}
+function confirmDeleteCustomCategory(id) {
+  state.customCategories = (state.customCategories || []).filter(c => c.id !== id);
+  save();
+  renderAll();
+  showManageCategoriesDialog();
+}
+
+window.showNewCategoryDialog = showNewCategoryDialog;
+window.confirmNewCategory = confirmNewCategory;
+window.showManageCategoriesDialog = showManageCategoriesDialog;
+window.confirmDeleteCustomCategory = confirmDeleteCustomCategory;
 
 function confirmQuickLog(catId) {
   const raw = String(document.getElementById("ql-amount").value || "").replace(",", ".").trim();
@@ -2973,7 +3099,9 @@ function renderQuickTrack() {
   const todayByCat = {};
   todayLog.forEach(e => { todayByCat[e.category] = (todayByCat[e.category] || 0) + e.amount; });
 
-  grid.innerHTML = QUICK_LOG_CATEGORIES.map(cat => {
+  // Built-in + Custom Kategorien zusammenführen
+  const allCats = QUICK_LOG_CATEGORIES.concat(state.customCategories || []);
+  let html = allCats.map(cat => {
     const todayTotal = todayByCat[cat.id] || 0;
     const hasToday = todayTotal > 0 ? " has-today" : "";
     return '<button class="quick-btn' + hasToday + '" data-quick-cat="' + cat.id + '">' +
@@ -2982,10 +3110,30 @@ function renderQuickTrack() {
       (todayTotal > 0 ? '<span class="qb-today">' + fmt(todayTotal) + '</span>' : '') +
     '</button>';
   }).join("");
+  // + Neu Button immer am Ende
+  html += '<button class="quick-btn quick-add-btn" data-quick-new="1">' +
+    '<span class="qb-icon">➕</span>' +
+    '<span class="qb-label">Neue Kategorie</span>' +
+  '</button>';
+  grid.innerHTML = html;
 
   grid.querySelectorAll("[data-quick-cat]").forEach(b => {
     b.addEventListener("click", () => showQuickLogDialog(b.dataset.quickCat));
   });
+  grid.querySelectorAll("[data-quick-new]").forEach(b => {
+    b.addEventListener("click", showNewCategoryDialog);
+  });
+
+  // Verwalten-Link nur zeigen wenn Custom-Kategorien existieren
+  const manageLink = document.getElementById("qt-manage-link");
+  if (manageLink) {
+    const hasCustom = (state.customCategories || []).length > 0;
+    manageLink.style.display = hasCustom ? "" : "none";
+    if (hasCustom && !manageLink._wired) {
+      manageLink.addEventListener("click", showManageCategoriesDialog);
+      manageLink._wired = true;
+    }
+  }
 
   // Summary
   const todayTotal = todayLog.reduce((a, e) => a + e.amount, 0);
@@ -3009,6 +3157,18 @@ function renderQuickTrack() {
 }
 
 /* =========================================================
+   ALTERSFILTER – passt Missionen + Aktionsplan an profile.age an
+   ========================================================= */
+function meetsAgeRequirements(item) {
+  if (!item) return true;
+  const age = (state.profile && state.profile.age) || 0;
+  if (age <= 0) return true; // kein Alter gesetzt → alles zeigen
+  if (typeof item.ageMin === "number" && age < item.ageMin) return false;
+  if (typeof item.ageMax === "number" && age > item.ageMax) return false;
+  return true;
+}
+
+/* =========================================================
    AKTIONSPLAN – läuft im Hintergrund, User sieht nur Ergebnisse
    ========================================================= */
 function computeActionPlan() {
@@ -3022,6 +3182,7 @@ function computeActionPlan() {
     if (accepted.includes(planId)) return;
     const plan = ACTION_PLANS[planId];
     if (!plan) return;
+    if (!meetsAgeRequirements(plan)) return; // 14-Jähriger braucht keine KFZ-Versicherung
     if (!found[planId] || found[planId].reasonScore < reasonScore) {
       found[planId] = { plan, reasonScore };
     }
@@ -3045,7 +3206,13 @@ function computeActionPlan() {
   if ((w.debt || 0) > 0) add("schulden", 6);
   if ((w.depot || 0) === 0 && (cf.savings || 0) >= 50) add("kein_depot", 3);
 
-  // 4) Schnell-Tracking-Daten der letzten 30 Tage (starkes Signal!)
+  // 4) Teen-spezifischer Auto-Trigger (10–17 Jahre)
+  const age = (state.profile && state.profile.age) || 0;
+  if (age >= 10 && age <= 17) {
+    add("taschengeld_start", 6);
+  }
+
+  // 5) Schnell-Tracking-Daten der letzten 30 Tage (starkes Signal!)
   const today = todayISO();
   const trackingByPlan = {};
   (state.expenseLog || []).forEach(e => {
@@ -3274,6 +3441,8 @@ function recommendTemplateIds(count = 6) {
     const tMin = t.tierMin !== undefined ? t.tierMin : 0;
     const tMax = t.tierMax !== undefined ? t.tierMax : 5;
     if (tier < tMin || tier > tMax) return;
+    // Altersfilter (14-Jähriger braucht keine KFZ-Versicherung-Quest)
+    if (!meetsAgeRequirements(t)) return;
     // Beruf-Block
     if (t.notFor && occ && t.notFor.includes(occ)) return;
     // Bereits in der aktiven Liste? Skip (auch erledigte Long-Quest-Stufen)
