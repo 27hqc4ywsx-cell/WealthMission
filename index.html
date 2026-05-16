@@ -808,6 +808,45 @@
   .qts-row .qts-val { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text); }
 
   /* =========================================================
+     KONSUM-DIAGNOSE (nur Beobachtungen, kein Aktionsplan)
+     ========================================================= */
+  .cd-summary {
+    background: var(--surface-2);
+    padding: 12px 14px; border-radius: 12px;
+    font-size: 14px; color: var(--text);
+    margin-bottom: 14px; line-height: 1.5;
+  }
+  .cd-list { display: flex; flex-direction: column; gap: 8px; }
+  .cd-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 14px;
+  }
+  .cd-icon { font-size: 24px; flex-shrink: 0; }
+  .cd-text { flex: 1; min-width: 0; }
+  .cd-label { font-weight: 700; font-size: 14px; color: var(--text); }
+  .cd-meta { font-size: 11.5px; color: var(--muted-deep); margin-top: 2px; }
+  .cd-amount {
+    font-weight: 800; font-variant-numeric: tabular-nums;
+    color: var(--primary); font-size: 14px;
+  }
+  .cd-patterns {
+    margin-top: 14px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .cd-pattern {
+    padding: 10px 14px; background: var(--coral-bg);
+    border-left: 4px solid var(--coral);
+    border-radius: 8px;
+    font-size: 13.5px; color: var(--text); line-height: 1.55;
+  }
+  .cd-note {
+    margin-top: 14px; padding: 12px 14px;
+    background: var(--mint-bg); border-radius: 12px;
+    font-size: 13px; color: #047857; font-weight: 600;
+    line-height: 1.5;
+  }
+
+  /* =========================================================
      ACTION PLAN CARDS – klare Marschbefehle
      ========================================================= */
   .action-card {
@@ -1400,6 +1439,13 @@
 
   <!-- ============== MISSIONS ============== -->
   <section class="view" data-view="missions">
+    <!-- Aktionsplan – klare Marschbefehle, oben im Quest-Tab -->
+    <div class="card">
+      <div class="card-title">🎯 Dein Aktionsplan <span class="accent">Konkrete Schritte</span></div>
+      <div id="action-plan"></div>
+      <button class="btn-ghost mt-12" id="action-plan-reset" style="display:none;">Ausgeblendete wieder anzeigen</button>
+    </div>
+
     <div class="card">
       <div class="card-title">Quests <span class="accent" id="mission-count-label">0 aktiv</span></div>
       <div class="mission-tabs" id="mission-tabs">
@@ -1432,11 +1478,10 @@
       <div class="quick-track-summary" id="quick-track-summary"></div>
     </div>
 
-    <!-- Aktionsplan – klare Marschbefehle -->
+    <!-- Konsum-Diagnose – nur Beobachtung, keine Aktion -->
     <div class="card">
-      <div class="card-title">🎯 Dein Aktionsplan <span class="accent">Konkrete Schritte</span></div>
-      <div id="action-plan"></div>
-      <button class="btn-ghost mt-12" id="action-plan-reset" style="display:none;">Ausgeblendete wieder anzeigen</button>
+      <div class="card-title">🔍 Konsum-Diagnose <span class="accent">Beobachtungen</span></div>
+      <div id="consumption-diagnosis"></div>
     </div>
 
     <div class="card">
@@ -2500,8 +2545,30 @@ function loadInitialQuests() {
       }
     });
   });
+  // Altersband-spezifische Quests automatisch laden
+  loadAgeAppropriateQuests();
   // Plus: empfohlene Standard-Missionen
   addRecommendedMissions(true, 4);
+}
+
+// Lädt die zum Alter passenden Teen-Quests direkt in die Mission-Liste.
+// Wird beim Onboarding und nach Profil-Update aufgerufen.
+function loadAgeAppropriateQuests() {
+  const age = (state.profile && state.profile.age) || 0;
+  if (age < 10 || age >= 18) return; // nur fuer Jugendliche
+  // Welche Teen-Quest-IDs passen je Altersband?
+  let teenIds = [];
+  if (age >= 10 && age <= 12) teenIds = ["t1", "t2", "t3", "t4", "t6"];
+  else if (age >= 13 && age <= 14) teenIds = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8"];
+  else if (age >= 15 && age <= 17) teenIds = ["t1", "t4", "t5", "t7", "t8", "t9", "t10"];
+
+  teenIds.forEach(tid => {
+    if (state.missions.find(m => m.templateId === tid && !m.done)) return;
+    const tpl = allTemplates().find(t => t.id === tid);
+    if (tpl && meetsAgeRequirements(tpl)) {
+      state.missions.push(makeMissionFromTemplate(tpl));
+    }
+  });
 }
 
 /* =========================================================
@@ -3276,6 +3343,81 @@ function computeActionPlan() {
   return ranked.slice(0, 5).map(r => r.plan);
 }
 
+// Konsum-Diagnose: nur Beobachtungen, kein Aktionsplan
+function renderConsumptionDiagnosis() {
+  const wrap = document.getElementById("consumption-diagnosis");
+  if (!wrap) return;
+
+  const today = todayISO();
+  const last30 = (state.expenseLog || []).filter(e => {
+    const d = daysBetween(e.date, today);
+    return d >= 0 && d < 30;
+  });
+
+  if (last30.length === 0) {
+    wrap.innerHTML = '<div class="chart-empty">Noch keine Tracking-Daten in den letzten 30 Tagen.<br/>Tippe oben auf eine Kategorie, um zu starten – dann zeigen wir dir hier dein konkretes Konsumverhalten.</div>';
+    return;
+  }
+
+  // Gruppieren nach Kategorie
+  const byCat = {};
+  last30.forEach(e => {
+    if (!byCat[e.category]) byCat[e.category] = { amount: 0, count: 0 };
+    byCat[e.category].amount += e.amount;
+    byCat[e.category].count += 1;
+  });
+
+  const allCats = QUICK_LOG_CATEGORIES.concat(state.customCategories || []);
+  const rows = Object.keys(byCat).map(catId => {
+    const cat = allCats.find(c => c.id === catId) || { id: catId, icon: "❓", label: catId };
+    return { cat, amount: byCat[catId].amount, count: byCat[catId].count };
+  }).sort((a, b) => b.amount - a.amount);
+
+  const total = rows.reduce((a, r) => a + r.amount, 0);
+
+  // Top 3 Beobachtungen
+  const top3 = rows.slice(0, 3);
+  const observationHtml = top3.map(r => {
+    const pct = Math.round((r.amount / total) * 100);
+    return '<div class="cd-row">' +
+      '<span class="cd-icon">' + r.cat.icon + '</span>' +
+      '<div class="cd-text">' +
+        '<div class="cd-label">' + escapeHTML(r.cat.label) + '</div>' +
+        '<div class="cd-meta">' + r.count + 'x getrackt · ' + pct + '% deiner Tracks</div>' +
+      '</div>' +
+      '<div class="cd-amount">' + fmt(r.amount) + '</div>' +
+    '</div>';
+  }).join("");
+
+  // Mustererkennung
+  const patternMessages = [];
+  const impulseCats = ["konsum", "freizeit", "kleidung"];
+  const impulseCount = rows.filter(r => impulseCats.includes(r.cat.id)).reduce((a, r) => a + r.count, 0);
+  if (impulseCount >= 5) {
+    patternMessages.push("🔔 In den letzten 30 Tagen hast du " + impulseCount + "× spontanen Konsum getrackt – klassisches Impulskauf-Muster.");
+  }
+  const essen = byCat["essen"];
+  if (essen && essen.amount >= 150) {
+    patternMessages.push("🍔 " + fmt(essen.amount) + " für Essen unterwegs in 30 Tagen – das sind etwa " + fmt(essen.amount * 12) + " im Jahr.");
+  }
+  const abos = byCat["abo"];
+  if (abos && abos.count >= 3) {
+    patternMessages.push("📺 " + abos.count + "× Abo-Einzelausgaben – Audit lohnt sich.");
+  }
+  if (rows.length === 1 && rows[0].count >= 7) {
+    patternMessages.push("📊 Du trackst aktuell nur eine Kategorie – ergänze andere, damit wir dein Konsumverhalten ganzheitlich diagnostizieren können.");
+  }
+
+  let html = '<div class="cd-summary">In den letzten 30 Tagen hast du <strong>' + fmt(total) + '</strong> in <strong>' + last30.length + ' Buchungen</strong> getrackt.</div>';
+  html += '<div class="cd-list">' + observationHtml + '</div>';
+  if (patternMessages.length) {
+    html += '<div class="cd-patterns">' + patternMessages.map(p => '<div class="cd-pattern">' + p + '</div>').join("") + '</div>';
+  }
+  html += '<div class="cd-note">🎯 Wir haben deine Quests an dieses Konsumverhalten angepasst. Schau im Quest-Tab nach „Für dich".</div>';
+
+  wrap.innerHTML = html;
+}
+
 function renderActionPlan() {
   const wrap = document.getElementById("action-plan");
   if (!wrap) return;
@@ -3349,7 +3491,7 @@ function dismissActionPlan(planId) {
 
 function renderAnalysis() {
   renderQuickTrack();
-  renderActionPlan();
+  renderConsumptionDiagnosis();
   // 1) Vermögensverteilung (Donut)
   const wealthSlices = [
     { label: '💵 Bargeld', value: state.wealth.cash || 0, color: '#FBBF24' },
@@ -3521,6 +3663,9 @@ function addRecommendedMissions(initial = false, count = 6) {
 }
 
 function renderMissions() {
+  // Aktionsplan-Karte oben im Quest-Tab rendern
+  renderActionPlan();
+
   const list = document.getElementById("missions-list");
   const openCount = state.missions.filter(m => !m.done).length;
   document.getElementById("mission-count-label").textContent = openCount + " aktiv";
@@ -4071,6 +4216,7 @@ function handleProfileSave() {
     return isNaN(v) ? 0 : Math.max(0, v);
   };
   const wasInCrisis = isCashflowCrisis();
+  const oldAge = state.profile.age || 0;
   const newName = document.getElementById("pe-name").value.trim();
   if (newName) state.character.name = newName;
   state.profile.age = parseInt(document.getElementById("pe-age").value, 10) || state.profile.age;
@@ -4086,6 +4232,10 @@ function handleProfileSave() {
   const isInCrisis = isCashflowCrisis();
   if (isInCrisis) {
     addEmergencyMissions();
+  }
+  // Wenn sich das Altersband geändert hat: altersgerechte Quests nachladen
+  if (state.profile.age !== oldAge) {
+    loadAgeAppropriateQuests();
   }
   save();
   renderAll();
