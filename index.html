@@ -1829,6 +1829,19 @@ const MISSION_TEMPLATES = [
   { id: "i6", title: "1 Buch über Investieren lesen", category: "investieren", baseDifficulty: "schwer", effect: 0, xp: 300,
     tierMin: 0, tierMax: 5, weakness: "investieren_unklar",
     desc: "Empfehlung: „Souverän investieren“ (Kommer) oder „Der reichste Mann von Babylon“." },
+  // --- Premium-Quests fuer Tier 3-5 ---
+  { id: "i7", title: "Steueroptimierung prüfen", category: "investieren", baseDifficulty: "schwer", effect: 0, xp: 250,
+    tierMin: 3, tierMax: 5, ageMin: 18,
+    desc: "Freistellungsauftrag voll ausgenutzt (1.000 € pro Person)? Verlustverrechnung im Depot geprüft? Riester/Rürup sinnvoll? 30 Min mit Steuerberater oder Smartsteuer-App – oft 200–800 € pro Jahr Ersparnis." },
+  { id: "i8", title: "ETF-Kostencheck (TER vergleichen)", category: "investieren", baseDifficulty: "mittel", effect: 0, xp: 180,
+    tierMin: 3, tierMax: 5, ageMin: 18,
+    desc: "Schau dir die TER (Total Expense Ratio) deiner ETFs an. Über 0,3 %? Vergleiche mit günstigeren Alternativen (iShares Core MSCI World 0,20 %, Vanguard FTSE All-World 0,22 %). Wechsel spart langfristig 5-stellig." },
+  { id: "i9", title: "Diversifikation prüfen", category: "investieren", baseDifficulty: "mittel", effect: 0, xp: 200,
+    tierMin: 3, tierMax: 5, ageMin: 18,
+    desc: "Wie ist dein Depot aufgeteilt? Klumpenrisiko in einer Branche / einem Land? Faustregel: 70 % World-ETF, 30 % Emerging Markets oder thematische Beimischung. Rebalancing einmal pro Jahr." },
+  { id: "i10", title: "Vorsorgevollmacht + Testament", category: "investieren", baseDifficulty: "schwer", effect: 0, xp: 300,
+    tierMin: 3, tierMax: 5, ageMin: 25,
+    desc: "Sobald nennenswertes Vermögen vorhanden ist: Vorsorgevollmacht (kostenlos bei Notar oder online), Patientenverfügung, ggf. einfaches Testament. Schützt Familie + Vermögen bei Notfällen." },
 
   // --- Disziplin ---
   { id: "d1", title: "7 Tage Ausgaben tracken", category: "disziplin", baseDifficulty: "mittel", effect: 0, xp: 120,
@@ -3618,6 +3631,8 @@ function recommendTemplateIds(count = 6) {
     if (tier < tMin || tier > tMax) return;
     // Altersfilter (14-Jähriger braucht keine KFZ-Versicherung-Quest)
     if (!meetsAgeRequirements(t)) return;
+    // Crisis-Quests nur empfehlen, wenn akute Cashflow-Krise vorliegt
+    if (t.crisis === true && !isCashflowCrisis()) return;
     // Beruf-Block
     if (t.notFor && occ && t.notFor.includes(occ)) return;
     // Bereits in der aktiven Liste? Skip (auch erledigte Long-Quest-Stufen)
@@ -3632,12 +3647,18 @@ function recommendTemplateIds(count = 6) {
     if (t.category === "schulden" && (w.debt || 0) > 0) score += 8;
     // Bonus: Investieren-Quest, wenn User Tier ≥ 2 und kein Depot
     if (t.category === "investieren" && (w.depot || 0) === 0 && tier >= 1) score += 6;
+    // Premium-Bonus: Tier 4-5 mit Depot → Asset-Allocation/Optimierung-Quests bevorzugen
+    if (t.category === "investieren" && (w.depot || 0) >= 1000 && tier >= 4 && t.tierMin >= 3) score += 8;
+    // Premium-Penalty: Tier 4-5 sollen keine Anfänger-Lern-Quests bekommen
+    if (tier >= 4 && t.weakness === "investieren_unklar") score -= 4;
     // Bonus: Vertragsoptimierung, wenn Fixkosten hoch
     if (t.category === "vertraege" && cf.income > 0 && cf.fixed > cf.income * 0.55) score += 7;
     // Bonus: Sparen, wenn Sparrate niedrig
     if (t.category === "sparen" && cf.savings < 100) score += 4;
     // Bonus: Verdienen, wenn Tier 0–1
     if (t.category === "verdienen" && tier <= 1) score += 5;
+    // Penalty: Verkaufs-Quests für hohe Tiers reduzieren (nicht passend)
+    if (t.category === "verdienen" && tier >= 3) score -= 3;
     // Penalisierung: zu schwer für aktuellen Cashflow
     const eff = effectiveEffect(t);
     if (eff > 0 && cf.savings > 0 && eff > cf.savings * 1.5) score -= 5;
