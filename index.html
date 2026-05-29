@@ -268,6 +268,59 @@
   .ob-sub { color: var(--muted-deep); margin: 0 0 24px; font-size: 15px; line-height: 1.55; }
   .ob-spacer { flex: 1; min-height: 16px; }
 
+  /* Live-Berechnung in Onboarding-Schritt 6 */
+  .ob-live-calc {
+    margin-top: 18px;
+    padding: 16px 18px;
+    background: linear-gradient(160deg, var(--mint-bg) 0%, var(--surface) 60%);
+    border: 1.5px solid rgba(16,185,129,0.30);
+    border-radius: var(--radius);
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .ob-live-calc .lc-title {
+    font-size: 12px; font-weight: 800;
+    color: #047857; letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .ob-live-calc .lc-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 3px 0; font-variant-numeric: tabular-nums;
+  }
+  .ob-live-calc .lc-row .lc-label { color: var(--text-soft); }
+  .ob-live-calc .lc-row .lc-val { font-weight: 700; }
+  .ob-live-calc .lc-divider {
+    height: 1px; background: rgba(15,23,42,0.10);
+    margin: 6px 0;
+  }
+  .ob-live-calc .lc-total {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 4px 0;
+    font-weight: 800; font-size: 15px;
+    color: #047857;
+    font-variant-numeric: tabular-nums;
+  }
+  .ob-live-calc .lc-total.negative { color: var(--rose); }
+  .ob-live-calc .lc-block {
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid rgba(15,23,42,0.10);
+  }
+  .ob-live-calc .lc-block-title {
+    font-size: 12px; font-weight: 800;
+    color: var(--text); margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .ob-live-calc .lc-hint {
+    font-size: 12px; color: var(--muted-deep);
+    margin-top: 4px; line-height: 1.45;
+  }
+  .ob-live-calc.warn {
+    background: linear-gradient(160deg, var(--rose-bg) 0%, var(--surface) 60%);
+    border-color: rgba(244,63,94,0.30);
+  }
+  .ob-live-calc.warn .lc-title { color: #BE123C; }
+
   .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .choice-grid.full { grid-template-columns: 1fr; }
   .choice {
@@ -1097,6 +1150,10 @@
     <input type="number" inputmode="decimal" id="ob-variable" placeholder="Essen, Freizeit, Konsum" />
     <label>💎 Tatsächlicher Sparbetrag €/Monat</label>
     <input type="number" inputmode="decimal" id="ob-savings" placeholder="Was bleibt wirklich übrig?" />
+
+    <!-- Live-Rechnung: aktualisiert sich automatisch beim Tippen -->
+    <div id="ob-live-calc" class="ob-live-calc" style="display:none;"></div>
+
     <div class="ob-spacer"></div>
     <div class="btn-row">
       <button class="btn-ghost" data-back="6">Zurück</button>
@@ -2509,6 +2566,83 @@ function num(id) {
   const v = parseFloat(raw);
   return isNaN(v) ? 0 : Math.max(0, v);
 }
+
+// Live-Berechnung in Onboarding-Schritt 6
+function updateObLiveCalc() {
+  const box = document.getElementById("ob-live-calc");
+  if (!box) return;
+  const parse = (id) => {
+    const raw = String(document.getElementById(id).value || "").replace(",", ".").trim();
+    const v = parseFloat(raw);
+    return isNaN(v) ? 0 : Math.max(0, v);
+  };
+  const income = parse("ob-income");
+  const fixed = parse("ob-fixed");
+  const variable = parse("ob-variable");
+  const savings = parse("ob-savings");
+
+  // Box nur zeigen wenn Einnahmen eingegeben
+  if (income <= 0) { box.style.display = "none"; return; }
+  box.style.display = "";
+
+  const free = income - fixed - variable;
+  const monthlyExpenses = fixed + variable;
+
+  // Notgroschen-Ziel: 3 Monatsausgaben, mind. 1.000 €, max 15.000 €
+  // Bei sehr geringen Ausgaben (Schüler): mind. 500 €
+  let notgroschenTarget;
+  if (income < 500) {
+    notgroschenTarget = 500;
+  } else {
+    notgroschenTarget = Math.min(15000, Math.max(1000, monthlyExpenses * 3));
+  }
+
+  // Vorgeschlagene Aufbau-Rate: 20% vom rechnerisch freien, mind. 25 €, max 500 €
+  const buildup = free > 0 ? Math.max(25, Math.min(500, Math.round(free * 0.20))) : 0;
+  const effective = free - buildup;
+  const months = buildup > 0 ? Math.ceil(notgroschenTarget / buildup) : 0;
+
+  let warnClass = "";
+  if (free < 0) warnClass = " warn";
+
+  let html = '<div class="lc-title">💡 Deine Live-Rechnung</div>';
+  html += '<div class="lc-row"><span class="lc-label">Einnahmen</span><span class="lc-val">' + fmt(income) + '</span></div>';
+  html += '<div class="lc-row"><span class="lc-label">− Fixkosten</span><span class="lc-val">−' + fmt(fixed) + '</span></div>';
+  html += '<div class="lc-row"><span class="lc-label">− Variable Ausgaben</span><span class="lc-val">−' + fmt(variable) + '</span></div>';
+  html += '<div class="lc-divider"></div>';
+  html += '<div class="lc-total' + (free < 0 ? ' negative' : '') + '"><span>= Rechnerisch frei</span><span>' + fmt(free) + '</span></div>';
+
+  if (free < 0) {
+    html += '<div class="lc-hint" style="color:var(--rose);font-weight:600;margin-top:8px;">⚠️ Du gibst monatlich ' + fmt(-free) + ' mehr aus als du einnimmst – wir aktivieren nach dem Onboarding die Notbremse-Quests.</div>';
+  } else if (free === 0) {
+    html += '<div class="lc-hint">Nullsumme: alles, was reinkommt, geht raus. Erster Schritt: 1 Fixkosten-Audit (Quests sind dafür da).</div>';
+  } else {
+    html += '<div class="lc-block">';
+    html += '<div class="lc-block-title">🛡️ Notgroschen-Plan</div>';
+    html += '<div class="lc-row"><span class="lc-label">Empfohlenes Ziel</span><span class="lc-val">' + fmt(notgroschenTarget) + '</span></div>';
+    html += '<div class="lc-row"><span class="lc-label">Aufbau-Rate (Empfehlung)</span><span class="lc-val">' + fmt(buildup) + '/Monat</span></div>';
+    html += '<div class="lc-row"><span class="lc-label">Voll in</span><span class="lc-val">' + months + ' Monaten</span></div>';
+    html += '<div class="lc-divider"></div>';
+    html += '<div class="lc-total"><span>≈ Wirklich frei verfügbar</span><span>' + fmt(effective) + '/Monat</span></div>';
+    html += '<div class="lc-hint">' + (effective > 0
+      ? 'Nach Notgroschen-Aufbau bleiben dir <strong>' + fmt(effective) + '</strong> für Konsum, Erlebnisse oder zusätzliches Investieren.'
+      : 'Notgroschen-Aufbau frisst aktuell alles freie Geld. Das ist OK – sobald er voll ist, kannst du voll investieren.') + '</div>';
+    html += '</div>';
+    if (savings > 0 && Math.abs(savings - buildup) > 50) {
+      html += '<div class="lc-hint" style="margin-top:8px;">💎 Du hast <strong>' + fmt(savings) + '</strong> als Sparbetrag angegeben' +
+        (savings > buildup ? ' – das ist ehrgeizig, super!' : ' – die App rechnet trotzdem mit deinem Wert.') + '</div>';
+    }
+  }
+
+  box.innerHTML = html;
+  box.className = "ob-live-calc" + warnClass;
+}
+
+// Event-Listener auf die 4 Cashflow-Felder
+["ob-income", "ob-fixed", "ob-variable", "ob-savings"].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener("input", updateObLiveCalc);
+});
 
 function goStep(n) {
   document.querySelectorAll(".ob-step").forEach(s => s.classList.remove("active"));
