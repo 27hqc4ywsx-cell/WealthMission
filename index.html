@@ -1605,6 +1605,19 @@
     </div>
 
     <div class="card">
+      <div class="card-title">💾 Datensicherung</div>
+      <div class="text-muted text-small" style="line-height:1.5;margin-bottom:10px;">
+        <strong>Wichtig:</strong> Deine Daten liegen nur in diesem Browser. Wenn du den Browser-Cache löschst, einen anderen Browser nutzt oder die App vom Homescreen entfernst, sind sie weg.<br/>
+        Mach regelmäßig ein Backup. Die Datei kannst du sicher ablegen (Cloud, E-Mail an dich selbst) und jederzeit wieder einspielen – auch auf einem neuen Gerät.
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" id="export-btn">⬇️ Backup speichern</button>
+        <button class="btn-ghost" id="import-btn">⬆️ Backup laden</button>
+      </div>
+      <input type="file" id="import-file" accept="application/json,.json" style="display:none;" />
+    </div>
+
+    <div class="card">
       <div class="card-title">Wartung</div>
       <div class="text-muted text-small" style="line-height:1.5;margin-bottom:10px;">Falls Zahlen nicht stimmen oder „NaN €" angezeigt wird, repariert dieser Knopf den Daten-Stand. Deine Werte bleiben erhalten, nur kaputte Felder werden auf 0 gesetzt und der Tresor an Bargeld+Bank angepasst.</div>
       <button class="btn-ghost" id="repair-btn">🛠️ Daten reparieren</button>
@@ -1663,10 +1676,14 @@ function cashflowDeficit() {
   return Math.max(0, (cf.fixed || 0) + (cf.variable || 0) - (cf.income || 0));
 }
 
-function computeUserTier() {
-  const savings = state.cashflow.savings || 0;
-  const net = netWorth();
-  const depot = state.wealth.depot || 0;
+// Berechnet den Tier. Optional kann ein {wealth, cashflow}-Objekt übergeben werden
+// (z.B. für die Onboarding-Vorschau), sonst wird der globale state verwendet.
+function computeUserTier(src) {
+  const w = src ? src.wealth : state.wealth;
+  const cf = src ? src.cashflow : state.cashflow;
+  const savings = (cf && cf.savings) || 0;
+  const net = (w.cash || 0) + (w.bank || 0) + (w.depot || 0) + (w.gold || 0) - (w.debt || 0);
+  const depot = (w && w.depot) || 0;
 
   if (net >= 50000 || savings >= 1000) return 5; // Kapitalstratege
   if (net >= 10000 || savings >= 500) return 4;  // Investor
@@ -2284,15 +2301,17 @@ function sanitizeState(s) {
   s.streak.count = safeNum(s.streak.count);
   s.profile.age = parseInt(s.profile.age, 10) || 0;
 
-  // History bereinigen
+  // History bereinigen + auf letzte 730 Einträge (~2 Jahre) cappen
   if (!Array.isArray(s.history)) s.history = [];
   s.history = s.history.map(h => ({ date: String(h.date || ""), net: safeNum(h.net) })).filter(h => h.date);
+  if (s.history.length > 730) s.history = s.history.slice(-730);
 
-  // ExpenseLog bereinigen
+  // ExpenseLog bereinigen + auf letzte 1000 Einträge cappen (Storage-Schutz)
   if (!Array.isArray(s.expenseLog)) s.expenseLog = [];
   s.expenseLog = s.expenseLog
     .map(e => ({ id: e.id || ('e_' + Math.random().toString(36).slice(2, 9)), date: String(e.date || ''), category: String(e.category || ''), amount: safeNum(e.amount) }))
     .filter(e => e.date && e.category && e.amount > 0);
+  if (s.expenseLog.length > 1000) s.expenseLog = s.expenseLog.slice(-1000);
 
   // Custom Kategorien bereinigen
   if (!Array.isArray(s.customCategories)) s.customCategories = [];
@@ -2310,8 +2329,18 @@ function sanitizeState(s) {
 
   return s;
 }
+let saveErrorShown = false;
 function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    saveErrorShown = false;
+  } catch (e) {
+    // iOS Safari Privat-Modus wirft hier sofort; Quota-Überschreitung ebenfalls.
+    if (!saveErrorShown) {
+      saveErrorShown = true;
+      toast("⚠️ Speichern nicht möglich (Privat-Modus?). Daten gehen beim Schließen verloren.");
+    }
+  }
 }
 
 /* =========================================================
@@ -2483,17 +2512,12 @@ function renderObChallenges() {
 
 // Step 9: Zusammenfassung mit User-Tier
 function renderObSummary() {
-  // Berechne preliminären Tier basierend auf obData
+  // Tier über dieselbe zentrale Funktion berechnen (keine Logik-Duplikation)
   const tmpState = { wealth: { cash: obData.cash, bank: obData.bank, depot: obData.depot, gold: obData.gold, debt: obData.debt },
                      cashflow: { savings: obData.savings } };
   const savings = obData.savings || 0;
   const tmpNet = (obData.cash + obData.bank + obData.depot + obData.gold) - obData.debt;
-  let tier = 0;
-  if (tmpNet >= 50000 || savings >= 1000) tier = 5;
-  else if (tmpNet >= 10000 || savings >= 500) tier = 4;
-  else if (savings >= 200 && obData.depot > 0) tier = 3;
-  else if (savings >= 50) tier = 2;
-  else if (savings > 0 || tmpNet > 0) tier = 1;
+  const tier = computeUserTier(tmpState);
 
   const occ = OCCUPATIONS.find(o => o.id === obData.occupation);
   const challengeLabels = obData.challenges.map(id => {
@@ -2669,6 +2693,8 @@ document.getElementById("ob-finish").addEventListener("click", () => {
   if (isCashflowCrisis()) {
     addEmergencyMissions();
   }
+  // Bereits erreichte Meilensteine still markieren (kein Popup-Spam für reiche Starter)
+  seedMilestones();
   pushHistory();
   save();
   enterApp();
@@ -4166,6 +4192,17 @@ function checkMilestones() {
   }
 }
 
+// Markiert beim ersten Start alle bereits überschrittenen Meilensteine still als erreicht,
+// damit ein User der mit z.B. 50.000 € startet KEINE "Erste 100 €!"-Popup-Kette bekommt.
+function seedMilestones() {
+  const total = netWorth();
+  MILESTONES.forEach(ms => {
+    if (total >= ms.at && !state.milestonesReached.includes(ms.at)) {
+      state.milestonesReached.push(ms.at);
+    }
+  });
+}
+
 /* =========================================================
    MODALS
    ========================================================= */
@@ -4532,6 +4569,78 @@ document.getElementById("repair-btn").addEventListener("click", () => {
   toast("✓ Daten repariert");
 });
 document.getElementById("crisis-open-btn").addEventListener("click", showCashflowCrisisModal);
+
+// ===== Datensicherung: Export =====
+document.getElementById("export-btn").addEventListener("click", () => {
+  try {
+    const payload = {
+      app: "WealthMission",
+      version: 2,
+      exportedAt: new Date().toISOString(),
+      state: state
+    };
+    const json = JSON.stringify(payload, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const datum = todayISO();
+    const safeName = (state.character.name || "Held").replace(/[^a-zA-Z0-9äöüÄÖÜß_-]/g, "");
+    a.href = url;
+    a.download = "WealthMission_" + safeName + "_" + datum + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast("✓ Backup gespeichert");
+  } catch (e) {
+    toast("Export fehlgeschlagen: " + e.message);
+  }
+});
+
+// ===== Datensicherung: Import =====
+document.getElementById("import-btn").addEventListener("click", () => {
+  document.getElementById("import-file").click();
+});
+document.getElementById("import-file").addEventListener("change", (ev) => {
+  const file = ev.target.files && ev.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(reader.result);
+      const imported = parsed && parsed.state ? parsed.state : parsed;
+      if (!imported || typeof imported !== "object" || !imported.character) {
+        toast("Datei ist kein gültiges WealthMission-Backup.");
+        return;
+      }
+      if (!confirm("Backup laden? Dein aktueller Stand wird durch das Backup ersetzt.")) return;
+      // Durch Default-State mergen + sanitizen, damit alte/teilweise Backups sauber landen
+      const def = defaultState();
+      const merged = Object.assign(def, imported, {
+        character: Object.assign(def.character, imported.character || {}),
+        wealth: Object.assign(def.wealth, imported.wealth || {}),
+        stats: Object.assign(def.stats, imported.stats || {}),
+        streak: Object.assign(def.streak, imported.streak || {}),
+        profile: Object.assign(def.profile, imported.profile || {}),
+        cashflow: Object.assign(def.cashflow, imported.cashflow || {}),
+        goals: Object.assign(def.goals, imported.goals || {}),
+        locked: Object.assign(def.locked, imported.locked || {}),
+        decay: Object.assign(def.decay, imported.decay || {}),
+        behavior: Object.assign(def.behavior, imported.behavior || {}),
+      });
+      state = sanitizeState(merged);
+      state.userTier = computeUserTier();
+      save();
+      renderAll();
+      toast("✓ Backup geladen");
+    } catch (e) {
+      toast("Import fehlgeschlagen: ungültige Datei.");
+    } finally {
+      ev.target.value = ""; // erlaubt erneutes Laden derselben Datei
+    }
+  };
+  reader.readAsText(file);
+});
 
 document.querySelectorAll("#mission-tabs .mission-tab").forEach(t => {
   t.addEventListener("click", () => {
