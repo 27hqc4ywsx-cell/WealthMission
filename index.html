@@ -813,6 +813,26 @@
   @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
   @keyframes toastOut { to { opacity: 0; transform: translate(-50%, 20px); } }
 
+  /* Dezenter "Gespeichert"-Indikator oben rechts */
+  .save-indicator {
+    position: fixed;
+    top: calc(var(--safe-top) + 14px);
+    right: 14px;
+    background: var(--mint);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity .25s ease, transform .25s ease;
+    z-index: 250;
+  }
+  .save-indicator.show { opacity: 1; transform: translateY(0); }
+
   /* =========================================================
      QUICK TRACK – Schnell-Tap Konsum-Tracking
      ========================================================= */
@@ -4520,31 +4540,94 @@ function toast(msg) {
 /* =========================================================
    EVENT BINDINGS
    ========================================================= */
-document.getElementById("save-wealth").addEventListener("click", () => {
-  state.wealth = {
+// Übernimmt die aktuellen Werte aus den Vermögens-Inputs in den State und speichert.
+// Wird sowohl vom Speichern-Button als auch vom Auto-Save bei Eingabe + App-Wechsel genutzt.
+function commitWealthInputs(silent) {
+  const w = document.getElementById("w-cash");
+  if (!w) return false; // Vermögens-Tab nicht im DOM
+  const newWealth = {
     cash: num("w-cash"), bank: num("w-bank"),
     depot: num("w-depot"), gold: num("w-gold"),
     debt: num("w-debt"),
   };
+  // Nur speichern wenn sich tatsächlich etwas geändert hat
+  const cur = state.wealth || {};
+  if (newWealth.cash === (cur.cash||0) && newWealth.bank === (cur.bank||0) &&
+      newWealth.depot === (cur.depot||0) && newWealth.gold === (cur.gold||0) &&
+      newWealth.debt === (cur.debt||0)) {
+    return false;
+  }
+  state.wealth = newWealth;
   // Plausibilität: Tresor darf nicht größer sein als Bargeld+Bank
   const liquid = state.wealth.cash + state.wealth.bank;
   if (state.locked.total > liquid + 0.01) {
     state.locked.total = liquid;
-    // Deposits proportional anpassen
     let cap = liquid;
     state.locked.deposits = state.locked.deposits.map(d => {
       if (cap <= 0) return null;
       if (d.amount <= cap) { cap -= d.amount; return d; }
       const adj = { ...d, amount: cap }; cap = 0; return adj;
     }).filter(Boolean);
-    toast("Tresor wurde an dein Bargeld+Bank angepasst.");
+    if (!silent) toast("Tresor wurde an dein Bargeld+Bank angepasst.");
   }
   pushHistory();
   state.userTier = computeUserTier();
   save();
+  return true;
+}
+
+document.getElementById("save-wealth").addEventListener("click", () => {
+  const changed = commitWealthInputs(false);
   renderAll();
-  toast("Vermögen gespeichert.");
+  toast(changed ? "✓ Vermögen gespeichert" : "Keine Änderungen");
 });
+
+// Auto-Save bei Eingabe in den Vermögens-Feldern (blur = wenn der User das Feld verlässt)
+["w-cash","w-bank","w-depot","w-gold","w-debt"].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener("blur", () => {
+      if (commitWealthInputs(true)) {
+        // Header + Stats live aktualisieren, ohne aggressives renderAll
+        renderWealth();
+        renderHeader();
+        showSaveIndicator();
+      }
+    });
+  }
+});
+
+// Visueller "Gespeichert"-Indikator (kurzer Toast oben)
+let saveIndicatorTimer = null;
+function showSaveIndicator() {
+  let el = document.getElementById("save-indicator");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "save-indicator";
+    el.className = "save-indicator";
+    el.textContent = "✓ Gespeichert";
+    document.body.appendChild(el);
+  }
+  el.classList.add("show");
+  clearTimeout(saveIndicatorTimer);
+  saveIndicatorTimer = setTimeout(() => el.classList.remove("show"), 1400);
+}
+
+// ===== App-Lifecycle: bei jedem Verlassen / Hintergrund-Wechsel speichern =====
+function flushAndSave() {
+  try {
+    commitWealthInputs(true); // hängige Vermögens-Eingaben übernehmen
+    save();
+  } catch (e) { /* still */ }
+}
+// pagehide deckt Safari iOS App-Switch + Tab-Close ab
+window.addEventListener("pagehide", flushAndSave);
+// visibilitychange feuert auch bei Wechsel auf anderen Tab / Sleep
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") flushAndSave();
+});
+// beforeunload als zusätzlicher Schutz (Browser-Reload, Tab-Close)
+window.addEventListener("beforeunload", flushAndSave);
 
 document.getElementById("vault-deposit-btn").addEventListener("click", showVaultDepositDialog);
 document.getElementById("vault-withdraw-btn").addEventListener("click", showVaultWithdrawDialog);
