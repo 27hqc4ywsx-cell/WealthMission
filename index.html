@@ -9,55 +9,64 @@
 <title>WealthMission – Vermögen trifft Charakter</title>
 <style>
   /* =========================================================
-     DESIGN TOKENS – Friendly Fintech, Light Theme
+     DESIGN TOKENS – "Midnight Navy & Platinum" Dark Elite
+     Champagner-Gold = knapper Erfolgs-/Aktiv-Akzent.
+     Platin = Struktur. Navy-Schwarz = Private-Banking-Ruhe.
+     (Variablennamen bleiben – nur die Werte sind jetzt dunkel)
      ========================================================= */
   :root {
-    /* Surfaces */
-    --bg: #F8F4EC;
-    --bg-warm: #FAF6EE;
-    --surface: #FFFFFF;
-    --surface-2: #F4EFE3;
-    --surface-3: #ECE6D7;
-    --line: rgba(15, 23, 42, 0.08);
-    --line-strong: rgba(15, 23, 42, 0.14);
+    /* Surfaces – tiefes Navy-Schwarz, nah beieinander (Trennung über Linien/Schatten) */
+    --bg: #070A12;
+    --bg-warm: #0C111C;
+    --surface: #121826;
+    --surface-2: #19202F;
+    --surface-3: #222B3D;
+    --line: rgba(199, 210, 224, 0.08);
+    --line-strong: rgba(199, 210, 224, 0.16);
+    --glass-border: rgba(199, 210, 224, 0.12); /* Alias (Altlast-Referenzen) */
 
-    /* Text */
-    --text: #1F2937;
-    --text-soft: #475569;
-    --muted: #94A3B8;
-    --muted-deep: #64748B;
+    /* Text – kühle, klare Rampe (AA auf dunklem Grund) */
+    --text: #F2F5FA;
+    --text-soft: #AEB8C9;
+    --muted: #7E8AA0;
+    --muted-deep: #AEB8C9;
 
-    /* Primary accent: deep teal */
-    --primary: #0F766E;
-    --primary-mid: #14B8A6;
-    --primary-soft: #5EEAD4;
-    --primary-bg: #CCFBF1;
-    --primary-bg-hover: #99F6E4;
+    /* Primary = Champagner-Gold (Erfolg / aktiv / verdient) */
+    --primary: #D8B978;
+    --primary-mid: #E7CF9E;
+    --primary-soft: #A8884B;
+    --primary-bg: rgba(216, 185, 120, 0.16);
+    --primary-bg-hover: rgba(216, 185, 120, 0.26);
 
-    /* Secondary accent: warm coral */
-    --coral: #FB6F4B;
-    --coral-soft: #FEC0AE;
-    --coral-bg: #FFE4D7;
+    /* Platin – Struktur-Metall (Rahmen, Sekundär-Buttons, Icons) */
+    --platinum: #C7D2E0;
+    --accent-glow: rgba(216, 185, 120, 0.28);
+    --info: #5BA3E8;
 
-    /* Mint */
-    --mint: #10B981;
+    /* Sekundär / warm (tox-Hebel, Streak) – gedämpftes Terrakotta */
+    --coral: #E0905E;
+    --coral-soft: #EBB394;
+    --coral-bg: rgba(224, 144, 94, 0.13);
+
+    /* Erfolg / Zuwächse – lebendiges Smaragd */
+    --mint: #34D399;
     --mint-soft: #6EE7B7;
-    --mint-bg: #D1FAE5;
+    --mint-bg: rgba(52, 211, 153, 0.12);
 
-    /* Amber (for gold/XP) */
-    --amber: #F59E0B;
-    --amber-soft: #FCD34D;
-    --amber-bg: #FEF3C7;
+    /* Gold / XP / Rang */
+    --amber: #D8B978;
+    --amber-soft: #E7CF9E;
+    --amber-bg: rgba(216, 185, 120, 0.14);
 
-    /* Rose / danger */
-    --rose: #F43F5E;
-    --rose-soft: #FB7185;
-    --rose-bg: #FFE4E6;
+    /* Gefahr / Krise – raffiniertes, nicht-grelles Rot */
+    --rose: #E0635E;
+    --rose-soft: #E88983;
+    --rose-bg: rgba(239, 94, 110, 0.12);
 
-    /* Violet */
-    --violet: #8B5CF6;
-    --violet-soft: #C4B5FD;
-    --violet-bg: #EDE9FE;
+    /* Violett – Premium-Ton (Tier-Badge) */
+    --violet: #A88BE0;
+    --violet-soft: #C3B0EC;
+    --violet-bg: rgba(168, 139, 224, 0.14);
 
     /* Sizing */
     --radius-sm: 14px;
@@ -67,22 +76,27 @@
     --safe-top: env(safe-area-inset-top);
     --safe-bottom: env(safe-area-inset-bottom);
 
-    /* Shadows: soft drops, no glow */
-    --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.04);
-    --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.06), 0 2px 6px rgba(15, 23, 42, 0.04);
-    --shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.10), 0 4px 12px rgba(15, 23, 42, 0.05);
+    /* Shadows – tief, dunkel (auf dunklem Grund) */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.40), 0 1px 2px rgba(0, 0, 0, 0.30);
+    --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.50), 0 2px 8px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.62), 0 6px 16px rgba(0, 0, 0, 0.45);
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; padding: 0; height: 100%; }
   body {
     font-family: -apple-system, "SF Pro Rounded", "SF Pro Text", "Avenir Next", "Nunito Sans", "Helvetica Neue", Arial, sans-serif;
-    background: var(--bg);
     color: var(--text);
     min-height: 100vh;
     overscroll-behavior: none;
     -webkit-font-smoothing: antialiased;
     line-height: 1.5;
+    background:
+      radial-gradient(1100px 720px at 12% -12%, rgba(216,185,120,0.10), transparent 58%),
+      radial-gradient(900px 620px at 102% 14%, rgba(91,163,232,0.06), transparent 60%),
+      radial-gradient(800px 600px at 50% 116%, rgba(168,139,224,0.05), transparent 60%),
+      linear-gradient(180deg, #070A12 0%, #0C111C 55%, #070A12 100%);
+    background-attachment: fixed;
   }
 
   h1, h2, h3 {
@@ -165,35 +179,35 @@
   button:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .btn-primary {
-    background: var(--primary);
-    color: #fff;
+    background: linear-gradient(180deg, var(--primary-mid), var(--primary));
+    color: #0A0E16;
     border: none;
-    box-shadow: 0 6px 16px rgba(15, 118, 110, 0.25);
+    box-shadow: 0 8px 22px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.35);
   }
   .btn-primary:active { background: #0B5C56; }
 
   .btn-success {
     background: var(--mint);
-    color: #fff;
+    color: #06231A;
     border: none;
-    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.25);
+    box-shadow: 0 8px 20px rgba(52, 211, 153, 0.28);
   }
   .btn-success:active { background: #059669; }
 
   .btn-violet {
     background: var(--violet);
-    color: #fff;
+    color: #1A0E33;
     border: none;
-    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.25);
+    box-shadow: 0 8px 20px rgba(168, 139, 224, 0.28);
   }
 
   .btn-danger {
     background: var(--rose);
-    color: #fff;
+    color: #2A0608;
     border: none;
-    box-shadow: 0 6px 16px rgba(244, 63, 94, 0.25);
+    box-shadow: 0 8px 20px rgba(239, 94, 110, 0.28);
   }
-  .btn-danger:active { background: #BE123C; }
+  .btn-danger:active { background: #E88983; }
 
   .btn-ghost {
     background: var(--surface);
@@ -281,7 +295,7 @@
   }
   .ob-live-calc .lc-title {
     font-size: 12px; font-weight: 800;
-    color: #047857; letter-spacing: 1px;
+    color: #6EE7B7; letter-spacing: 1px;
     text-transform: uppercase; margin-bottom: 10px;
   }
   .ob-live-calc .lc-row {
@@ -298,7 +312,7 @@
     display: flex; justify-content: space-between; align-items: baseline;
     padding: 4px 0;
     font-weight: 800; font-size: 15px;
-    color: #047857;
+    color: #6EE7B7;
     font-variant-numeric: tabular-nums;
   }
   .ob-live-calc .lc-total.negative { color: var(--rose); }
@@ -319,7 +333,7 @@
     background: linear-gradient(160deg, var(--rose-bg) 0%, var(--surface) 60%);
     border-color: rgba(244,63,94,0.30);
   }
-  .ob-live-calc.warn .lc-title { color: #BE123C; }
+  .ob-live-calc.warn .lc-title { color: #E88983; }
 
   .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .choice-grid.full { grid-template-columns: 1fr; }
@@ -378,8 +392,8 @@
     box-shadow: var(--shadow-sm);
   }
   .chip.selected {
-    background: var(--primary); color: #fff; border-color: var(--primary);
-    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.30);
+    background: linear-gradient(180deg, var(--primary-mid), var(--primary)); color: #0A0E16; border-color: transparent;
+    box-shadow: 0 4px 14px var(--accent-glow);
   }
 
   /* =========================================================
@@ -399,6 +413,15 @@
     border-radius: 12px; color: var(--text-soft); font-weight: 700;
     box-shadow: var(--shadow-sm);
   }
+  .header .icon-btn {
+    width: 40px; height: 40px; min-height: 40px; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 19px; color: var(--platinum); border-radius: 12px;
+  }
+  .header .icon-btn:active { background: var(--surface-2); }
+
+  /* Diagramm-Panel im Statistik-Umschalter */
+  .chart-panel { margin-top: 4px; animation: fadeIn .2s ease; }
 
   /* =========================================================
      CHARACTER CARD
@@ -416,14 +439,14 @@
 
   .rank-badge {
     display: inline-flex; align-items: center; gap: 4px;
-    background: var(--amber-bg); color: #92400E;
+    background: var(--amber-bg); color: #E7CF9E;
     padding: 5px 12px; border-radius: 999px;
     font-size: 11px; font-weight: 800;
     text-transform: uppercase; letter-spacing: 1px;
   }
   .tier-badge {
     display: inline-flex; align-items: center; gap: 4px;
-    background: var(--violet-bg); color: #5B21B6;
+    background: var(--violet-bg); color: #C3B0EC;
     padding: 5px 12px; border-radius: 999px;
     font-size: 11px; font-weight: 800;
     text-transform: uppercase; letter-spacing: 1px;
@@ -437,7 +460,7 @@
   .level-pill strong { color: var(--text); font-size: 13px; }
   .streak-chip {
     display: inline-flex; align-items: center; gap: 4px;
-    background: var(--coral-bg); color: #C2410C;
+    background: var(--coral-bg); color: #EBB394;
     border-radius: 999px; padding: 5px 12px;
     font-size: 11px; font-weight: 800;
   }
@@ -466,33 +489,48 @@
   }
   .avatar-frame.damaged { filter: saturate(0.4) brightness(0.95); }
 
-  /* Background scenes – softer, lighter palette */
+  /* Background scenes – dunkles Premium-Ambiente, Akzent-Glow je Stil */
   .scene { position: absolute; inset: 0; }
   .scene.fantasy {
-    background: linear-gradient(180deg, #E0F2FE 0%, #DBEAFE 100%);
+    background:
+      radial-gradient(80% 60% at 50% 18%, rgba(168,139,224,0.28), transparent 70%),
+      linear-gradient(180deg, #161B2E 0%, #0A0D18 100%);
   }
   .scene.fantasy::before {
-    content: ""; position: absolute; left: 12%; top: 14%; width: 3px; height: 3px;
-    border-radius: 50%; background: var(--primary-soft);
+    content: ""; position: absolute; left: 12%; top: 14%; width: 2px; height: 2px;
+    border-radius: 50%; background: rgba(231,207,158,0.9);
     box-shadow:
-      18px 4px 0 var(--primary-soft), 35px 14px 0 rgba(94,234,212,0.6),
-      55px 8px 0 var(--primary-soft), 75px 22px 0 rgba(94,234,212,0.7),
-      14px 30px 0 rgba(94,234,212,0.5);
+      18px 4px 0 rgba(231,207,158,0.7), 35px 14px 0 rgba(199,210,224,0.5),
+      55px 8px 0 rgba(231,207,158,0.6), 75px 22px 0 rgba(199,210,224,0.7),
+      14px 30px 0 rgba(231,207,158,0.5), 60px 36px 0 rgba(199,210,224,0.4);
   }
-  .scene.casual { background: linear-gradient(180deg, #FFE4E6 0%, #FED7AA 100%); }
-  .scene.luxury { background: linear-gradient(180deg, #FEF3C7 0%, #FEE0C0 100%); }
+  .scene.casual {
+    background:
+      radial-gradient(80% 60% at 50% 20%, rgba(91,163,232,0.22), transparent 70%),
+      linear-gradient(180deg, #14233A 0%, #0A0D18 100%);
+  }
+  .scene.luxury {
+    background:
+      radial-gradient(85% 65% at 50% 12%, rgba(216,185,120,0.30), transparent 72%),
+      linear-gradient(180deg, #1C1A14 0%, #0A0906 100%);
+  }
   .scene.luxury::after {
     content: ""; position: absolute; bottom: 22%; left: 0; right: 0; height: 24px;
     background: linear-gradient(90deg,
-      #E5C896 0 14%, #D4AF7A 14% 26%, #E5C896 26% 40%,
-      #C99A66 40% 56%, #E5C896 56% 70%, #D4AF7A 70% 84%, #E5C896 84% 100%);
+      #2A2418 0 14%, #3A3022 14% 26%, #2A2418 26% 40%,
+      #4A3C20 40% 56%, #2A2418 56% 70%, #3A3022 70% 84%, #2A2418 84% 100%);
+    box-shadow: inset 0 8px 0 rgba(216,185,120,0.08);
   }
-  .scene.penthouse { background: linear-gradient(180deg, #FECACA 0%, #FCA5A5 100%); }
+  .scene.penthouse {
+    background:
+      radial-gradient(90% 70% at 50% 10%, rgba(216,185,120,0.40), transparent 70%),
+      linear-gradient(180deg, #2A2012 0%, #0A0805 100%);
+  }
   .scene.penthouse::after {
     content: ""; position: absolute; bottom: 22%; left: 0; right: 0; height: 28px;
     background: linear-gradient(90deg,
-      #B45309 0 14%, #D97706 14% 26%, #B45309 26% 40%,
-      #F59E0B 40% 56%, #B45309 56% 70%, #D97706 70% 84%, #B45309 84% 100%);
+      #3A2E18 0 14%, #5A4520 14% 26%, #3A2E18 26% 40%,
+      #A8884B 40% 56%, #3A2E18 56% 70%, #5A4520 70% 84%, #3A2E18 84% 100%);
   }
 
   /* Character SVG container */
@@ -602,8 +640,8 @@
     box-shadow: none;
   }
   .mission-tab.active {
-    background: var(--primary); color: #fff;
-    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
+    background: linear-gradient(180deg, var(--primary-mid), var(--primary)); color: #0A0E16;
+    box-shadow: 0 4px 14px var(--accent-glow);
   }
 
   .mission {
@@ -642,12 +680,12 @@
     text-transform: uppercase; letter-spacing: 0.8px; font-weight: 800;
     display: inline-flex; align-items: center; gap: 3px;
   }
-  .tag.gold { background: var(--amber-bg); color: #92400E; }
-  .tag.green { background: var(--mint-bg); color: #047857; }
-  .tag.violet { background: var(--violet-bg); color: #5B21B6; }
-  .tag.diff-leicht { background: var(--mint-bg); color: #047857; }
-  .tag.diff-mittel { background: var(--amber-bg); color: #92400E; }
-  .tag.diff-schwer { background: var(--rose-bg); color: #9F1239; }
+  .tag.gold { background: var(--amber-bg); color: #E7CF9E; }
+  .tag.green { background: var(--mint-bg); color: #6EE7B7; }
+  .tag.violet { background: var(--violet-bg); color: #C3B0EC; }
+  .tag.diff-leicht { background: var(--mint-bg); color: #6EE7B7; }
+  .tag.diff-mittel { background: var(--amber-bg); color: #E7CF9E; }
+  .tag.diff-schwer { background: var(--rose-bg); color: #E88983; }
 
   .mission-actions { display: flex; gap: 8px; flex-direction: column; }
   .mission-actions .btn { padding: 12px 14px; min-height: 46px; font-size: 14px; }
@@ -873,7 +911,7 @@
   }
   .quick-track-summary {
     margin-top: 14px; padding: 12px 14px;
-    background: rgba(255,255,255,0.55); border-radius: 12px;
+    background: rgba(0,0,0,0.22); border-radius: 12px;
     font-size: 13px; border: 1px solid var(--line);
   }
   .qts-row { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 0; }
@@ -915,7 +953,7 @@
   .cd-note {
     margin-top: 14px; padding: 12px 14px;
     background: var(--mint-bg); border-radius: 12px;
-    font-size: 13px; color: #047857; font-weight: 600;
+    font-size: 13px; color: #6EE7B7; font-weight: 600;
     line-height: 1.5;
   }
 
@@ -943,13 +981,13 @@
     color: var(--muted-deep); text-transform: uppercase;
     margin-bottom: 3px;
   }
-  .action-card.sev-tox .action-sev { color: #C2410C; }
-  .action-card.sev-crisis .action-sev { color: #9F1239; }
-  .action-card.sev-invest .action-sev { color: #047857; }
+  .action-card.sev-tox .action-sev { color: #EBB394; }
+  .action-card.sev-crisis .action-sev { color: #E88983; }
+  .action-card.sev-invest .action-sev { color: #6EE7B7; }
   .action-title { font-size: 16px; font-weight: 800; color: var(--text); line-height: 1.25; margin: 0; }
   .action-impact {
     font-size: 13px; color: var(--text-soft);
-    background: rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.22);
     border-radius: 10px;
     padding: 6px 12px;
     margin-bottom: 10px;
@@ -1230,12 +1268,11 @@
      ========================================================= -->
 <div id="app" class="hidden">
   <div class="header">
-    <div class="logo">⚔️ WEALTHMISSION</div>
-    <div style="display:flex;gap:6px;">
-      <button class="menu-btn" id="help-btn" aria-label="Hilfe">?</button>
-      <button class="menu-btn" id="reset-btn">Reset</button>
-    </div>
+    <div class="logo">⚜ WEALTHMISSION</div>
+    <button class="menu-btn icon-btn" id="settings-btn" aria-label="Einstellungen">⚙</button>
   </div>
+  <!-- Verstecktes File-Input für Backup-Import (global, damit der Listener stabil bleibt) -->
+  <input type="file" id="import-file" accept="application/json,.json" style="display:none;" />
 
   <!-- ============== DASHBOARD ============== -->
   <section class="view active" data-view="dashboard">
@@ -1352,7 +1389,7 @@
                 <!-- MOUTH MALE -->
                 <path id="char-mouth-male" d="M 47 22 Q 50 23 53 22" stroke="#7C2D12" stroke-width="0.7" fill="none" stroke-linecap="round"/>
                 <!-- MOUTH FEMALE (lipstick) -->
-                <path id="char-mouth-female" style="display:none" d="M 47 22 Q 50 23.5 53 22" stroke="#9F1239" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+                <path id="char-mouth-female" style="display:none" d="M 47 22 Q 50 23.5 53 22" stroke="#E88983" stroke-width="1.1" fill="none" stroke-linecap="round"/>
                 <!-- HELMET (Lvl 20+) -->
                 <g id="char-helmet" style="display:none">
                   <path d="M 35 16 Q 34 -2 50 -2 Q 66 -2 65 16 Q 65 22 62 25 L 59 24 Q 60 16 60 12 Q 58 7 50 7 Q 42 7 40 12 Q 40 16 41 24 L 38 25 Q 35 22 35 16 Z" fill="#94A3B8" stroke="#334155" stroke-width="0.5"/>
@@ -1561,24 +1598,30 @@
       <div id="consumption-diagnosis"></div>
     </div>
 
+    <!-- Statistiken – eine Karte, Diagramm per Umschalter -->
     <div class="card">
-      <div class="card-title">Vermögensverteilung</div>
-      <div id="chart-wealth"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Vermögensverlauf <span class="accent" id="chart-history-period">letzte Tage</span></div>
-      <div id="chart-history"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Konsumverhalten <span class="accent">pro Monat</span></div>
-      <div id="chart-cashflow"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Erledigte Quests pro Bereich</div>
-      <div id="chart-missions"></div>
+      <div class="card-title">Statistiken</div>
+      <div class="mission-tabs" id="chart-tabs">
+        <button class="mission-tab active" data-chart="wealth">Vermögen</button>
+        <button class="mission-tab" data-chart="history">Verlauf</button>
+        <button class="mission-tab" data-chart="cashflow">Konsum</button>
+        <button class="mission-tab" data-chart="missions">Quests</button>
+      </div>
+      <div class="chart-panel" data-chart-panel="wealth">
+        <div id="chart-wealth"></div>
+      </div>
+      <div class="chart-panel" data-chart-panel="history" style="display:none;">
+        <div class="text-muted text-small" style="margin-bottom:8px;">Nettovermögen · <span id="chart-history-period">letzte Tage</span></div>
+        <div id="chart-history"></div>
+      </div>
+      <div class="chart-panel" data-chart-panel="cashflow" style="display:none;">
+        <div class="text-muted text-small" style="margin-bottom:8px;">Konsumverhalten pro Monat</div>
+        <div id="chart-cashflow"></div>
+      </div>
+      <div class="chart-panel" data-chart-panel="missions" style="display:none;">
+        <div class="text-muted text-small" style="margin-bottom:8px;">Erledigte Quests pro Bereich</div>
+        <div id="chart-missions"></div>
+      </div>
     </div>
 
     <div class="card">
@@ -1620,27 +1663,12 @@
     </div>
 
     <div class="card">
-      <div class="card-title">Profil & Finanzen <button id="profile-edit-btn" style="width:auto;min-height:0;padding:4px 12px;font-size:11px;background:transparent;border:1px solid var(--glass-border);">Bearbeiten</button></div>
+      <div class="card-title">Profil & Finanzen <button id="profile-edit-btn" style="width:auto;min-height:0;padding:4px 12px;font-size:11px;background:transparent;border:1px solid var(--line-strong);color:var(--text-soft);">Bearbeiten</button></div>
       <div id="profile-display"></div>
     </div>
 
-    <div class="card">
-      <div class="card-title">💾 Datensicherung</div>
-      <div class="text-muted text-small" style="line-height:1.5;margin-bottom:10px;">
-        <strong>Wichtig:</strong> Deine Daten liegen nur in diesem Browser. Wenn du den Browser-Cache löschst, einen anderen Browser nutzt oder die App vom Homescreen entfernst, sind sie weg.<br/>
-        Mach regelmäßig ein Backup. Die Datei kannst du sicher ablegen (Cloud, E-Mail an dich selbst) und jederzeit wieder einspielen – auch auf einem neuen Gerät.
-      </div>
-      <div class="btn-row">
-        <button class="btn-primary" id="export-btn">⬇️ Backup speichern</button>
-        <button class="btn-ghost" id="import-btn">⬆️ Backup laden</button>
-      </div>
-      <input type="file" id="import-file" accept="application/json,.json" style="display:none;" />
-    </div>
-
-    <div class="card">
-      <div class="card-title">Wartung</div>
-      <div class="text-muted text-small" style="line-height:1.5;margin-bottom:10px;">Falls Zahlen nicht stimmen oder „NaN €" angezeigt wird, repariert dieser Knopf den Daten-Stand. Deine Werte bleiben erhalten, nur kaputte Felder werden auf 0 gesetzt und der Tresor an Bargeld+Bank angepasst.</div>
-      <button class="btn-ghost" id="repair-btn">🛠️ Daten reparieren</button>
+    <div class="text-muted text-small" style="text-align:center;padding:4px 8px 0;">
+      Backup, Reparatur &amp; Reset findest du im ⚙ Menü oben rechts.
     </div>
   </section>
 
@@ -2885,8 +2913,8 @@ function renderAvatar() {
 function computeOutfitColors(style, lvl) {
   // Liefert separate Light/Dark-Stops für die SVG-Gradients
   if (style === "rpg" || style === "hybrid") {
-    if (lvl >= 50) return { outfitLight: "#FCD34D", outfitDark: "#92400E", pantsLight: "#B45309", pantsDark: "#78350F", accent: "#FEF3C7" };
-    if (lvl >= 30) return { outfitLight: "#A78BFA", outfitDark: "#4C1D95", pantsLight: "#5B21B6", pantsDark: "#2E1065", accent: "#DDD6FE" };
+    if (lvl >= 50) return { outfitLight: "#FCD34D", outfitDark: "#E7CF9E", pantsLight: "#B45309", pantsDark: "#78350F", accent: "#FEF3C7" };
+    if (lvl >= 30) return { outfitLight: "#A78BFA", outfitDark: "#4C1D95", pantsLight: "#C3B0EC", pantsDark: "#2E1065", accent: "#DDD6FE" };
     if (lvl >= 20) return { outfitLight: "#CBD5E1", outfitDark: "#475569", pantsLight: "#475569", pantsDark: "#1E293B", accent: "#94A3B8" };
     if (lvl >= 10) return { outfitLight: "#94A3B8", outfitDark: "#334155", pantsLight: "#334155", pantsDark: "#1E293B", accent: "#CBD5E1" };
     if (lvl >= 5)  return { outfitLight: "#A0522D", outfitDark: "#5C3317", pantsLight: "#5C3317", pantsDark: "#3D2417", accent: "#C68B5C" };
@@ -4632,7 +4660,7 @@ window.addEventListener("beforeunload", flushAndSave);
 document.getElementById("vault-deposit-btn").addEventListener("click", showVaultDepositDialog);
 document.getElementById("vault-withdraw-btn").addEventListener("click", showVaultWithdrawDialog);
 document.getElementById("profile-edit-btn").addEventListener("click", showProfileEditDialog);
-document.getElementById("help-btn").addEventListener("click", showHelpModal);
+document.getElementById("settings-btn").addEventListener("click", showSettingsModal);
 document.getElementById("action-plan-reset").addEventListener("click", () => {
   state.behavior.acceptedPatterns = [];
   save();
@@ -4643,18 +4671,30 @@ document.getElementById("show-calc-btn").addEventListener("click", () => {
   const el = document.getElementById("calc-breakdown");
   el.style.display = el.style.display === "none" ? "" : "none";
 });
-document.getElementById("repair-btn").addEventListener("click", () => {
+function doRepair() {
+  closeModal();
   state = sanitizeState(state);
   state.userTier = computeUserTier();
   pushHistory();
   save();
   renderAll();
   toast("✓ Daten repariert");
-});
+}
 document.getElementById("crisis-open-btn").addEventListener("click", showCashflowCrisisModal);
 
+// Diagramm-Umschalter im Analyse-Tab
+document.querySelectorAll("#chart-tabs .mission-tab").forEach(t => {
+  t.addEventListener("click", () => {
+    const which = t.dataset.chart;
+    document.querySelectorAll("#chart-tabs .mission-tab").forEach(x => x.classList.toggle("active", x === t));
+    document.querySelectorAll("[data-chart-panel]").forEach(p => {
+      p.style.display = p.dataset.chartPanel === which ? "" : "none";
+    });
+  });
+});
+
 // ===== Datensicherung: Export =====
-document.getElementById("export-btn").addEventListener("click", () => {
+function doExport() {
   try {
     const payload = {
       app: "WealthMission",
@@ -4678,12 +4718,12 @@ document.getElementById("export-btn").addEventListener("click", () => {
   } catch (e) {
     toast("Export fehlgeschlagen: " + e.message);
   }
-});
+}
 
 // ===== Datensicherung: Import =====
-document.getElementById("import-btn").addEventListener("click", () => {
+function doImport() {
   document.getElementById("import-file").click();
-});
+}
 document.getElementById("import-file").addEventListener("change", (ev) => {
   const file = ev.target.files && ev.target.files[0];
   if (!file) return;
@@ -4714,6 +4754,7 @@ document.getElementById("import-file").addEventListener("change", (ev) => {
       state = sanitizeState(merged);
       state.userTier = computeUserTier();
       save();
+      closeModal();
       renderAll();
       toast("✓ Backup geladen");
     } catch (e) {
@@ -4750,12 +4791,37 @@ document.querySelectorAll("[data-set-style]").forEach(el => {
   });
 });
 
-document.getElementById("reset-btn").addEventListener("click", () => {
+function doReset() {
   if (confirm("Wirklich alles zurücksetzen? Dein Charakter und alle Daten gehen verloren.")) {
     localStorage.removeItem(STORAGE_KEY);
     location.reload();
   }
-});
+}
+
+// ===== Einstellungs-Menü (Zahnrad) =====
+function showSettingsModal() {
+  modalShell(
+    '<h2 style="font-size:22px;margin-bottom:4px;">Einstellungen</h2>' +
+    '<p style="margin-bottom:14px;">Hilfe, Datensicherung und Verwaltung.</p>' +
+    '<div style="display:flex;flex-direction:column;gap:10px;text-align:left;">' +
+      '<button class="btn-ghost" onclick="closeModal();showHelpModal();">❓ Wie funktioniert die App?</button>' +
+      '<button class="btn-primary" onclick="closeModal();doExport();">⬇️ Backup speichern</button>' +
+      '<button class="btn-ghost" onclick="closeModal();doImport();">⬆️ Backup laden</button>' +
+      '<button class="btn-ghost" onclick="doRepair();">🛠️ Daten reparieren</button>' +
+      '<button class="btn-danger" onclick="closeModal();doReset();">🗑️ App zurücksetzen</button>' +
+    '</div>' +
+    '<div class="text-muted text-small" style="margin-top:14px;line-height:1.5;">' +
+      '<strong>Wichtig:</strong> Deine Daten liegen nur in diesem Browser. Mach regelmäßig ein Backup – die Datei kannst du sichern (Cloud, E-Mail an dich selbst) und jederzeit auf einem neuen Gerät wieder einspielen.' +
+    '</div>' +
+    '<button class="btn-ghost" style="margin-top:14px;" onclick="closeModal()">Schließen</button>'
+  );
+}
+window.showSettingsModal = showSettingsModal;
+window.doExport = doExport;
+window.doImport = doImport;
+window.doRepair = doRepair;
+window.doReset = doReset;
+window.showHelpModal = showHelpModal;
 
 /* =========================================================
    ESCAPE / RENDER ALL
