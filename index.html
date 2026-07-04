@@ -29,7 +29,7 @@
     --text: #F2F5FA;
     --text-soft: #AEB8C9;
     --muted: #7E8AA0;
-    --muted-deep: #AEB8C9;
+    --muted-deep: var(--text-soft);
 
     /* Primary = Champagner-Gold (Erfolg / aktiv / verdient) */
     --primary: #D8B978;
@@ -54,8 +54,8 @@
     --mint-bg: rgba(52, 211, 153, 0.12);
 
     /* Gold / XP / Rang */
-    --amber: #D8B978;
-    --amber-soft: #E7CF9E;
+    --amber: var(--primary);
+    --amber-soft: var(--primary-mid);
     --amber-bg: rgba(216, 185, 120, 0.14);
 
     /* Gefahr / Krise – raffiniertes, nicht-grelles Rot */
@@ -80,6 +80,33 @@
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.40), 0 1px 2px rgba(0, 0, 0, 0.30);
     --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.50), 0 2px 8px rgba(0, 0, 0, 0.35);
     --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.62), 0 6px 16px rgba(0, 0, 0, 0.45);
+
+    /* Reparatur-Aliases (bisher undefinierte Referenzen) */
+    --red: var(--rose);
+    --gold: var(--primary);
+    --gold-soft: var(--primary-mid);
+    --emerald-soft: var(--mint-soft);
+    --shadow-card: var(--shadow-md);
+
+    /* Chart-Palette (freigegebene Rampe, hue-separiert auf Dunkel) */
+    --chart-1: #D8B978;  /* Gold    */
+    --chart-2: #4FB6A8;  /* Teal    */
+    --chart-3: #5BA3E8;  /* Blau    */
+    --chart-4: #34D399;  /* Grün    */
+    --chart-5: #A88BE0;  /* Violett */
+    --chart-6: #E0635E;  /* Koralle */
+
+    /* Radius-Ergänzung */
+    --radius-xs: 12px;
+    --radius-md: 16px;
+    --radius-pill: 999px;
+
+    /* Typo-Skala */
+    --fs-2xs: 11px; --fs-xs: 12px; --fs-sm: 13px; --fs-base: 15px;
+    --fs-md: 17px;  --fs-lg: 20px; --fs-xl: 24px; --fs-2xl: 28px;
+    --fs-3xl: 34px; --fs-display: 40px;
+    --track-overline: 0.08em;
+    --track-label: 0.06em;
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -133,41 +160,41 @@
   }
   /* Accent variants */
   .card.gold {
-    background: linear-gradient(160deg, #FFF8DD 0%, var(--surface) 65%);
-    border-color: rgba(245, 158, 11, 0.25);
+    background: linear-gradient(160deg, rgba(216, 185, 120, 0.10) 0%, var(--surface) 60%);
+    border-color: rgba(216, 185, 120, 0.26);
   }
   .card.emerald {
     background: linear-gradient(160deg, var(--mint-bg) 0%, var(--surface) 65%);
-    border-color: rgba(16, 185, 129, 0.22);
+    border-color: rgba(52, 211, 153, 0.20);
   }
   .card.violet {
     background: linear-gradient(160deg, var(--violet-bg) 0%, var(--surface) 65%);
-    border-color: rgba(139, 92, 246, 0.22);
+    border-color: rgba(168, 139, 224, 0.22);
   }
 
   .card-title {
     margin: 0 0 14px;
-    font-size: 13px;
+    font-size: var(--fs-sm);
     color: var(--muted-deep);
     text-transform: uppercase;
-    letter-spacing: 1.4px;
+    letter-spacing: var(--track-overline);
     font-weight: 800;
     display: flex; align-items: center; justify-content: space-between;
     gap: 8px;
   }
-  .card-title .accent { color: var(--primary); text-transform: none; letter-spacing: 0; font-size: 13px; }
+  .card-title .accent { color: var(--primary); text-transform: none; letter-spacing: 0; font-size: var(--fs-sm); }
 
   /* =========================================================
      BUTTONS – Rounded, soft shadow, no glow
      ========================================================= */
   button, .btn {
     font-family: inherit;
-    font-size: 16px;
+    font-size: var(--fs-base);
     font-weight: 700;
     color: var(--text);
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 16px;
+    border-radius: var(--radius-md);
     padding: 14px 18px;
     cursor: pointer;
     transition: transform .08s ease, box-shadow .15s ease, background .15s ease;
@@ -184,7 +211,7 @@
     border: none;
     box-shadow: 0 8px 22px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.35);
   }
-  .btn-primary:active { background: #0B5C56; }
+  .btn-primary:active { filter: brightness(0.9); }
 
   .btn-success {
     background: var(--mint);
@@ -192,7 +219,7 @@
     border: none;
     box-shadow: 0 8px 20px rgba(52, 211, 153, 0.28);
   }
-  .btn-success:active { background: #059669; }
+  .btn-success:active { filter: brightness(0.9); }
 
   .btn-violet {
     background: var(--violet);
@@ -207,7 +234,7 @@
     border: none;
     box-shadow: 0 8px 20px rgba(239, 94, 110, 0.28);
   }
-  .btn-danger:active { background: #E88983; }
+  .btn-danger:active { filter: brightness(0.9); }
 
   .btn-ghost {
     background: var(--surface);
@@ -224,9 +251,9 @@
      ========================================================= */
   input[type="text"], input[type="number"], select {
     width: 100%;
-    font-size: 17px;
+    font-size: var(--fs-md);
     padding: 16px 18px;
-    border-radius: 16px;
+    border-radius: var(--radius-md);
     border: 1.5px solid var(--line);
     background: var(--surface);
     color: var(--text);
@@ -244,7 +271,7 @@
   }
   label {
     display: block;
-    font-size: 13px;
+    font-size: var(--fs-sm);
     color: var(--muted-deep);
     margin: 16px 0 8px;
     font-weight: 700;
@@ -261,7 +288,7 @@
     display: flex; gap: 6px; margin-bottom: 24px;
   }
   .ob-progress-bar {
-    flex: 1; height: 4px; border-radius: 999px;
+    flex: 1; height: 4px; border-radius: var(--radius-pill);
     background: var(--surface-3);
   }
   .ob-progress-bar.active { background: var(--primary); }
@@ -271,15 +298,15 @@
   @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
   .ob-eyebrow {
-    color: var(--primary); font-size: 12px; font-weight: 800;
-    letter-spacing: 1.6px; text-transform: uppercase; margin-bottom: 10px;
+    color: var(--primary); font-size: var(--fs-xs); font-weight: 800;
+    letter-spacing: var(--track-overline); text-transform: uppercase; margin-bottom: 10px;
   }
   .ob-title {
-    font-size: 32px; font-weight: 800; margin: 0 0 12px;
+    font-size: var(--fs-3xl); font-weight: 800; margin: 0 0 12px;
     color: var(--text);
     line-height: 1.15;
   }
-  .ob-sub { color: var(--muted-deep); margin: 0 0 24px; font-size: 15px; line-height: 1.55; }
+  .ob-sub { color: var(--muted-deep); margin: 0 0 24px; font-size: var(--fs-base); line-height: 1.55; }
   .ob-spacer { flex: 1; min-height: 16px; }
 
   /* Live-Berechnung in Onboarding-Schritt 6 */
@@ -289,13 +316,13 @@
     background: linear-gradient(160deg, var(--mint-bg) 0%, var(--surface) 60%);
     border: 1.5px solid rgba(16,185,129,0.30);
     border-radius: var(--radius);
-    font-size: 13.5px;
+    font-size: var(--fs-sm);
     line-height: 1.5;
     color: var(--text);
   }
   .ob-live-calc .lc-title {
-    font-size: 12px; font-weight: 800;
-    color: #6EE7B7; letter-spacing: 1px;
+    font-size: var(--fs-xs); font-weight: 800;
+    color: var(--mint-soft); letter-spacing: var(--track-overline);
     text-transform: uppercase; margin-bottom: 10px;
   }
   .ob-live-calc .lc-row {
@@ -305,35 +332,35 @@
   .ob-live-calc .lc-row .lc-label { color: var(--text-soft); }
   .ob-live-calc .lc-row .lc-val { font-weight: 700; }
   .ob-live-calc .lc-divider {
-    height: 1px; background: rgba(15,23,42,0.10);
+    height: 1px; background: var(--line);
     margin: 6px 0;
   }
   .ob-live-calc .lc-total {
     display: flex; justify-content: space-between; align-items: baseline;
     padding: 4px 0;
-    font-weight: 800; font-size: 15px;
-    color: #6EE7B7;
+    font-weight: 800; font-size: var(--fs-base);
+    color: var(--mint-soft);
     font-variant-numeric: tabular-nums;
   }
   .ob-live-calc .lc-total.negative { color: var(--rose); }
   .ob-live-calc .lc-block {
     margin-top: 12px; padding-top: 12px;
-    border-top: 1px solid rgba(15,23,42,0.10);
+    border-top: 1px solid var(--line);
   }
   .ob-live-calc .lc-block-title {
-    font-size: 12px; font-weight: 800;
+    font-size: var(--fs-xs); font-weight: 800;
     color: var(--text); margin-bottom: 6px;
     display: flex; align-items: center; gap: 6px;
   }
   .ob-live-calc .lc-hint {
-    font-size: 12px; color: var(--muted-deep);
+    font-size: var(--fs-xs); color: var(--muted-deep);
     margin-top: 4px; line-height: 1.45;
   }
   .ob-live-calc.warn {
     background: linear-gradient(160deg, var(--rose-bg) 0%, var(--surface) 60%);
     border-color: rgba(244,63,94,0.30);
   }
-  .ob-live-calc.warn .lc-title { color: #E88983; }
+  .ob-live-calc.warn .lc-title { color: var(--rose-soft); }
 
   .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .choice-grid.full { grid-template-columns: 1fr; }
@@ -347,17 +374,17 @@
     transition: border-color .15s, transform .08s, background .15s;
     box-shadow: var(--shadow-sm);
   }
-  .choice .icon { font-size: 36px; display: block; margin-bottom: 8px; line-height: 1; }
-  .choice .label { font-weight: 700; font-size: 15px; color: var(--text); }
-  .choice .desc { font-size: 12px; color: var(--muted-deep); margin-top: 4px; line-height: 1.4; }
+  .choice .icon { font-size: var(--fs-3xl); display: block; margin-bottom: 8px; line-height: 1; }
+  .choice .label { font-weight: 700; font-size: var(--fs-base); color: var(--text); }
+  .choice .desc { font-size: var(--fs-xs); color: var(--muted-deep); margin-top: 4px; line-height: 1.4; }
   .choice.selected {
     border-color: var(--primary);
     background: var(--primary-bg);
-    box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.10);
+    box-shadow: 0 0 0 4px var(--primary-bg);
   }
   .choice.selected::after {
     content: "✓"; position: relative; display: inline-block;
-    color: var(--primary); font-weight: 800; font-size: 14px; margin-left: 6px;
+    color: var(--primary); font-weight: 800; font-size: var(--fs-base); margin-left: 6px;
   }
   .choice:active { transform: scale(0.98); }
 
@@ -372,21 +399,21 @@
     transition: border-color .15s, background .15s;
     box-shadow: var(--shadow-sm);
   }
-  .choice-row .icon { font-size: 26px; flex-shrink: 0; }
+  .choice-row .icon { font-size: var(--fs-xl); flex-shrink: 0; }
   .choice-row .text { flex: 1; }
-  .choice-row .text .t { font-weight: 700; font-size: 15px; color: var(--text); }
-  .choice-row .text .s { color: var(--muted-deep); font-size: 12.5px; margin-top: 3px; line-height: 1.4; }
+  .choice-row .text .t { font-weight: 700; font-size: var(--fs-base); color: var(--text); }
+  .choice-row .text .s { color: var(--muted-deep); font-size: var(--fs-xs); margin-top: 3px; line-height: 1.4; }
   .choice-row.selected {
     border-color: var(--primary);
     background: var(--primary-bg);
   }
-  .choice-row.selected::after { content: "✓"; color: var(--primary); font-weight: 800; font-size: 18px; }
+  .choice-row.selected::after { content: "✓"; color: var(--primary); font-weight: 800; font-size: var(--fs-md); }
 
   .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip {
-    padding: 10px 16px; border-radius: 999px;
+    padding: 10px 16px; border-radius: var(--radius-pill);
     background: var(--surface); border: 1.5px solid var(--line);
-    font-weight: 700; font-size: 13.5px; color: var(--text);
+    font-weight: 700; font-size: var(--fs-sm); color: var(--text);
     cursor: pointer; min-height: 0; width: auto;
     transition: all .15s;
     box-shadow: var(--shadow-sm);
@@ -404,19 +431,19 @@
     margin-bottom: 18px; padding: 0 2px;
   }
   .logo {
-    font-weight: 900; font-size: 17px; letter-spacing: 0.5px;
+    font-weight: 900; font-size: var(--fs-md); letter-spacing: 0.5px;
     color: var(--primary);
   }
   .header .menu-btn {
-    width: auto; padding: 8px 14px; min-height: 36px; font-size: 12px;
+    width: auto; padding: 8px 14px; min-height: 36px; font-size: var(--fs-xs);
     background: var(--surface); border: 1px solid var(--line);
-    border-radius: 12px; color: var(--text-soft); font-weight: 700;
+    border-radius: var(--radius-xs); color: var(--text-soft); font-weight: 700;
     box-shadow: var(--shadow-sm);
   }
   .header .icon-btn {
     width: 40px; height: 40px; min-height: 40px; padding: 0;
     display: flex; align-items: center; justify-content: center;
-    font-size: 19px; color: var(--platinum); border-radius: 12px;
+    font-size: var(--fs-lg); color: var(--platinum); border-radius: var(--radius-xs);
   }
   .header .icon-btn:active { background: var(--surface-2); }
 
@@ -428,41 +455,58 @@
      ========================================================= */
   .char-card {
     padding: 24px 22px;
-    background: linear-gradient(160deg, #FFFFFF 0%, var(--primary-bg) 100%);
-    border: 1px solid rgba(15, 118, 110, 0.16);
+    background:
+      radial-gradient(120% 90% at 82% -12%, rgba(216, 185, 120, 0.14), transparent 55%),
+      linear-gradient(165deg, #1A2132 0%, #121826 55%, #0E1420 100%);
+    border: 1px solid rgba(216, 185, 120, 0.35);
+  }
+  /* Gold-Gradient-Hairline (mask-composite) – Fallback ist der Border oben */
+  @supports ((-webkit-mask-composite: xor) or (mask-composite: exclude)) {
+    .char-card { border-color: transparent; }
+    .char-card::before {
+      content: ""; position: absolute; inset: 0;
+      border-radius: inherit; padding: 1px;
+      background: linear-gradient(160deg, rgba(216,185,120,0.55), rgba(199,210,224,0.14) 45%, rgba(216,185,120,0.30));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+              mask-composite: exclude;
+      pointer-events: none;
+    }
   }
   .char-top { display: flex; gap: 18px; align-items: center; }
   .char-info { flex: 1; min-width: 0; }
-  .char-name { font-size: 22px; font-weight: 800; line-height: 1.1; color: var(--text); }
-  .char-meta { color: var(--muted-deep); font-size: 13px; margin-top: 5px; }
+  .char-name { font-size: var(--fs-lg); font-weight: 800; line-height: 1.1; color: var(--text); }
+  .char-meta { color: var(--muted-deep); font-size: var(--fs-sm); margin-top: 5px; }
   .char-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 
   .rank-badge {
     display: inline-flex; align-items: center; gap: 4px;
-    background: var(--amber-bg); color: #E7CF9E;
-    padding: 5px 12px; border-radius: 999px;
-    font-size: 11px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 1px;
+    background: var(--amber-bg); color: var(--primary-mid);
+    padding: 5px 12px; border-radius: var(--radius-pill);
+    font-size: var(--fs-2xs); font-weight: 800;
+    text-transform: uppercase; letter-spacing: var(--track-label);
   }
   .tier-badge {
     display: inline-flex; align-items: center; gap: 4px;
-    background: var(--violet-bg); color: #C3B0EC;
-    padding: 5px 12px; border-radius: 999px;
-    font-size: 11px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 1px;
+    background: var(--violet-bg); color: var(--violet-soft);
+    padding: 5px 12px; border-radius: var(--radius-pill);
+    font-size: var(--fs-2xs); font-weight: 800;
+    text-transform: uppercase; letter-spacing: var(--track-label);
   }
   .level-pill {
     display: inline-flex; align-items: center; gap: 4px;
     background: var(--surface); border: 1px solid var(--line);
-    border-radius: 999px; padding: 5px 12px;
-    font-size: 11px; color: var(--muted-deep); font-weight: 700;
+    border-radius: var(--radius-pill); padding: 5px 12px;
+    font-size: var(--fs-2xs); color: var(--muted-deep); font-weight: 700;
   }
-  .level-pill strong { color: var(--text); font-size: 13px; }
+  .level-pill strong { color: var(--text); font-size: var(--fs-sm); font-variant-numeric: tabular-nums; }
   .streak-chip {
     display: inline-flex; align-items: center; gap: 4px;
-    background: var(--coral-bg); color: #EBB394;
-    border-radius: 999px; padding: 5px 12px;
-    font-size: 11px; font-weight: 800;
+    background: var(--coral-bg); color: var(--coral-soft);
+    border-radius: var(--radius-pill); padding: 5px 12px;
+    font-size: var(--fs-2xs); font-weight: 800;
+    font-variant-numeric: tabular-nums;
   }
 
   /* =========================================================
@@ -473,19 +517,31 @@
     width: 116px; height: 156px;
     display: flex; align-items: center; justify-content: center;
   }
-  .avatar-aura { display: none; }
+  .avatar-aura {
+    position: absolute; inset: -8px;
+    border-radius: var(--radius-lg);
+    background: radial-gradient(60% 55% at 50% 42%, var(--accent-glow), transparent 72%);
+    filter: blur(10px); opacity: .55;
+    animation: auraBreath 4.5s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  .avatar-aura.legendary { opacity: .9; inset: -12px; }
+  @keyframes auraBreath {
+    from { opacity: .35; transform: scale(.97); }
+    to   { opacity: .65; transform: scale(1.04); }
+  }
   .avatar-frame {
     position: relative; z-index: 1;
     width: 108px; height: 148px;
     border-radius: var(--radius);
     overflow: hidden;
     background: var(--surface-2);
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow-md);
+    border: 1px solid var(--line-strong);
+    box-shadow: var(--shadow-md), inset 0 1px 0 rgba(199, 210, 224, 0.10);
   }
   .avatar-frame.gold-border {
-    border-color: var(--amber);
-    box-shadow: var(--shadow-md), 0 0 0 3px var(--amber-bg);
+    border-color: var(--primary-soft);
+    box-shadow: var(--shadow-md), 0 0 0 3px var(--amber-bg), 0 0 26px var(--accent-glow);
   }
   .avatar-frame.damaged { filter: saturate(0.4) brightness(0.95); }
 
@@ -548,7 +604,7 @@
   }
   .char .crown {
     position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
-    font-size: 20px; line-height: 1; z-index: 2;
+    font-size: var(--fs-lg); line-height: 1; z-index: 2;
     pointer-events: none;
     text-shadow: 0 2px 3px rgba(0,0,0,0.30);
   }
@@ -559,15 +615,16 @@
   .bar-row { margin-top: 18px; }
   .bar-label {
     display: flex; justify-content: space-between;
-    font-size: 11.5px; color: var(--muted-deep);
-    margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;
+    font-size: var(--fs-xs); color: var(--muted-deep);
+    margin-bottom: 8px; text-transform: uppercase; letter-spacing: var(--track-label);
+    font-variant-numeric: tabular-nums;
     font-weight: 700;
   }
   .bar-label strong { color: var(--text); font-weight: 800; }
   .bar {
     width: 100%; height: 10px;
     background: var(--surface-2);
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     overflow: hidden;
   }
   .bar > span {
@@ -575,7 +632,7 @@
     background: var(--amber);
     width: 0;
     transition: width .8s cubic-bezier(.2,1,.4,1);
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
   }
   .bar.green > span { background: var(--mint); }
   .bar.violet > span { background: var(--violet); }
@@ -584,20 +641,33 @@
      WEALTH / NUMBERS
      ========================================================= */
   .wealth-net {
-    font-size: 40px; font-weight: 800; line-height: 1.05;
+    font-size: var(--fs-display); font-weight: 800; line-height: 1.05;
     letter-spacing: -0.03em;
-    color: var(--text);
+    color: var(--text); /* Fallback falls background-clip:text ausfaellt */
     font-variant-numeric: tabular-nums;
   }
-  .wealth-sub { color: var(--muted-deep); font-size: 13.5px; margin-top: 6px; line-height: 1.5; }
+  /* Gold-Shimmer: sanfter Lichtstreif alle ~6s */
+  @supports (-webkit-background-clip: text) {
+    .wealth-net {
+      background: linear-gradient(110deg, var(--text) 42%, var(--primary-mid) 50%, var(--text) 58%) 0 0 / 250% 100%;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: goldSweep 6s ease-in-out infinite;
+    }
+  }
+  @keyframes goldSweep {
+    0%, 72% { background-position: 250% 0; }
+    94%, 100% { background-position: 0% 0; }
+  }
+  .wealth-sub { color: var(--muted-deep); font-size: var(--fs-sm); margin-top: 6px; line-height: 1.5; }
 
   .wealth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
   .wealth-item {
     background: var(--surface-2); border-radius: var(--radius-sm);
     padding: 12px 14px;
   }
-  .wealth-item .k { font-size: 11px; color: var(--muted-deep); text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
-  .wealth-item .v { font-size: 17px; font-weight: 800; margin-top: 4px; font-variant-numeric: tabular-nums; color: var(--text); }
+  .wealth-item .k { font-size: var(--fs-2xs); color: var(--muted-deep); text-transform: uppercase; letter-spacing: var(--track-label); font-weight: 800; }
+  .wealth-item .v { font-size: var(--fs-md); font-weight: 800; margin-top: 4px; font-variant-numeric: tabular-nums; color: var(--text); }
   .wealth-item.debt .v { color: var(--rose); }
 
   /* Stats */
@@ -606,8 +676,8 @@
     background: var(--surface-2); border-radius: var(--radius-sm);
     padding: 12px 14px;
   }
-  .stat .k { font-size: 11px; color: var(--muted-deep); text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
-  .stat .v { font-size: 19px; font-weight: 800; margin-top: 4px; font-variant-numeric: tabular-nums; color: var(--text); }
+  .stat .k { font-size: var(--fs-2xs); color: var(--muted-deep); text-transform: uppercase; letter-spacing: var(--track-label); font-weight: 800; }
+  .stat .v { font-size: var(--fs-lg); font-weight: 800; margin-top: 4px; font-variant-numeric: tabular-nums; color: var(--text); }
   .stat.green .v { color: var(--mint); }
   .stat.gold .v { color: var(--amber); }
   .stat.violet .v { color: var(--violet); }
@@ -617,9 +687,9 @@
     padding: 14px; background: var(--surface-2);
     border-radius: var(--radius-sm); margin-top: 14px;
   }
-  .next-upgrade .nu-icon { font-size: 28px; flex-shrink: 0; }
-  .next-upgrade .nu-text .t { font-weight: 800; font-size: 14px; color: var(--text); }
-  .next-upgrade .nu-text .s { color: var(--muted-deep); font-size: 12.5px; margin-top: 3px; line-height: 1.4; }
+  .next-upgrade .nu-icon { font-size: var(--fs-2xl); flex-shrink: 0; }
+  .next-upgrade .nu-text .t { font-weight: 800; font-size: var(--fs-base); color: var(--text); font-variant-numeric: tabular-nums; }
+  .next-upgrade .nu-text .s { color: var(--muted-deep); font-size: var(--fs-xs); margin-top: 3px; line-height: 1.4; }
 
   /* =========================================================
      MISSIONS – Quest cards
@@ -633,9 +703,9 @@
   .mission-tabs::-webkit-scrollbar { display: none; }
   .mission-tab {
     flex-shrink: 0;
-    padding: 9px 16px; border-radius: 999px; min-height: 0;
+    padding: 9px 16px; border-radius: var(--radius-pill); min-height: 0;
     background: var(--surface-2); border: 1px solid transparent;
-    font-size: 13px; width: auto; font-weight: 700;
+    font-size: var(--fs-sm); width: auto; font-weight: 700;
     color: var(--text-soft);
     box-shadow: none;
   }
@@ -660,52 +730,53 @@
   }
   .mission.cat-sparen::before { background: var(--mint); }
   .mission.cat-verdienen::before { background: var(--amber); }
-  .mission.cat-vertraege::before { background: #38BDF8; }
+  .mission.cat-vertraege::before { background: var(--info); }
   .mission.cat-investieren::before { background: var(--violet); }
   .mission.cat-disziplin::before { background: var(--coral); }
   .mission.cat-schulden::before { background: var(--rose); }
 
   .mission.done { opacity: 0.55; }
-  .mission.done::before { background: #CBD5E1; }
+  .mission.done::before { background: var(--line-strong); }
 
   .mission-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-  .mission-title { font-weight: 800; font-size: 15.5px; line-height: 1.3; color: var(--text); }
-  .mission-desc { color: var(--muted-deep); font-size: 13.5px; margin: 10px 0 14px; line-height: 1.55; }
+  .mission-title { font-weight: 800; font-size: var(--fs-base); line-height: 1.3; color: var(--text); }
+  .mission-desc { color: var(--muted-deep); font-size: var(--fs-sm); margin: 10px 0 14px; line-height: 1.55; }
   .mission-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
 
   .tag {
-    font-size: 10px; padding: 4px 10px; border-radius: 999px;
+    font-size: var(--fs-2xs); padding: 4px 10px; border-radius: var(--radius-pill);
     background: var(--surface-2);
     color: var(--muted-deep);
-    text-transform: uppercase; letter-spacing: 0.8px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: var(--track-label); font-weight: 800;
     display: inline-flex; align-items: center; gap: 3px;
+    font-variant-numeric: tabular-nums;
   }
-  .tag.gold { background: var(--amber-bg); color: #E7CF9E; }
-  .tag.green { background: var(--mint-bg); color: #6EE7B7; }
-  .tag.violet { background: var(--violet-bg); color: #C3B0EC; }
-  .tag.diff-leicht { background: var(--mint-bg); color: #6EE7B7; }
-  .tag.diff-mittel { background: var(--amber-bg); color: #E7CF9E; }
-  .tag.diff-schwer { background: var(--rose-bg); color: #E88983; }
+  .tag.gold { background: var(--amber-bg); color: var(--primary-mid); }
+  .tag.green { background: var(--mint-bg); color: var(--mint-soft); }
+  .tag.violet { background: var(--violet-bg); color: var(--violet-soft); }
+  .tag.diff-leicht { background: var(--mint-bg); color: var(--mint-soft); }
+  .tag.diff-mittel { background: var(--amber-bg); color: var(--primary-mid); }
+  .tag.diff-schwer { background: var(--rose-bg); color: var(--rose-soft); }
 
   .mission-actions { display: flex; gap: 8px; flex-direction: column; }
-  .mission-actions .btn { padding: 12px 14px; min-height: 46px; font-size: 14px; }
+  .mission-actions .btn { padding: 12px 14px; min-height: 46px; font-size: var(--fs-base); }
   .mission-actions .row { display: flex; gap: 8px; }
   .mission-actions .row > * { flex: 1; }
 
   .mission .delete-btn {
     position: absolute; top: 10px; right: 10px;
     background: transparent; border: none; color: var(--muted);
-    width: auto; min-height: 0; padding: 6px 10px; font-size: 16px;
+    width: auto; min-height: 0; padding: 6px 10px; font-size: var(--fs-base);
     box-shadow: none;
   }
 
   .mission-progress { margin: 8px 0 14px; }
   .mission-progress .pwrap { display: flex; align-items: center; gap: 10px; }
   .mission-progress .pwrap .bar { flex: 1; height: 8px; }
-  .mission-progress .ptext { font-size: 11.5px; color: var(--muted-deep); margin-top: 6px; font-weight: 700; }
+  .mission-progress .ptext { font-size: var(--fs-xs); color: var(--muted-deep); margin-top: 6px; font-weight: 700; }
 
   .mission-saved-input { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
-  .mission-saved-input input { flex: 1; padding: 11px 14px; font-size: 14px; }
+  .mission-saved-input input { flex: 1; padding: 11px 14px; font-size: var(--fs-base); }
 
   /* =========================================================
      BOTTOM TAB NAV – Floating pill, light
@@ -717,7 +788,7 @@
     max-width: 492px;
     margin: 0 auto;
     background: var(--surface);
-    border-radius: 22px;
+    border-radius: calc(var(--radius-sm) + 8px);
     display: flex;
     padding: 8px;
     z-index: 50;
@@ -726,13 +797,13 @@
   }
   .tabnav .tab {
     flex: 1; background: transparent; border: none; color: var(--muted-deep);
-    padding: 8px 4px; font-size: 10.5px; min-height: 0;
+    padding: 8px 4px; font-size: var(--fs-2xs); min-height: 0;
     display: flex; flex-direction: column; align-items: center; gap: 4px;
-    border-radius: 14px; transition: all .15s;
-    font-weight: 700; letter-spacing: 0.4px;
+    border-radius: var(--radius-sm); transition: all .15s;
+    font-weight: 700; letter-spacing: var(--track-label);
     box-shadow: none;
   }
-  .tabnav .tab .ico { font-size: 22px; line-height: 1; }
+  .tabnav .tab .ico { font-size: var(--fs-lg); line-height: 1; }
   .tabnav .tab.active {
     color: var(--primary);
     background: var(--primary-bg);
@@ -744,6 +815,16 @@
      ========================================================= */
   .view { display: none; }
   .view.active { display: block; animation: fadeIn .25s ease; }
+  /* Karten-Stagger beim Tab-Wechsel (nur .view-Toggle, nicht bei Daten-Renders) */
+  .view.active .card { animation: cardIn .45s cubic-bezier(.2, 1, .4, 1) backwards; }
+  .view.active .card:nth-child(2) { animation-delay: .05s; }
+  .view.active .card:nth-child(3) { animation-delay: .09s; }
+  .view.active .card:nth-child(4) { animation-delay: .13s; }
+  .view.active .card:nth-child(5) { animation-delay: .17s; }
+  .view.active .card:nth-child(n+6) { animation-delay: .2s; }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(12px) scale(.99); }
+  }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
   /* =========================================================
@@ -751,11 +832,15 @@
      ========================================================= */
   .modal-bg {
     position: fixed; inset: 0;
-    background: rgba(15, 23, 42, 0.5);
-    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+    background: rgba(4, 6, 12, 0.55);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
     display: flex; align-items: center; justify-content: center;
     z-index: 100; padding: 20px;
-    animation: fadeIn .2s ease;
+    animation: modalBgIn .3s ease forwards;
+  }
+  @keyframes modalBgIn {
+    from { opacity: 0; -webkit-backdrop-filter: blur(0); backdrop-filter: blur(0); }
+    to   { opacity: 1; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
   }
   .modal {
     background: var(--surface);
@@ -778,17 +863,17 @@
     100% { transform: scale(1); opacity: 1; }
   }
   .modal h2 {
-    font-size: 26px; font-weight: 800; margin: 8px 0 6px;
+    font-size: var(--fs-xl); font-weight: 800; margin: 8px 0 6px;
     color: var(--text);
   }
-  .modal p { color: var(--text-soft); font-size: 14.5px; margin: 10px 0 16px; line-height: 1.55; }
+  .modal p { color: var(--text-soft); font-size: var(--fs-base); margin: 10px 0 16px; line-height: 1.55; }
   .modal .big-icon { font-size: 64px; line-height: 1; margin-bottom: 6px; }
   .modal .fact-list {
     text-align: left; background: var(--surface-2);
-    border-radius: 16px; padding: 14px 18px; margin: 14px 0;
+    border-radius: var(--radius-md); padding: 14px 18px; margin: 14px 0;
     list-style: none; padding-left: 14px;
   }
-  .modal .fact-list li { color: var(--text-soft); font-size: 13.5px; line-height: 1.65; margin: 6px 0; padding-left: 4px; }
+  .modal .fact-list li { color: var(--text-soft); font-size: var(--fs-sm); line-height: 1.65; margin: 6px 0; padding-left: 4px; }
 
   /* Confetti */
   .confetti-layer { position: fixed; inset: 0; pointer-events: none; z-index: 200; overflow: hidden; }
@@ -809,27 +894,28 @@
   .history-row {
     display: flex; justify-content: space-between; align-items: center;
     padding: 14px 0; border-bottom: 1px solid var(--line);
-    font-size: 14px;
+    font-size: var(--fs-base);
   }
   .history-row:last-child { border-bottom: none; }
-  .history-row .date { color: var(--muted-deep); font-size: 12.5px; }
+  .history-row .date { color: var(--muted-deep); font-size: var(--fs-xs); }
   .history-row .net { font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; }
 
-  .empty {
+  .empty, .chart-empty {
     text-align: center; color: var(--muted-deep);
-    padding: 28px 16px; font-size: 14px; line-height: 1.55;
+    padding: 32px 16px; font-size: var(--fs-sm); line-height: 1.55;
+    background: var(--surface-2); border-radius: var(--radius);
   }
 
   /* Vault rows */
   .vault-row {
     display: flex; justify-content: space-between; align-items: center;
     padding: 12px 0; border-bottom: 1px solid var(--line);
-    font-size: 13.5px;
+    font-size: var(--fs-sm);
   }
   .vault-row:last-child { border-bottom: none; }
   .vault-row .meta { display: flex; flex-direction: column; }
   .vault-row .label { font-weight: 800; color: var(--text); }
-  .vault-row .sub { color: var(--muted-deep); font-size: 11.5px; margin-top: 3px; }
+  .vault-row .sub { color: var(--muted-deep); font-size: var(--fs-xs); margin-top: 3px; }
   .vault-row .amount { font-weight: 800; font-variant-numeric: tabular-nums; }
   .vault-row .amount.in { color: var(--mint); }
   .vault-row .amount.out { color: var(--rose); }
@@ -840,9 +926,10 @@
   .toast {
     position: fixed; bottom: calc(110px + var(--safe-bottom));
     left: 50%; transform: translateX(-50%);
-    background: var(--text); color: #fff;
-    padding: 13px 22px; border-radius: 999px;
-    font-size: 14px; font-weight: 700;
+    background: var(--surface-3); color: var(--text);
+    border: 1px solid var(--line-strong);
+    padding: 13px 22px; border-radius: var(--radius-pill);
+    font-size: var(--fs-base); font-weight: 700;
     z-index: 300;
     animation: toastIn .25s ease, toastOut .25s ease 2.4s forwards;
     box-shadow: var(--shadow-lg);
@@ -859,8 +946,8 @@
     background: var(--mint);
     color: #fff;
     padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 12px;
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-xs);
     font-weight: 700;
     box-shadow: var(--shadow-md);
     opacity: 0;
@@ -875,7 +962,7 @@
      QUICK TRACK – Schnell-Tap Konsum-Tracking
      ========================================================= */
   .quick-track-info {
-    font-size: 13.5px; color: var(--text-soft);
+    font-size: var(--fs-sm); color: var(--text-soft);
     line-height: 1.55; margin-bottom: 14px;
   }
   .quick-track-grid {
@@ -883,7 +970,7 @@
   }
   .quick-btn {
     display: flex; flex-direction: column; align-items: center; gap: 5px;
-    padding: 14px 6px; border-radius: 16px;
+    padding: 14px 6px; border-radius: var(--radius-md);
     background: var(--surface); border: 1.5px solid var(--line);
     cursor: pointer; transition: transform .08s, background .15s, border-color .15s;
     min-height: 78px; width: 100%;
@@ -891,10 +978,10 @@
   }
   .quick-btn:active { transform: scale(0.95); background: var(--surface-2); }
   .quick-btn.has-today { border-color: var(--primary); background: var(--primary-bg); }
-  .quick-btn .qb-icon { font-size: 26px; line-height: 1; }
-  .quick-btn .qb-label { font-size: 10.5px; font-weight: 700; color: var(--text-soft); text-align: center; line-height: 1.2; }
+  .quick-btn .qb-icon { font-size: var(--fs-xl); line-height: 1; }
+  .quick-btn .qb-label { font-size: var(--fs-2xs); font-weight: 700; color: var(--text-soft); text-align: center; line-height: 1.2; }
   .quick-btn.has-today .qb-label { color: var(--primary); }
-  .quick-btn .qb-today { font-size: 11px; color: var(--primary); font-weight: 800; margin-top: 1px; font-variant-numeric: tabular-nums; }
+  .quick-btn .qb-today { font-size: var(--fs-2xs); color: var(--primary); font-weight: 800; margin-top: 1px; font-variant-numeric: tabular-nums; }
   .quick-btn.quick-add-btn {
     background: var(--surface-2);
     border: 1.5px dashed var(--line-strong);
@@ -904,15 +991,15 @@
   .quick-btn.quick-add-btn .qb-icon { color: var(--primary); }
   .qt-manage-link {
     display: block; text-align: center; padding: 8px;
-    margin-top: 8px; font-size: 12.5px; font-weight: 700;
+    margin-top: 8px; font-size: var(--fs-xs); font-weight: 700;
     color: var(--muted-deep); background: transparent;
     border: none; cursor: pointer; width: 100%;
     text-decoration: underline; text-underline-offset: 3px;
   }
   .quick-track-summary {
     margin-top: 14px; padding: 12px 14px;
-    background: rgba(0,0,0,0.22); border-radius: 12px;
-    font-size: 13px; border: 1px solid var(--line);
+    background: rgba(0,0,0,0.22); border-radius: var(--radius-xs);
+    font-size: var(--fs-sm); border: 1px solid var(--line);
   }
   .qts-row { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 0; }
   .qts-row .qts-label { color: var(--text-soft); font-weight: 600; }
@@ -923,23 +1010,23 @@
      ========================================================= */
   .cd-summary {
     background: var(--surface-2);
-    padding: 12px 14px; border-radius: 12px;
-    font-size: 14px; color: var(--text);
+    padding: 12px 14px; border-radius: var(--radius-xs);
+    font-size: var(--fs-base); color: var(--text);
     margin-bottom: 14px; line-height: 1.5;
   }
   .cd-list { display: flex; flex-direction: column; gap: 8px; }
   .cd-row {
     display: flex; align-items: center; gap: 12px;
     padding: 12px 14px; background: var(--surface);
-    border: 1px solid var(--line); border-radius: 14px;
+    border: 1px solid var(--line); border-radius: var(--radius-sm);
   }
-  .cd-icon { font-size: 24px; flex-shrink: 0; }
+  .cd-icon { font-size: var(--fs-xl); flex-shrink: 0; }
   .cd-text { flex: 1; min-width: 0; }
-  .cd-label { font-weight: 700; font-size: 14px; color: var(--text); }
-  .cd-meta { font-size: 11.5px; color: var(--muted-deep); margin-top: 2px; }
+  .cd-label { font-weight: 700; font-size: var(--fs-base); color: var(--text); }
+  .cd-meta { font-size: var(--fs-xs); color: var(--muted-deep); margin-top: 2px; }
   .cd-amount {
     font-weight: 800; font-variant-numeric: tabular-nums;
-    color: var(--primary); font-size: 14px;
+    color: var(--primary); font-size: var(--fs-base);
   }
   .cd-patterns {
     margin-top: 14px; display: flex; flex-direction: column; gap: 8px;
@@ -947,13 +1034,13 @@
   .cd-pattern {
     padding: 10px 14px; background: var(--coral-bg);
     border-left: 4px solid var(--coral);
-    border-radius: 8px;
-    font-size: 13.5px; color: var(--text); line-height: 1.55;
+    border-radius: var(--radius-xs);
+    font-size: var(--fs-sm); color: var(--text); line-height: 1.55;
   }
   .cd-note {
     margin-top: 14px; padding: 12px 14px;
-    background: var(--mint-bg); border-radius: 12px;
-    font-size: 13px; color: #6EE7B7; font-weight: 600;
+    background: var(--mint-bg); border-radius: var(--radius-xs);
+    font-size: var(--fs-sm); color: var(--mint-soft); font-weight: 600;
     line-height: 1.5;
   }
 
@@ -974,37 +1061,37 @@
   .action-card.sev-invest { border-left-color: var(--mint); background: linear-gradient(180deg, var(--mint-bg) 0%, var(--surface) 50%); }
 
   .action-head { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px; }
-  .action-icon { font-size: 28px; line-height: 1; flex-shrink: 0; }
+  .action-icon { font-size: var(--fs-2xl); line-height: 1; flex-shrink: 0; }
   .action-meta { flex: 1; min-width: 0; }
   .action-sev {
-    font-size: 10.5px; font-weight: 800; letter-spacing: 1.4px;
+    font-size: var(--fs-2xs); font-weight: 800; letter-spacing: var(--track-label);
     color: var(--muted-deep); text-transform: uppercase;
     margin-bottom: 3px;
   }
-  .action-card.sev-tox .action-sev { color: #EBB394; }
-  .action-card.sev-crisis .action-sev { color: #E88983; }
-  .action-card.sev-invest .action-sev { color: #6EE7B7; }
-  .action-title { font-size: 16px; font-weight: 800; color: var(--text); line-height: 1.25; margin: 0; }
+  .action-card.sev-tox .action-sev { color: var(--coral-soft); }
+  .action-card.sev-crisis .action-sev { color: var(--rose-soft); }
+  .action-card.sev-invest .action-sev { color: var(--mint-soft); }
+  .action-title { font-size: var(--fs-base); font-weight: 800; color: var(--text); line-height: 1.25; margin: 0; }
   .action-impact {
-    font-size: 13px; color: var(--text-soft);
+    font-size: var(--fs-sm); color: var(--text-soft);
     background: rgba(0,0,0,0.22);
-    border-radius: 10px;
+    border-radius: var(--radius-xs);
     padding: 6px 12px;
     margin-bottom: 10px;
     font-variant-numeric: tabular-nums;
   }
   .action-instruction {
-    font-size: 14px; line-height: 1.55;
+    font-size: var(--fs-base); line-height: 1.55;
     color: var(--text); font-weight: 600;
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: var(--radius-xs);
     padding: 12px 14px;
     margin-bottom: 12px;
   }
   .action-actions { display: flex; gap: 8px; }
   .action-actions > * { flex: 1; }
-  .action-actions .btn-primary, .action-actions .btn-ghost { padding: 11px 14px; min-height: 44px; font-size: 14px; }
+  .action-actions .btn-primary, .action-actions .btn-ghost { padding: 11px 14px; min-height: 44px; font-size: var(--fs-base); }
 
   /* =========================================================
      CHARTS (Pie / Bar) - pure SVG, kein Framework
@@ -1026,10 +1113,10 @@
   }
   .legend-item {
     display: flex; align-items: center; gap: 10px;
-    font-size: 13.5px;
+    font-size: var(--fs-sm);
     padding: 6px 10px;
     background: var(--surface-2);
-    border-radius: 10px;
+    border-radius: var(--radius-xs);
   }
   .legend-item .dot {
     width: 12px; height: 12px;
@@ -1038,34 +1125,179 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.15);
   }
   .legend-item .label { flex: 1; color: var(--text); font-weight: 600; }
-  .legend-item .val { color: var(--text-soft); font-weight: 700; font-variant-numeric: tabular-nums; font-size: 12.5px; }
-  .chart-empty {
-    text-align: center; padding: 32px 16px;
-    color: var(--muted-deep);
-    background: var(--surface-2);
-    border-radius: var(--radius);
-    font-size: 14px; line-height: 1.5;
-  }
+  .legend-item .val { color: var(--text-soft); font-weight: 700; font-variant-numeric: tabular-nums; font-size: var(--fs-xs); }
+  /* .chart-empty: gemeinsame Regel mit .empty (siehe HISTORY-Sektion) */
 
   /* =========================================================
      UTILITIES
      ========================================================= */
+  /* ---------- SVG-Icon-System ---------- */
+  .ico-svg {
+    width: 1em; height: 1em;
+    display: inline-block; vertical-align: -0.12em;
+    flex-shrink: 0;
+    fill: none; stroke: currentColor;
+    stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .choice .icon .ico-svg, .choice-row .icon .ico-svg, .tabnav .tab .ico .ico-svg,
+  .qb-icon .ico-svg, .nu-icon .ico-svg, .action-icon .ico-svg, .cd-icon .ico-svg,
+  .big-icon .ico-svg, .crown .ico-svg { display: block; margin: 0 auto; }
+  .ico-gold { color: var(--primary); }
+  .ico-mint { color: var(--mint); }
+  .ico-rose { color: var(--rose); }
+  .ico-coral { color: var(--coral); }
+  .ico-violet { color: var(--violet); }
+  .ico-platinum { color: var(--platinum); }
+  .card-title .ico-svg { font-size: 15px; vertical-align: -0.18em; margin-right: 2px; color: var(--platinum); }
+  label .ico-svg { vertical-align: -0.15em; margin-right: 3px; color: var(--platinum); font-size: 13px; }
+
   .row-flex { display: flex; gap: 8px; align-items: center; }
   .text-muted { color: var(--muted-deep); }
-  .text-small { font-size: 12.5px; }
+  .text-small { font-size: var(--fs-xs); }
+  .mt-8 { margin-top: 8px; }
   .mt-12 { margin-top: 12px; }
+  .mt-14 { margin-top: 14px; }
   .mt-16 { margin-top: 16px; }
   .mt-24 { margin-top: 24px; }
+  .mb-12 { margin-bottom: 12px; }
+  .my-8 { margin: 8px 0; }
+  .span-2 { grid-column: 1 / -1; }
+
+  /* Mini-Button in Card-Titles (Rechnung / Bearbeiten) */
+  .btn-mini {
+    width: auto; min-height: 0; padding: 4px 12px;
+    font-size: var(--fs-2xs); font-weight: 700;
+    background: transparent; border: 1px solid var(--line-strong);
+    color: var(--text-soft); border-radius: var(--radius-xs);
+  }
+
+  /* Krisen-Banner-Karte (ersetzt Inline-Style) */
+  .card.crisis {
+    border-color: var(--rose);
+    background: linear-gradient(180deg, var(--rose-bg), rgba(239, 94, 110, 0.04));
+    box-shadow: var(--shadow-md), 0 0 60px rgba(224, 99, 94, 0.22);
+  }
+  .card.crisis .card-title { color: var(--rose-soft); }
+
+  /* Rechen-Aufschlüsselung (Nettovermögen) */
+  .calc-breakdown {
+    margin-top: 14px; padding: 14px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-sm); border: 1px solid var(--line);
+    font-variant-numeric: tabular-nums;
+    font-size: var(--fs-base); line-height: 1.8;
+  }
+  .calc-row { display: flex; justify-content: space-between; }
+  .calc-row.neg { color: var(--rose); }
+  .calc-row.total { font-weight: 800; color: var(--gold); }
+  .calc-sub { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--line); font-size: var(--fs-xs); color: var(--muted); }
+  .calc-divider { border-top: 1px dashed var(--line); margin: 6px 0; }
+
+  /* Chart-Draw-in (feuert beim ersten Paint nach Tab-Aktivierung) */
+  .pie-chart {
+    animation: pieIn .6s cubic-bezier(.2, 1, .4, 1) backwards;
+    transform-origin: 50% 50%;
+  }
+  @keyframes pieIn {
+    from { opacity: 0; transform: rotate(-70deg) scale(.86); }
+    to   { opacity: 1; transform: rotate(0deg) scale(1); }
+  }
+  .bar-chart rect {
+    transform-box: fill-box; transform-origin: bottom;
+    animation: barGrow .5s cubic-bezier(.2, 1, .4, 1) backwards;
+  }
+  @keyframes barGrow {
+    from { transform: scaleY(0); }
+    to   { transform: scaleY(1); }
+  }
+  /* Sanfte Zustands-Transitions in regenerierten Containern (KEINE Keyframes!) */
+  .quick-btn { transition: border-color .2s, background .2s, box-shadow .2s, transform .08s; }
+  .quick-btn.has-today { box-shadow: 0 0 0 1px var(--primary-bg), 0 6px 18px rgba(216, 185, 120, 0.12); }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
       transition-duration: 0.01ms !important;
     }
+    /* infinite-Animationen wuerden mit 0.01ms busy-loopen -> ganz aus */
+    .wealth-net, .avatar-aura { animation: none !important; }
   }
 </style>
 </head>
 <body>
+
+<!-- =========================================================
+     SVG-ICON-SPRITE – 24x24 Linien-Icons, stroke=currentColor
+     Liegt bewusst direkt nach <body>, außerhalb jedes
+     innerHTML-Containers (kann nie überschrieben werden).
+     ========================================================= -->
+<svg id="icon-sprite" width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true"><defs>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 10.5 12 3.5l8.5 7M5.5 9.5V20a.8.8 0 0 0 .8.8h11.4a.8.8 0 0 0 .8-.8V9.5M10 20.5v-5.5h4v5.5"/></symbol>
+<symbol id="i-wallet" viewBox="0 0 24 24"><path d="M3.5 7.5A2 2 0 0 1 5.5 5.5h11a2 2 0 0 1 2 2v1M3.5 7.5v9a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2h-15Z"/><circle cx="16.5" cy="14" r="1.1"/></symbol>
+<symbol id="i-swords" viewBox="0 0 24 24"><path d="M4 4l10.5 10.5M4 4h3.2M4 4v3.2M12.6 16.6l2 2M16.4 14.6l-2 2M15.5 19.5l3-3M20 4 9.5 14.5M20 4h-3.2M20 4v3.2M11.4 16.6l-2 2M8.5 19.5l-3-3M7.6 14.6l2 2"/></symbol>
+<symbol id="i-stats" viewBox="0 0 24 24"><path d="M4 20.5h16M6.5 20v-5.5M12 20V9.5M17.5 20V4.5"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.5 5 6v5.5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6l-7-2.5ZM9 11.5l2.2 2.2L15.5 9"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="6.6"/><path d="M12 5.4V3M12 21v-2.4M18.6 12H21M3 12h2.4M16.7 7.3l1.7-1.7M5.6 18.4l1.7-1.7M16.7 16.7l1.7 1.7M5.6 5.6l1.7 1.7"/></symbol>
+<symbol id="i-crest" viewBox="0 0 24 24"><path d="M12 3.5 15 8l-3 3.5L9 8l3-4.5ZM12 11.5v6M8.5 15.5c0 3 1.6 4.5 3.5 5 1.9-.5 3.5-2 3.5-5"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5.5" y="10.5" width="13" height="9.5" rx="2"/><path d="M8.5 10.5v-3a3.5 3.5 0 0 1 7 0v3"/><circle cx="12" cy="15.2" r="1.2"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.4"/><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><path d="M13.5 3 6 13.5h5L10.5 21 18 10.5h-5L13.5 3Z"/></symbol>
+<symbol id="i-scan" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="m15.5 15.5 5 5"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4 3 19.5h18L12 4ZM12 10v4.2M12 17.2v.1"/></symbol>
+<symbol id="i-cash" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="11" rx="1.6"/><circle cx="12" cy="12.5" r="2.6"/><path d="M6 10.2v.1M18 14.8v.1"/></symbol>
+<symbol id="i-bank" viewBox="0 0 24 24"><path d="M3.5 9.5 12 4l8.5 5.5M4.5 9.5h15M6 12.5v5M12 12.5v5M18 12.5v5M4 20.5h16"/></symbol>
+<symbol id="i-chart-up" viewBox="0 0 24 24"><path d="M4 19.5 10 13l3.5 3.5 6.5-7M16 9.5h4v4"/></symbol>
+<symbol id="i-ingot" viewBox="0 0 24 24"><path d="M7 6.5h6l1.5 4h-9L7 6.5ZM5 13.5h6l1.5 4h-9L5 13.5ZM13.5 13.5h6l1.5 4h-9l1.5-4Z"/></symbol>
+<symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12.5" rx="2"/><path d="M3 10h18M6.5 14.8h4"/></symbol>
+<symbol id="i-coins" viewBox="0 0 24 24"><circle cx="9" cy="9.5" r="5.5"/><path d="M14 8.2a5.5 5.5 0 1 1-4.6 9.7"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11Z"/><circle cx="12" cy="9.8" r="2.2"/></symbol>
+<symbol id="i-bag" viewBox="0 0 24 24"><path d="M5.5 8.5h13l-1 11.5a1.5 1.5 0 0 1-1.5 1.3H8a1.5 1.5 0 0 1-1.5-1.3l-1-11.5ZM8.8 8.5V7a3.2 3.2 0 0 1 6.4 0v1.5"/></symbol>
+<symbol id="i-gem" viewBox="0 0 24 24"><path d="M7 4.5h10l3.5 5L12 20.5 1.5 9.5l3.5-5H7ZM1.5 9.5h21M8.5 4.5 12 9.5l3.5-5M12 9.5v11"/></symbol>
+<symbol id="i-burger" viewBox="0 0 24 24"><path d="M4.5 9.5a7.5 5 0 0 1 15 0H4.5ZM4 13h16M5.5 16.5c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 4.5 0M4.5 9.5h15"/></symbol>
+<symbol id="i-hanger" viewBox="0 0 24 24"><path d="M12 8.5a2 2 0 1 1 2-2M12 8.5l8.5 6a1.2 1.2 0 0 1-.7 2.2H4.2a1.2 1.2 0 0 1-.7-2.2l8.5-6Z"/></symbol>
+<symbol id="i-drink" viewBox="0 0 24 24"><path d="M6 4.5h12l-4.6 7v6M9 20.5h6M7.5 8h9"/></symbol>
+<symbol id="i-screen" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12.5" rx="2"/><path d="m10.3 8.8 4.5 2.7-4.5 2.7v-5.4ZM9 20.5h6"/></symbol>
+<symbol id="i-car" viewBox="0 0 24 24"><path d="M5 13 6.6 8a2 2 0 0 1 1.9-1.4h7a2 2 0 0 1 1.9 1.4L19 13M4 13h16a1 1 0 0 1 1 1v3.5h-2.2M3 17.5V14a1 1 0 0 1 1-1M8.4 17.5h7.2"/><circle cx="6.8" cy="17.4" r="1.6"/><circle cx="17.2" cy="17.4" r="1.6"/></symbol>
+<symbol id="i-gift" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="1.2"/><path d="M12 10v10M4 13.5h16M12 10s-4.5.3-5.5-2c-.8-1.8 1-3.4 2.7-2.6C11 6.2 12 10 12 10ZM12 10s4.5.3 5.5-2c.8-1.8-1-3.4-2.7-2.6C13 6.2 12 10 12 10Z"/></symbol>
+<symbol id="i-pulse" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.8-7.5-10A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.5 3c0 5.2-7.5 10-7.5 10ZM5.5 12h3.4l1.6-2.8 2.4 4.6 1.6-2.8h4"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4H6.5A2.5 2.5 0 0 1 4 13.5v-7Z"/><path d="M8.5 10h.1M12 10h.1M15.5 10h.1"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-cart" viewBox="0 0 24 24"><path d="M3.5 4.5h2.4l2.4 11h10.4l2.3-8H7"/><circle cx="9.5" cy="19.4" r="1.5"/><circle cx="16.7" cy="19.4" r="1.5"/></symbol>
+<symbol id="i-chain" viewBox="0 0 24 24"><path d="M9.5 14.5 14.5 9.5M8 11 5.6 13.4a3.7 3.7 0 0 0 5.2 5.2L13 16.5M16 13l2.4-2.4a3.7 3.7 0 0 0-5.2-5.2L11 7.5"/></symbol>
+<symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.2l3.4 2"/></symbol>
+<symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3.5" y="7.5" width="17" height="12" rx="2"/><path d="M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5M3.5 12.5h17"/></symbol>
+<symbol id="i-backpack" viewBox="0 0 24 24"><path d="M7 8a5 5 0 0 1 10 0v11.5a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V8ZM9.5 8V6a2.5 2.5 0 0 1 5 0v2M7 13h10M9.5 13v3.5h5V13"/></symbol>
+<symbol id="i-news" viewBox="0 0 24 24"><path d="M4.5 5.5h13v13a2 2 0 0 0 2 2h-13a2 2 0 0 1-2-2v-13ZM19.5 20.5a2 2 0 0 0 2-2V9h-4M7.5 9h7M7.5 12.5h7M7.5 16h4.5"/></symbol>
+<symbol id="i-sprout" viewBox="0 0 24 24"><path d="M12 20.5v-8M12 12.5c0-3.5-2.6-6-6.5-6 0 3.6 2.7 6 6.5 6ZM12 10.5c.2-3 2.5-5 6.5-5-.1 3.4-2.8 5.3-6.5 5"/></symbol>
+<symbol id="i-hero-m" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 20.5c.8-4 3.5-6 7-6s6.2 2 7 6M8.5 5.5C9.5 4.3 13 3.8 15.3 5.8"/></symbol>
+<symbol id="i-hero-f" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5.5 20.5c.8-4 3.3-6 6.5-6s5.7 2 6.5 6M8 7C7.5 10 7 12.5 6 14M16 7c.5 3 1 5.5 2 7"/></symbol>
+<symbol id="i-sword" viewBox="0 0 24 24"><path d="m5 19 9.5-9.5M5 19l-1 1M5 19l2.5 0M5 19l0-2.5M14 10.5 19.5 5V3h-2L12 8.5M9.5 14.5l3 3"/></symbol>
+<symbol id="i-skyline" viewBox="0 0 24 24"><path d="M3.5 20.5V10h5v10.5M8.5 20.5V5.5h6v15M14.5 20.5V13h6v7.5M2.5 20.5h19M11 8.5h1M11 11.5h1M17 15.5h1"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3.5c.6 4.4 2 6.5 6.5 8.5-4.5 2-5.9 4.1-6.5 8.5-.6-4.4-2-6.5-6.5-8.5 4.5-2 5.9-4.1 6.5-8.5Z"/></symbol>
+<symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3.5c1 3-4.8 5.6-4.8 10.2A4.9 4.9 0 0 0 12 20.5a4.9 4.9 0 0 0 4.8-6.8C15.5 10.5 16.5 7 12 3.5ZM12 20.5c-1.8-1-2.3-3.4-.7-5.7 2 1 2.7 3.5.7 5.7Z"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v10M8 10.5l4 4 4-4M4.5 17v2a1.5 1.5 0 0 0 1.5 1.5h12A1.5 1.5 0 0 0 19.5 19v-2"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 14.5V4M8 8l4-4 4 4M4.5 17v2a1.5 1.5 0 0 0 1.5 1.5h12A1.5 1.5 0 0 0 19.5 19v-2"/></symbol>
+<symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.5 6.5a4.5 4.5 0 0 1 5.6-4.4l-3.1 3.2 1.7 1.7L21.9 4a4.5 4.5 0 0 1-5.9 5.5L8.5 17a2 2 0 1 1-2.8-2.8l7.5-7.5c-.4-.1-.5-.2 1.3-.2Z"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 6.5h15M9 6.5v-1a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5.5v1M6.5 6.5l.8 12.5a1.6 1.6 0 0 0 1.6 1.5h6.2a1.6 1.6 0 0 0 1.6-1.5l.8-12.5M10 10.5v6M14 10.5v6"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.5 9.3A2.6 2.6 0 0 1 14.5 10c0 1.8-2.5 2-2.5 3.7M12 17v.1"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="m12 4 2.4 5 5.6.7-4.1 3.8 1.1 5.5L12 16.2 7 19l1.1-5.5L4 9.7 9.6 9 12 4Z"/></symbol>
+<symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7.5 4.5h9v6a4.5 4.5 0 0 1-9 0v-6ZM7.5 6H4.3c-.2 3 .8 5 3.5 5.4M16.5 6h3.2c.2 3-.8 5-3.5 5.4M12 15v3M8.5 20.5h7M10 18h4"/></symbol>
+<symbol id="i-grad" viewBox="0 0 24 24"><path d="M2.5 9.5 12 5l9.5 4.5L12 14 2.5 9.5ZM6.5 11.5v4.5c0 1.4 2.5 2.8 5.5 2.8s5.5-1.4 5.5-2.8v-4.5M21 10v4.5"/></symbol>
+<symbol id="i-tool" viewBox="0 0 24 24"><path d="m5.5 5.5 6 6M4 4l2 .5.5 2L5 8 3.5 6.5 4 4ZM13.5 13.5l5 5a1.8 1.8 0 0 1-2.5 2.5l-5-5M17.5 9.5l3-3-2-2-3 3-1 3 3-1Z"/></symbol>
+<symbol id="i-rocket" viewBox="0 0 24 24"><path d="M12 16c-1.5-4 0-9 4.5-12 2.6 1 4.5 3 4.8 5.8C18.5 14 14.5 16.5 12 16ZM12 16l-3.5 4M8 12.5c-2.3.4-3.7 2-4 5 3 0 4.6-1 5.5-3M15.8 8.2h.1"/></symbol>
+<symbol id="i-column" viewBox="0 0 24 24"><path d="M5 5.5h14M5.5 20h13M8 8v9.5M12 8v9.5M16 8v9.5M6 5.5 12 3l6 2.5"/></symbol>
+<symbol id="i-elder" viewBox="0 0 24 24"><circle cx="11" cy="6" r="2.6"/><path d="M11 9v5.5l-2 6M11 12.5l3 2 .5 6M8 12l3-3M17.5 12.5v8"/></symbol>
+<symbol id="i-celebrate" viewBox="0 0 24 24"><path d="M8 13 4 20l7-4M9.5 11.5l3 3M12 4.5v2.2M17.5 6.5l-1.6 1.6M19.5 12h-2.2M15.5 15.5l1.5 1.5M14 8.5l4.5-4.5"/></symbol>
+<symbol id="i-wilt" viewBox="0 0 24 24"><path d="M12 20.5c0-5 .5-8 4-10.5M16 10c2 .5 3.5-.5 4-2.5-2-.5-3.5.5-4 2.5ZM16 10c-.5-2 .3-3.7 2-4.5.8 1.8.2 3.6-2 4.5ZM8 20.5h8"/></symbol>
+<symbol id="i-crown" viewBox="0 0 24 24"><path d="m4 8 4 3.5L12 5l4 6.5L20 8l-1.5 9.5h-13L4 8ZM7 20.5h10"/></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24"><path d="M4 4.5h7l9 9a1.6 1.6 0 0 1 0 2.3l-4.7 4.7a1.6 1.6 0 0 1-2.3 0l-9-9v-7Z"/><circle cx="8.3" cy="8.8" r="1.2"/></symbol>
+<symbol id="i-shirt" viewBox="0 0 24 24"><path d="M8.5 4.5 4 7l1.8 3.5 2.2-1V20h8v-10.5l2.2 1L20 7l-4.5-2.5a3.5 3.5 0 0 1-7 0Z"/></symbol>
+<symbol id="i-armor" viewBox="0 0 24 24"><path d="M7 4.5h10l1.5 4-2 1.5v6.5c0 2-2.5 3.5-4.5 3.5s-4.5-1.5-4.5-3.5V10l-2-1.5 1.5-4ZM12 4.5v15.5M9 12h6"/></symbol>
+<symbol id="i-orb" viewBox="0 0 24 24"><circle cx="12" cy="13" r="6.5"/><path d="M8 10.5c1-1.5 3-2 4.5-1.5M12 3v2M9 4l1 1.6M15 4l-1 1.6"/></symbol>
+</defs></svg>
 
 <!-- =========================================================
      ONBOARDING (9 Pflicht-Schritte)
@@ -1085,11 +1317,11 @@
     </p>
     <div class="choice-grid">
       <div class="choice" data-gender="male">
-        <span class="icon">🤴</span>
+        <span class="icon"><svg class="ico-svg" aria-hidden="true"><use href="#i-hero-m"/></svg></span>
         <div class="label">Mann</div>
       </div>
       <div class="choice" data-gender="female">
-        <span class="icon">👸</span>
+        <span class="icon"><svg class="ico-svg" aria-hidden="true"><use href="#i-hero-f"/></svg></span>
         <div class="label">Frau</div>
       </div>
     </div>
@@ -1120,17 +1352,17 @@
     <p class="ob-sub">Bestimmt das Design deines Charakters und deiner Welt.</p>
     <div class="choice-grid full">
       <div class="choice" data-style="rpg">
-        <span class="icon">⚔️</span>
+        <span class="icon"><svg class="ico-svg" aria-hidden="true"><use href="#i-sword"/></svg></span>
         <div class="label">RPG / Fantasy</div>
         <div class="desc">Rüstungen, Ränge, Heldenpfad</div>
       </div>
       <div class="choice" data-style="sims">
-        <span class="icon">🏙️</span>
+        <span class="icon"><svg class="ico-svg" aria-hidden="true"><use href="#i-skyline"/></svg></span>
         <div class="label">Sims / Luxus</div>
         <div class="desc">Outfits, Lifestyle, Penthouse</div>
       </div>
       <div class="choice" data-style="hybrid">
-        <span class="icon">✨</span>
+        <span class="icon"><svg class="ico-svg" aria-hidden="true"><use href="#i-spark"/></svg></span>
         <div class="label">Hybrid</div>
         <div class="desc">Das Beste aus beiden Welten</div>
       </div>
@@ -1165,23 +1397,23 @@
     </p>
     <div class="field-grid">
       <div>
-        <label>💵 Bargeld €</label>
+        <label><svg class="ico-svg" aria-hidden="true"><use href="#i-cash"/></svg> Bargeld €</label>
         <input type="number" inputmode="decimal" id="ob-cash" placeholder="0" />
       </div>
       <div>
-        <label>🏦 Bank €</label>
+        <label><svg class="ico-svg" aria-hidden="true"><use href="#i-bank"/></svg> Bank €</label>
         <input type="number" inputmode="decimal" id="ob-bank" placeholder="0" />
       </div>
       <div>
-        <label>📈 Depot €</label>
+        <label><svg class="ico-svg" aria-hidden="true"><use href="#i-chart-up"/></svg> Depot €</label>
         <input type="number" inputmode="decimal" id="ob-depot" placeholder="0" />
       </div>
       <div>
-        <label>🪙 Gold €</label>
+        <label><svg class="ico-svg" aria-hidden="true"><use href="#i-ingot"/></svg> Gold €</label>
         <input type="number" inputmode="decimal" id="ob-gold" placeholder="0" />
       </div>
-      <div style="grid-column: 1/-1;">
-        <label>💳 Schulden €</label>
+      <div class="span-2">
+        <label><svg class="ico-svg" aria-hidden="true"><use href="#i-card"/></svg> Schulden €</label>
         <input type="number" inputmode="decimal" id="ob-debt" placeholder="0" />
       </div>
     </div>
@@ -1200,13 +1432,13 @@
       Alles pro Monat. Faustregel: <em>Einnahmen − Fixkosten − Variable = was du sparen kannst.</em><br/>
       Gib unten deinen tatsächlichen Sparbetrag ein – wenn er stark abweicht, bekommst du im Dashboard einen Hinweis.
     </p>
-    <label>💰 Einnahmen €/Monat <span style="color:var(--muted-deep);font-weight:500;text-transform:none;letter-spacing:0;">(0 € OK – wir passen den Plan an)</span></label>
+    <label><svg class="ico-svg" aria-hidden="true"><use href="#i-coins"/></svg> Einnahmen €/Monat <span style="color:var(--muted-deep);font-weight:500;text-transform:none;letter-spacing:0;">(0 € OK – wir passen den Plan an)</span></label>
     <input type="number" inputmode="decimal" id="ob-income" placeholder="Gehalt, Taschengeld, Rente, BAföG, 0 wenn nichts..." />
-    <label>📌 Fixkosten €/Monat</label>
+    <label><svg class="ico-svg" aria-hidden="true"><use href="#i-pin"/></svg> Fixkosten €/Monat</label>
     <input type="number" inputmode="decimal" id="ob-fixed" placeholder="Miete, Strom, Versicherungen, Abos" />
-    <label>🛍️ Variable Ausgaben €/Monat</label>
+    <label><svg class="ico-svg" aria-hidden="true"><use href="#i-bag"/></svg> Variable Ausgaben €/Monat</label>
     <input type="number" inputmode="decimal" id="ob-variable" placeholder="Essen, Freizeit, Konsum" />
-    <label>💎 Tatsächlicher Sparbetrag €/Monat</label>
+    <label><svg class="ico-svg" aria-hidden="true"><use href="#i-gem"/></svg> Tatsächlicher Sparbetrag €/Monat</label>
     <input type="number" inputmode="decimal" id="ob-savings" placeholder="Was bleibt wirklich übrig?" />
 
     <!-- Live-Rechnung: aktualisiert sich automatisch beim Tippen -->
@@ -1268,8 +1500,8 @@
      ========================================================= -->
 <div id="app" class="hidden">
   <div class="header">
-    <div class="logo">⚜ WEALTHMISSION</div>
-    <button class="menu-btn icon-btn" id="settings-btn" aria-label="Einstellungen">⚙</button>
+    <div class="logo"><svg class="ico-svg ico-gold" aria-hidden="true"><use href="#i-crest"/></svg> WEALTHMISSION</div>
+    <button class="menu-btn icon-btn" id="settings-btn" aria-label="Einstellungen"><svg class="ico-svg" aria-hidden="true"><use href="#i-gear"/></svg></button>
   </div>
   <!-- Verstecktes File-Input für Backup-Import (global, damit der Listener stabil bleibt) -->
   <input type="file" id="import-file" accept="application/json,.json" style="display:none;" />
@@ -1278,8 +1510,8 @@
   <section class="view active" data-view="dashboard">
 
     <!-- Krisen-Banner: nur bei Cashflow-Defizit sichtbar -->
-    <div class="card" id="crisis-banner" style="display:none;border-color:var(--red);background:linear-gradient(180deg,rgba(248,113,113,0.18),rgba(248,113,113,0.04));box-shadow:var(--shadow-card),0 0 60px rgba(248,113,113,0.25);">
-      <div class="card-title" style="color:var(--red);">🚨 Cashflow im Minus</div>
+    <div class="card crisis" id="crisis-banner" style="display:none;">
+      <div class="card-title"><svg class="ico-svg ico-rose" aria-hidden="true"><use href="#i-alert"/></svg> Cashflow im Minus</div>
       <div style="font-size:14px;line-height:1.5;margin-bottom:10px;">
         Du gibst monatlich <strong id="crisis-deficit-amount" style="color:var(--red);">0 €</strong> mehr aus als du einnimmst.<br/>
         Wahrscheinlich rutscht dein Konto in den Dispo. Wir haben dir Notbremse-Quests bereitgelegt.
@@ -1456,7 +1688,7 @@
           </div>
           <div class="char-badges">
             <span class="level-pill">LVL <strong id="char-level">1</strong></span>
-            <span class="streak-chip">🔥 <span id="streak-count">0</span> Tage</span>
+            <span class="streak-chip"><svg class="ico-svg ico-coral" aria-hidden="true"><use href="#i-flame"/></svg> <span id="streak-count">0</span> Tage</span>
           </div>
         </div>
       </div>
@@ -1470,7 +1702,7 @@
       </div>
 
       <div class="next-upgrade" id="next-upgrade">
-        <div class="nu-icon">🎁</div>
+        <div class="nu-icon"><svg class="ico-svg ico-gold" aria-hidden="true"><use href="#i-gift"/></svg></div>
         <div class="nu-text">
           <div class="t">Nächstes Upgrade auf Level <span id="nu-level">5</span></div>
           <div class="s" id="nu-desc">Lederrüstung schaltet sich frei</div>
@@ -1480,12 +1712,12 @@
 
     <!-- Wealth Card -->
     <div class="card">
-      <div class="card-title">Nettovermögen <button id="show-calc-btn" style="width:auto;min-height:0;padding:4px 10px;font-size:11px;background:transparent;border:1px solid var(--glass-border);">Rechnung</button></div>
+      <div class="card-title">Nettovermögen <button id="show-calc-btn" class="btn-mini">Rechnung</button></div>
       <div class="wealth-net" id="net-worth">0 €</div>
       <div class="wealth-sub" id="net-sub">Tippe „Vermögen” um deine Werte zu pflegen.</div>
 
       <!-- Aufklappbare Rechen-Aufschlüsselung -->
-      <div id="calc-breakdown" style="display:none;margin-top:14px;padding:14px;background:rgba(0,0,0,0.3);border-radius:14px;border:1px solid var(--glass-border);font-variant-numeric:tabular-nums;font-size:14px;line-height:1.8;"></div>
+      <div id="calc-breakdown" class="calc-breakdown" style="display:none;"></div>
 
       <div class="bar-row">
         <div class="bar-label">
@@ -1497,7 +1729,7 @@
 
       <div class="stat-grid">
         <div class="stat gold">
-          <div class="k">🔒 davon geschützt</div>
+          <div class="k"><svg class="ico-svg" aria-hidden="true"><use href="#i-lock"/></svg> davon geschützt</div>
           <div class="v" id="stat-locked">0 €</div>
         </div>
         <div class="stat violet">
@@ -1540,23 +1772,23 @@
 
       <div class="field-grid mt-16">
         <div>
-          <label>💵 Bargeld</label>
+          <label><svg class="ico-svg" aria-hidden="true"><use href="#i-cash"/></svg> Bargeld</label>
           <input type="number" inputmode="decimal" id="w-cash" placeholder="0" />
         </div>
         <div>
-          <label>🏦 Bankkonto</label>
+          <label><svg class="ico-svg" aria-hidden="true"><use href="#i-bank"/></svg> Bankkonto</label>
           <input type="number" inputmode="decimal" id="w-bank" placeholder="0" />
         </div>
         <div>
-          <label>📈 Depot/ETF</label>
+          <label><svg class="ico-svg" aria-hidden="true"><use href="#i-chart-up"/></svg> Depot/ETF</label>
           <input type="number" inputmode="decimal" id="w-depot" placeholder="0" />
         </div>
         <div>
-          <label>🪙 Gold/Sachw.</label>
+          <label><svg class="ico-svg" aria-hidden="true"><use href="#i-ingot"/></svg> Gold/Sachw.</label>
           <input type="number" inputmode="decimal" id="w-gold" placeholder="0" />
         </div>
-        <div style="grid-column: 1/-1;">
-          <label>💳 Schulden</label>
+        <div class="span-2">
+          <label><svg class="ico-svg" aria-hidden="true"><use href="#i-card"/></svg> Schulden</label>
           <input type="number" inputmode="decimal" id="w-debt" placeholder="0" />
         </div>
       </div>
@@ -1568,7 +1800,7 @@
 
     <!-- TRESOR -->
     <div class="card gold">
-      <div class="card-title">🔒 Tresor – geschützter Anteil <span class="accent" id="vault-protect">Schutz: 0 Tage</span></div>
+      <div class="card-title"><svg class="ico-svg" aria-hidden="true"><use href="#i-lock"/></svg> Tresor – geschützter Anteil <span class="accent" id="vault-protect">Schutz: 0 Tage</span></div>
       <div class="wealth-net" id="vault-total">0 €</div>
       <div class="wealth-sub">
         <strong>Wichtig:</strong> Der Tresor ist <u>kein zusätzliches Vermögen</u> – er markiert, welcher Teil deines Bargelds/Bankkontos „geschützt" ist (Schließfach, Festgeld, separates Konto).<br/>
@@ -1600,7 +1832,7 @@
   <section class="view" data-view="missions">
     <!-- Aktionsplan – klare Marschbefehle, oben im Quest-Tab -->
     <div class="card">
-      <div class="card-title">🎯 Dein Aktionsplan <span class="accent">Konkrete Schritte</span></div>
+      <div class="card-title"><svg class="ico-svg" aria-hidden="true"><use href="#i-target"/></svg> Dein Aktionsplan <span class="accent">Konkrete Schritte</span></div>
       <div id="action-plan"></div>
       <button class="btn-ghost mt-12" id="action-plan-reset" style="display:none;">Ausgeblendete wieder anzeigen</button>
     </div>
@@ -1608,7 +1840,7 @@
     <div class="card">
       <div class="card-title">Quests <span class="accent" id="mission-count-label">0 aktiv</span></div>
       <div class="mission-tabs" id="mission-tabs">
-        <button class="mission-tab active" data-cat="empfohlen">⭐ Für dich</button>
+        <button class="mission-tab active" data-cat="empfohlen"><svg class="ico-svg" aria-hidden="true"><use href="#i-star"/></svg> Für dich</button>
         <button class="mission-tab" data-cat="alle">Alle aktiv</button>
         <button class="mission-tab" data-cat="sparen">Sparen</button>
         <button class="mission-tab" data-cat="verdienen">Verdienen</button>
@@ -1628,7 +1860,7 @@
   <section class="view" data-view="analyse">
     <!-- Schnell-Tracking – optional, belohnt mit XP -->
     <div class="card emerald">
-      <div class="card-title">📲 Schnell-Tracking <span class="accent">Optional · +5 XP pro Tap</span></div>
+      <div class="card-title"><svg class="ico-svg" aria-hidden="true"><use href="#i-zap"/></svg> Schnell-Tracking <span class="accent">Optional · +5 XP pro Tap</span></div>
       <div class="quick-track-info">
         Tippe einfach an, was du heute ausgegeben hast. <strong>Je mehr du trackst, desto schärfer wird dein Aktionsplan</strong> – wir passen dann Quests + Missionen exakt an deine Realität an. Außerdem: jeder Tap gibt XP für deinen Charakter.
       </div>
@@ -1639,7 +1871,7 @@
 
     <!-- Konsum-Diagnose – nur Beobachtung, keine Aktion -->
     <div class="card">
-      <div class="card-title">🔍 Konsum-Diagnose <span class="accent">Beobachtungen</span></div>
+      <div class="card-title"><svg class="ico-svg" aria-hidden="true"><use href="#i-scan"/></svg> Konsum-Diagnose <span class="accent">Beobachtungen</span></div>
       <div id="consumption-diagnosis"></div>
     </div>
 
@@ -1701,29 +1933,29 @@
     <div class="card">
       <div class="card-title">Stil ändern</div>
       <div class="choice-grid full">
-        <div class="choice" data-set-style="rpg"><span class="icon">⚔️</span><div class="label">RPG / Fantasy</div></div>
-        <div class="choice" data-set-style="sims"><span class="icon">🏙️</span><div class="label">Sims / Luxus</div></div>
-        <div class="choice" data-set-style="hybrid"><span class="icon">✨</span><div class="label">Hybrid</div></div>
+        <div class="choice" data-set-style="rpg"><span class="icon"><svg class="ico-svg" aria-hidden="true"><use href="#i-sword"/></svg></span><div class="label">RPG / Fantasy</div></div>
+        <div class="choice" data-set-style="sims"><span class="icon"><svg class="ico-svg" aria-hidden="true"><use href="#i-skyline"/></svg></span><div class="label">Sims / Luxus</div></div>
+        <div class="choice" data-set-style="hybrid"><span class="icon"><svg class="ico-svg" aria-hidden="true"><use href="#i-spark"/></svg></span><div class="label">Hybrid</div></div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">Profil & Finanzen <button id="profile-edit-btn" style="width:auto;min-height:0;padding:4px 12px;font-size:11px;background:transparent;border:1px solid var(--line-strong);color:var(--text-soft);">Bearbeiten</button></div>
+      <div class="card-title">Profil & Finanzen <button id="profile-edit-btn" class="btn-mini">Bearbeiten</button></div>
       <div id="profile-display"></div>
     </div>
 
     <div class="text-muted text-small" style="text-align:center;padding:4px 8px 0;">
-      Backup, Reparatur &amp; Reset findest du im ⚙ Menü oben rechts.
+      Backup, Reparatur &amp; Reset findest du im Zahnrad-Menü oben rechts.
     </div>
   </section>
 
   <!-- Bottom Tab Nav -->
   <nav class="tabnav">
-    <button class="tab active" data-go="dashboard"><span class="ico">🏰</span><span>HOME</span></button>
-    <button class="tab" data-go="wealth"><span class="ico">💰</span><span>VERMÖGEN</span></button>
-    <button class="tab" data-go="missions"><span class="ico">⚔️</span><span>QUESTS</span></button>
-    <button class="tab" data-go="analyse"><span class="ico">📊</span><span>ANALYSE</span></button>
-    <button class="tab" data-go="char"><span class="ico">🛡️</span><span>HELD</span></button>
+    <button class="tab active" data-go="dashboard"><span class="ico"><svg class="ico-svg" aria-hidden="true"><use href="#i-home"/></svg></span><span>HOME</span></button>
+    <button class="tab" data-go="wealth"><span class="ico"><svg class="ico-svg" aria-hidden="true"><use href="#i-wallet"/></svg></span><span>VERMÖGEN</span></button>
+    <button class="tab" data-go="missions"><span class="ico"><svg class="ico-svg" aria-hidden="true"><use href="#i-swords"/></svg></span><span>QUESTS</span></button>
+    <button class="tab" data-go="analyse"><span class="ico"><svg class="ico-svg" aria-hidden="true"><use href="#i-stats"/></svg></span><span>ANALYSE</span></button>
+    <button class="tab" data-go="char"><span class="ico"><svg class="ico-svg" aria-hidden="true"><use href="#i-shield"/></svg></span><span>HELD</span></button>
   </nav>
 </div>
 
@@ -1788,28 +2020,28 @@ function computeUserTier(src) {
 
 // Beruf-Optionen
 const OCCUPATIONS = [
-  { id: "schueler", icon: "🎒", label: "Schüler", desc: "Kleines, unregelmäßiges Einkommen" },
-  { id: "student", icon: "🎓", label: "Student", desc: "BAföG, Job, Eltern" },
-  { id: "azubi", icon: "🔧", label: "Azubi", desc: "Ausbildungsvergütung" },
-  { id: "vollzeit", icon: "💼", label: "Angestellt Vollzeit", desc: "Festes Monatsgehalt" },
-  { id: "teilzeit", icon: "⏰", label: "Angestellt Teilzeit", desc: "Reduzierte Stunden" },
-  { id: "selbststaendig", icon: "🚀", label: "Selbstständig", desc: "Schwankendes Einkommen" },
-  { id: "beamter", icon: "🏛️", label: "Beamter", desc: "Sicheres Einkommen" },
-  { id: "arbeitsuchend", icon: "🔍", label: "Arbeitsuchend", desc: "Aktuell ohne Job" },
-  { id: "rentner", icon: "👴", label: "Rentner", desc: "Rente / Pension" },
-  { id: "sonstiges", icon: "❓", label: "Sonstiges", desc: "Andere Situation" },
+  { id: "schueler", sym: "backpack", label: "Schüler", desc: "Kleines, unregelmäßiges Einkommen" },
+  { id: "student", sym: "grad", label: "Student", desc: "BAföG, Job, Eltern" },
+  { id: "azubi", sym: "tool", label: "Azubi", desc: "Ausbildungsvergütung" },
+  { id: "vollzeit", sym: "briefcase", label: "Angestellt Vollzeit", desc: "Festes Monatsgehalt" },
+  { id: "teilzeit", sym: "clock", label: "Angestellt Teilzeit", desc: "Reduzierte Stunden" },
+  { id: "selbststaendig", sym: "rocket", label: "Selbstständig", desc: "Schwankendes Einkommen" },
+  { id: "beamter", sym: "column", label: "Beamter", desc: "Sicheres Einkommen" },
+  { id: "arbeitsuchend", sym: "scan", label: "Arbeitsuchend", desc: "Aktuell ohne Job" },
+  { id: "rentner", sym: "elder", label: "Rentner", desc: "Rente / Pension" },
+  { id: "sonstiges", sym: "help", label: "Sonstiges", desc: "Andere Situation" },
 ];
 
 // Schwächen / persönliche Herausforderungen
 const CHALLENGES = [
-  { id: "impulskaufe", icon: "💸", label: "Impulskäufe", desc: "Du kaufst spontan Dinge, die du eigentlich nicht brauchst" },
-  { id: "essen_unterwegs", icon: "🍔", label: "Essen unterwegs", desc: "Lieferservice, Bäcker, Restaurants summieren sich" },
-  { id: "abos_vergessen", icon: "📺", label: "Abos vergessen", desc: "Du verlierst den Überblick über laufende Verträge" },
-  { id: "kein_uberblick", icon: "🧭", label: "Kein Überblick", desc: "Du weißt nicht genau, wo dein Geld bleibt" },
-  { id: "zu_wenig_einkommen", icon: "💼", label: "Zu wenig Einkommen", desc: "Am Monatsende bleibt nichts übrig" },
-  { id: "schulden", icon: "🔗", label: "Schulden", desc: "Kredite oder Dispo lasten auf dir" },
-  { id: "keine_disziplin", icon: "⏰", label: "Keine Disziplin", desc: "Gute Vorsätze halten selten lange" },
-  { id: "investieren_unklar", icon: "📊", label: "Investieren noch unklar", desc: "Aktien, ETFs, Depot – noch ein Fragezeichen" },
+  { id: "impulskaufe", sym: "cart", label: "Impulskäufe", desc: "Du kaufst spontan Dinge, die du eigentlich nicht brauchst" },
+  { id: "essen_unterwegs", sym: "burger", label: "Essen unterwegs", desc: "Lieferservice, Bäcker, Restaurants summieren sich" },
+  { id: "abos_vergessen", sym: "screen", label: "Abos vergessen", desc: "Du verlierst den Überblick über laufende Verträge" },
+  { id: "kein_uberblick", sym: "compass", label: "Kein Überblick", desc: "Du weißt nicht genau, wo dein Geld bleibt" },
+  { id: "zu_wenig_einkommen", sym: "briefcase", label: "Zu wenig Einkommen", desc: "Am Monatsende bleibt nichts übrig" },
+  { id: "schulden", sym: "chain", label: "Schulden", desc: "Kredite oder Dispo lasten auf dir" },
+  { id: "keine_disziplin", sym: "clock", label: "Keine Disziplin", desc: "Gute Vorsätze halten selten lange" },
+  { id: "investieren_unklar", sym: "stats", label: "Investieren noch unklar", desc: "Aktien, ETFs, Depot – noch ein Fragezeichen" },
 ];
 
 // Vermögensziel-Chips
@@ -1859,28 +2091,28 @@ const MILESTONES = [
    ========================================================= */
 const EQUIPMENT = {
   rpg: [
-    { lvl: 1,  name: "Einfache Tunika",       icon: "👕", desc: "Kleidung eines Reisenden" },
-    { lvl: 5,  name: "Lederrüstung",          icon: "🥋", desc: "Schutz für junge Abenteurer" },
-    { lvl: 10, name: "Eisenrüstung",          icon: "🛡️", desc: "Solide Rüstung erfahrener Krieger" },
-    { lvl: 20, name: "Ritterrüstung",         icon: "⚔️", desc: "Glänzende Rüstung eines Ritters" },
-    { lvl: 30, name: "Magische Rüstung",      icon: "🔮", desc: "Verzauberte Rüstung mit Aura" },
-    { lvl: 50, name: "Legendäre Goldrüstung", icon: "👑", desc: "Rüstung der Helden-Legenden" },
+    { lvl: 1,  name: "Einfache Tunika",       sym: "shirt", desc: "Kleidung eines Reisenden" },
+    { lvl: 5,  name: "Lederrüstung",          sym: "armor", desc: "Schutz für junge Abenteurer" },
+    { lvl: 10, name: "Eisenrüstung",          sym: "shield", desc: "Solide Rüstung erfahrener Krieger" },
+    { lvl: 20, name: "Ritterrüstung",         sym: "swords", desc: "Glänzende Rüstung eines Ritters" },
+    { lvl: 30, name: "Magische Rüstung",      sym: "orb", desc: "Verzauberte Rüstung mit Aura" },
+    { lvl: 50, name: "Legendäre Goldrüstung", sym: "crown", desc: "Rüstung der Helden-Legenden" },
   ],
   sims: [
-    { lvl: 1,  name: "Einfache Kleidung",       icon: "👕", desc: "Alltagslook" },
-    { lvl: 5,  name: "Casual Look",             icon: "🧥", desc: "Gepflegt und stilbewusst" },
-    { lvl: 10, name: "Business Outfit",         icon: "💼", desc: "Professionell und seriös" },
-    { lvl: 20, name: "Designer Outfit",         icon: "🕴️", desc: "Edel und exklusiv" },
-    { lvl: 30, name: "Luxuswohnung",            icon: "🏙️", desc: "Stilvoller Lifestyle" },
-    { lvl: 50, name: "Penthouse + Sportwagen",  icon: "🏎️", desc: "High-Society-Lifestyle" },
+    { lvl: 1,  name: "Einfache Kleidung",       sym: "shirt", desc: "Alltagslook" },
+    { lvl: 5,  name: "Casual Look",             sym: "hanger", desc: "Gepflegt und stilbewusst" },
+    { lvl: 10, name: "Business Outfit",         sym: "briefcase", desc: "Professionell und seriös" },
+    { lvl: 20, name: "Designer Outfit",         sym: "gem", desc: "Edel und exklusiv" },
+    { lvl: 30, name: "Luxuswohnung",            sym: "skyline", desc: "Stilvoller Lifestyle" },
+    { lvl: 50, name: "Penthouse + Sportwagen",  sym: "car", desc: "High-Society-Lifestyle" },
   ],
   hybrid: [
-    { lvl: 1,  name: "Einfache Kleidung",       icon: "👕", desc: "Der Anfang aller Helden" },
-    { lvl: 5,  name: "Lederrüstung & Casual",   icon: "🥋", desc: "Bereit für die ersten Quests" },
-    { lvl: 10, name: "Eisenrüstung & Business", icon: "🛡️", desc: "Stärke trifft Stil" },
-    { lvl: 20, name: "Ritter im Designer-Look", icon: "⚔️", desc: "Edler Krieger der Moderne" },
-    { lvl: 30, name: "Magische Luxusrüstung",   icon: "🔮", desc: "Penthouse mit magischer Aura" },
-    { lvl: 50, name: "Legendärer High-Roller",  icon: "👑", desc: "Mythos und Luxus vereint" },
+    { lvl: 1,  name: "Einfache Kleidung",       sym: "shirt", desc: "Der Anfang aller Helden" },
+    { lvl: 5,  name: "Lederrüstung & Casual",   sym: "armor", desc: "Bereit für die ersten Quests" },
+    { lvl: 10, name: "Eisenrüstung & Business", sym: "shield", desc: "Stärke trifft Stil" },
+    { lvl: 20, name: "Ritter im Designer-Look", sym: "swords", desc: "Edler Krieger der Moderne" },
+    { lvl: 30, name: "Magische Luxusrüstung",   sym: "orb", desc: "Penthouse mit magischer Aura" },
+    { lvl: 50, name: "Legendärer High-Roller",  sym: "crown", desc: "Mythos und Luxus vereint" },
   ],
 };
 
@@ -2026,25 +2258,25 @@ const MISSION_TEMPLATES = [
 
   // --- NOTBREMSE (Cashflow-Krise: Ausgaben > Einnahmen) ---
   // Diese werden NUR automatisch hinzugefügt, wenn der User in der Krise ist.
-  { id: "n1", title: "🚨 Notbremse: 7 Tage Konsum-STOPP", category: "disziplin", baseDifficulty: "schwer", effect: 0, xp: 250,
+  { id: "n1", title: "Notbremse: 7 Tage Konsum-STOPP", category: "disziplin", baseDifficulty: "schwer", effect: 0, xp: 250,
     tierMin: 0, tierMax: 5, crisis: true, ageMin: 18,
     desc: "Sofort 7 Tage Notbremse. Erlaubt: Lebensmittel (Aldi-Standard), Hygiene, Pflicht-Mobilität (zur Arbeit, Schule). NICHT erlaubt: Lieferservice, Restaurant, To-Go-Kaffee, Online-Shopping, Streaming-Erweiterungen, App-Käufe, Tanken über Pflicht hinaus. Ziel: das Bluten stoppen, bevor wir den Rest planen." },
-  { id: "n2", title: "🚨 Kompletter Fixkosten-Audit", category: "vertraege", baseDifficulty: "mittel", effect: 0, xp: 200,
+  { id: "n2", title: "Notbremse: Kompletter Fixkosten-Audit", category: "vertraege", baseDifficulty: "mittel", effect: 0, xp: 200,
     tierMin: 0, tierMax: 5, crisis: true, ageMin: 18,
     desc: "Setz dich 60 Minuten hin. Zettel + Banking-App. Schreibe JEDE Fixkost auf: Miete, Nebenkosten, Strom, Gas, Wasser, Internet, Mobilfunk, Versicherungen, Abos, Mitgliedschaften, Apps. Pro Punkt: ist es kündbar? Wechselbar? Verhandelbar? Markiere die Top 3 zum Kürzen." },
-  { id: "n3", title: "🚨 Dispo-Zinssatz checken & notieren", category: "schulden", baseDifficulty: "leicht", effect: 0, xp: 150,
+  { id: "n3", title: "Notbremse: Dispo-Zinssatz checken & notieren", category: "schulden", baseDifficulty: "leicht", effect: 0, xp: 150,
     tierMin: 0, tierMax: 5, crisis: true, ageMin: 18,
     desc: "Banking-App öffnen oder Bank anrufen: wie hoch ist dein Dispo-Zinssatz? Meist 9–14 %. Diese Zahl ist dein teuerster Feind. Schreib sie sichtbar auf. Plus: wieviel Dispo nutzt du gerade?" },
-  { id: "n4", title: "🚨 Mindestens 2 Abos heute kündigen", category: "vertraege", baseDifficulty: "leicht", effect: 30, xp: 180,
+  { id: "n4", title: "Notbremse: Mindestens 2 Abos heute kündigen", category: "vertraege", baseDifficulty: "leicht", effect: 30, xp: 180,
     tierMin: 0, tierMax: 5, crisis: true, ageMin: 18,
     desc: "Heute, nicht morgen. Streaming, Gym, Lieferservice-Prime, Magazine, Cloud-Speicher, Apps. Mindestens 2 raus. Sofort. Du kannst sie immer noch neu abschließen, wenn die Krise vorbei ist." },
-  { id: "n5", title: "🚨 50€ extra einnehmen (7 Tage)", category: "verdienen", baseDifficulty: "mittel", effect: 50, xp: 200,
+  { id: "n5", title: "Notbremse: 50€ extra einnehmen (7 Tage)", category: "verdienen", baseDifficulty: "mittel", effect: 50, xp: 200,
     tierMin: 0, tierMax: 5, crisis: true, ageMin: 18,
     desc: "In 7 Tagen 50€ extra reinholen. Verkaufe 3–5 Sachen (Kleinanzeigen, Vinted), biete 2h Hilfsarbeit an, frag bei Verwandten ob du was tun kannst (Garten, Renovierung, Hund hüten). Ziel ist nicht Reichtum – Ziel ist Bewegung." },
-  { id: "n6", title: "🚨 Keine neuen Kredite 30 Tage", category: "disziplin", baseDifficulty: "schwer", effect: 0, xp: 250,
+  { id: "n6", title: "Notbremse: Keine neuen Kredite 30 Tage", category: "disziplin", baseDifficulty: "schwer", effect: 0, xp: 250,
     tierMin: 0, tierMax: 5, crisis: true, ageMin: 18,
     desc: "30 Tage hartes Verbot: keine neue Kreditkarte, keine 0%-Finanzierung („Klarna in 3 Raten”), kein Privatkredit. Schulden löst man nicht mit neuen Schulden – sonst zahlst du am Ende doppelt." },
-  { id: "n7", title: "🚨 Schuldnerberatung anrufen (kostenlos)", category: "schulden", baseDifficulty: "mittel", effect: 0, xp: 300,
+  { id: "n7", title: "Notbremse: Schuldnerberatung anrufen (kostenlos)", category: "schulden", baseDifficulty: "mittel", effect: 0, xp: 300,
     tierMin: 0, tierMax: 5, crisis: true, ageMin: 18,
     desc: "Bei echter Schuldensituation: ruf eine kostenlose Schuldnerberatung an. Caritas, Diakonie, Verbraucherzentrale, AWO – alle kostenlos, alle vertraulich. Schämen ist umsonst – die Berater haben alles schon gesehen. Ein Termin ändert oft alles." },
 ];
@@ -2160,15 +2392,15 @@ const CATEGORY_LABEL = {
    Optional fuer User, mapped auf Aktionsplan-Hebel
    ========================================================= */
 const QUICK_LOG_CATEGORIES = [
-  { id: "essen",       icon: "🍔", label: "Essen unterwegs", planId: "essen_unterwegs" },
-  { id: "konsum",      icon: "🛍️", label: "Shopping",        planId: "impulskaufe" },
-  { id: "kleidung",    icon: "👔", label: "Kleidung",        planId: "kleidung_status" },
-  { id: "freizeit",    icon: "🍻", label: "Bar / Freizeit",  planId: "impulskaufe" },
-  { id: "abo",         icon: "📺", label: "Abo / App",       planId: "abos_vergessen" },
-  { id: "mobilitaet",  icon: "🚗", label: "Mobilität",       planId: null },
-  { id: "geschenke",   icon: "🎁", label: "Geschenke",       planId: null },
-  { id: "gesundheit",  icon: "💊", label: "Gesundheit",      planId: null },
-  { id: "sonstiges",   icon: "💬", label: "Sonstiges",       planId: null }
+  { id: "essen",       sym: "burger", label: "Essen unterwegs", planId: "essen_unterwegs" },
+  { id: "konsum",      sym: "bag", label: "Shopping",        planId: "impulskaufe" },
+  { id: "kleidung",    sym: "hanger", label: "Kleidung",        planId: "kleidung_status" },
+  { id: "freizeit",    sym: "drink", label: "Bar / Freizeit",  planId: "impulskaufe" },
+  { id: "abo",         sym: "screen", label: "Abo / App",       planId: "abos_vergessen" },
+  { id: "mobilitaet",  sym: "car", label: "Mobilität",       planId: null },
+  { id: "geschenke",   sym: "gift", label: "Geschenke",       planId: null },
+  { id: "gesundheit",  sym: "pulse", label: "Gesundheit",      planId: null },
+  { id: "sonstiges",   sym: "chat", label: "Sonstiges",       planId: null }
 ];
 
 /* =========================================================
@@ -2178,42 +2410,42 @@ const QUICK_LOG_CATEGORIES = [
 const ACTION_PLANS = {
   // --- Toxische Hebel (klar drängen) ---
   essen_unterwegs: {
-    id: "essen_unterwegs", icon: "🍔", title: "Konsum-Stopp: Essen unterwegs",
+    id: "essen_unterwegs", sym: "burger", title: "Konsum-Stopp: Essen unterwegs",
     severity: "tox", toxicity: 3, ageMin: 13,
     instruction: "Diese 7 Tage: kein Lieferservice, kein Restaurant, kein To-Go-Kaffee. Sonntag 90 Min Meal-Prep für die Woche. Lieferservice-Apps deinstallieren.",
     estimatedSavingMonthly: 200,
     questIds: ["we1", "we2", "we3"]
   },
   impulskaufe: {
-    id: "impulskaufe", icon: "💸", title: "Konsum-Stopp: Impulskäufe",
+    id: "impulskaufe", sym: "cart", title: "Konsum-Stopp: Impulskäufe",
     severity: "tox", toxicity: 3,
     instruction: "JETZT: Notiz-App öffnen, Wunschliste anlegen. Jeder spontane Kauf über 50 € kommt 48 Stunden auf die Liste. Shopping-Apps deinstallieren. Karte daheim lassen.",
     estimatedSavingMonthly: 150,
     questIds: ["wi1", "wi2", "wi3", "wi4"]
   },
   abos_vergessen: {
-    id: "abos_vergessen", icon: "📺", title: "Verträge: Abo-Audit",
+    id: "abos_vergessen", sym: "screen", title: "Verträge: Abo-Audit",
     severity: "tox", toxicity: 2, ageMin: 16,
     instruction: "JETZT Banking-App öffnen. Letzte 3 Monate alle wiederkehrenden Abbuchungen listen. Mindestens 2 unnütze Abos heute kündigen. Kalender-Reminder 7 Tage vor jeder Verlängerung anlegen.",
     estimatedSavingMonthly: 40,
     questIds: ["wa1", "wa2", "wa3"]
   },
   kleidung_status: {
-    id: "kleidung_status", icon: "👔", title: "Markenkonsum stoppen",
+    id: "kleidung_status", sym: "hanger", title: "Markenkonsum stoppen",
     severity: "tox", toxicity: 3,
     instruction: "30 Tage: keine neue Kleidung, kein Markenkauf. Bestehende Sachen durchsehen, was du wirklich anziehst. Bei Bedarf: Vinted / Kleinanzeigen statt Neukauf.",
     estimatedSavingMonthly: 100,
     questIds: ["d3"]
   },
   schulden: {
-    id: "schulden", icon: "🔗", title: "Schulden: Tilgungsplan",
+    id: "schulden", sym: "chain", title: "Schulden: Tilgungsplan",
     severity: "crisis", toxicity: 3, ageMin: 18,
     instruction: "Schreibe alle Schulden auf einen Zettel: Betrag + Zinssatz. Sortiere nach Zinssatz absteigend. Diesen Monat: tilge die teuerste doppelt. Dispo-Zins prüfen – meist 10–14 %, sofortige Priorität.",
     estimatedSavingMonthly: 50,
     questIds: ["ws1", "ws2", "ws3", "ws4"]
   },
   fixkosten_hoch: {
-    id: "fixkosten_hoch", icon: "📌", title: "Fixkosten-Audit",
+    id: "fixkosten_hoch", sym: "pin", title: "Fixkosten-Audit",
     severity: "tox", toxicity: 2, ageMin: 18,
     instruction: "Setz dich 60 Min hin mit Zettel + Banking-App. Schreibe JEDE Fixkost auf (Miete, Strom, Gas, Internet, Mobilfunk, Versicherungen, Abos). Markiere Top 3 zum Kürzen oder Wechseln.",
     estimatedSavingMonthly: 80,
@@ -2221,14 +2453,14 @@ const ACTION_PLANS = {
   },
   // --- Investment-Hebel (sanft, Lebensqualität erhalten) ---
   sparrate_niedrig: {
-    id: "sparrate_niedrig", icon: "💎", title: "Notgroschen: Pay-Yourself-First",
+    id: "sparrate_niedrig", sym: "gem", title: "Notgroschen: Pay-Yourself-First",
     severity: "invest", toxicity: 0,
     instruction: "Diesen 1. des Monats: Dauerauftrag einrichten – 100 € sofort auf separates Sparkonto, BEVOR du sie ausgibst. Klein anfangen ist besser als gar nichts.",
     estimatedSavingMonthly: 100,
     questIds: ["d4", "i4"]
   },
   kein_depot: {
-    id: "kein_depot", icon: "📈", title: "Investieren: Depot eröffnen",
+    id: "kein_depot", sym: "chart-up", title: "Investieren: Depot eröffnen",
     severity: "invest", toxicity: 0, ageMin: 16,
     instruction: "Diese Woche: Trade Republic / Scalable / ING-App laden. Depot eröffnen (10 Min, kostenlos). ETF-Sparplan auf MSCI World einrichten, 50 €/Monat. Erst eröffnen, dann verstehen.",
     estimatedSavingMonthly: 0,
@@ -2236,21 +2468,21 @@ const ACTION_PLANS = {
     questIds: ["i1", "i2", "i3", "wv1", "wv2"]
   },
   kein_uberblick: {
-    id: "kein_uberblick", icon: "🧭", title: "Geld-Überblick gewinnen",
+    id: "kein_uberblick", sym: "compass", title: "Geld-Überblick gewinnen",
     severity: "tox", toxicity: 2,
     instruction: "Diese 7 Tage: jede einzelne Ausgabe in eine Notiz-App, auch 2,50 € Brötchen. Sonntag: 10 Min Auswertung, größte Posten markieren.",
     estimatedSavingMonthly: 60,
     questIds: ["wu1", "wu2"]
   },
   keine_disziplin: {
-    id: "keine_disziplin", icon: "⏰", title: "Disziplin-Streak",
+    id: "keine_disziplin", sym: "clock", title: "Disziplin-Streak",
     severity: "tox", toxicity: 2,
     instruction: "Ab morgen 30 Tage Streak: jeden Tag 60 Sekunden WealthMission öffnen, eine Mini-Quest abhaken. Gewohnheit schlägt Motivation.",
     estimatedSavingMonthly: 50,
     questIds: ["wk1", "wk2", "wk3"]
   },
   zu_wenig_einkommen: {
-    id: "zu_wenig_einkommen", icon: "💼", title: "Einkommen erhöhen",
+    id: "zu_wenig_einkommen", sym: "briefcase", title: "Einkommen erhöhen",
     severity: "invest", toxicity: 0, ageMin: 14,
     instruction: "Diese Woche 1 Stunde investieren: 1 Skill lernen, der dein Einkommen heben kann (Excel, Englisch, Coden, Marketing). Plus 1 Bewerbung diese Woche auf besser bezahlten Job/Side-Hustle.",
     estimatedSavingMonthly: 0,
@@ -2258,7 +2490,7 @@ const ACTION_PLANS = {
     questIds: ["wz1", "wz2", "wz3"]
   },
   investieren_unklar: {
-    id: "investieren_unklar", icon: "📊", title: "Investieren verstehen",
+    id: "investieren_unklar", sym: "stats", title: "Investieren verstehen",
     severity: "invest", toxicity: 0, ageMin: 14,
     instruction: "Diese 30 Minuten: Finanzfluss YouTube anschauen „ETF erklärt”. Demo-Depot eröffnen. 1 € echt investieren um den Prozess durchzumachen.",
     estimatedSavingMonthly: 0,
@@ -2267,7 +2499,7 @@ const ACTION_PLANS = {
   },
   // --- Teen 10–13: Taschengeld, Sammeln, Verkaufen (kein Job legal) ---
   taschengeld_start: {
-    id: "taschengeld_start", icon: "🎒", title: "Taschengeld-Start: dein erstes Vermögen",
+    id: "taschengeld_start", sym: "backpack", title: "Taschengeld-Start: dein erstes Vermögen",
     severity: "invest", toxicity: 0, ageMin: 10, ageMax: 13,
     instruction: "Diese Woche: 5 € vom Taschengeld in eine separate Spardose. Verkauf 3 alte Sachen mit Eltern bei Kleinanzeigen. Sammel eine Woche Pfandflaschen. Sprecht über ein Junior-Sparkonto. Vermögensaufbau beginnt JETZT, nicht mit 18.",
     estimatedSavingMonthly: 25,
@@ -2276,7 +2508,7 @@ const ACTION_PLANS = {
   },
   // --- Teen 13–14: erste leichte Tätigkeiten erlaubt (mit Eltern-OK) ---
   teen_leichtarbeit: {
-    id: "teen_leichtarbeit", icon: "📰", title: "Erste eigene Einnahmen (mit Eltern-OK)",
+    id: "teen_leichtarbeit", sym: "news", title: "Erste eigene Einnahmen (mit Eltern-OK)",
     severity: "invest", toxicity: 0, ageMin: 13, ageMax: 14,
     instruction: "Ab 13 sind in DE 2 h/Tag leichte Tätigkeiten erlaubt (Eltern-Einverständnis nötig). Diese Woche: 1) Zeitungs/Werbung-Verteiler kontaktieren ODER Nachhilfe für Jüngere anbieten ODER Babysitten in der Nachbarschaft. Ziel: 30–60 € im ersten Monat. Davon 50 % in den Tresor.",
     estimatedSavingMonthly: 50,
@@ -2285,7 +2517,7 @@ const ACTION_PLANS = {
   },
   // --- Teen 15–17: Ferienjob + regulärer Minijob möglich ---
   teen_minijob: {
-    id: "teen_minijob", icon: "💼", title: "Ferienjob + Minijob nutzen",
+    id: "teen_minijob", sym: "briefcase", title: "Ferienjob + Minijob nutzen",
     severity: "invest", toxicity: 0, ageMin: 15, ageMax: 17,
     instruction: "Ab 15 darfst du bis zu 4 Wochen Ferienjob/Jahr machen (8 h/Tag), plus regulären Minijob. JETZT planen: Bewirb dich 2–3 Monate vor den Sommerferien (Supermarkt, Eisdiele, Lager, Festival). Pro Ferienmonat 400–1.200 € möglich. 80 % davon direkt in ETF-Sparplan.",
     estimatedSavingMonthly: 300,
@@ -2409,7 +2641,7 @@ function sanitizeState(s) {
   // Custom Kategorien bereinigen
   if (!Array.isArray(s.customCategories)) s.customCategories = [];
   s.customCategories = s.customCategories
-    .map(c => ({ id: String(c.id || ('custom_' + Math.random().toString(36).slice(2, 9))), icon: String(c.icon || '🏷️').slice(0, 4), label: String(c.label || '').slice(0, 22), planId: c.planId || null }))
+    .map(c => ({ id: String(c.id || ('custom_' + Math.random().toString(36).slice(2, 9))), icon: String(c.icon || '').slice(0, 4), label: String(c.label || '').slice(0, 22), planId: c.planId || null }))
     .filter(c => c.label);
 
   // Missions bereinigen
@@ -2431,7 +2663,7 @@ function save() {
     // iOS Safari Privat-Modus wirft hier sofort; Quota-Überschreitung ebenfalls.
     if (!saveErrorShown) {
       saveErrorShown = true;
-      toast("⚠️ Speichern nicht möglich (Privat-Modus?). Daten gehen beim Schließen verloren.");
+      toast("Speichern nicht möglich (Privat-Modus?). Daten gehen beim Schließen verloren.");
     }
   }
 }
@@ -2439,6 +2671,43 @@ function save() {
 /* =========================================================
    HILFSFUNKTIONEN
    ========================================================= */
+// ---------- SVG-Icon-Helfer ----------
+// Liefert ein <use>-Icon aus dem Sprite (#icon-sprite, direkt nach <body>).
+// NIEMALS durch escapeHTML leiten.
+function iconSvg(name, cls) {
+  return '<svg class="ico-svg' + (cls ? ' ' + cls : '') + '" aria-hidden="true"><use href="#i-' + name + '"/></svg>';
+}
+// Kategorie-Icon: sym-Feld (Built-ins) oder i-tag (Custom-Kategorien)
+function catIcon(cat, cls) {
+  return iconSvg(cat && cat.sym ? cat.sym : 'tag', cls);
+}
+
+// ---------- Count-up-Engine (UI-FX) ----------
+// Animiert Zahlenwechsel per rAF. Cache verhindert Re-Animation bei jedem
+// renderAll: nur ECHTE Wertänderungen zählen hoch; Erst-Render setzt sofort.
+const REDUCED_MOTION = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const _numCache = {};
+function setNum(id, value, fmtFn, dur) {
+  const el = document.getElementById(id); if (!el) return;
+  fmtFn = fmtFn || (v => String(Math.round(v)));
+  const c = _numCache[id];
+  if (c && c.raf) cancelAnimationFrame(c.raf);
+  if (REDUCED_MOTION || !c || c.val === value) {
+    _numCache[id] = { val: value, raf: 0 };
+    el.textContent = fmtFn(value); return;
+  }
+  const from = c.val, t0 = performance.now(), d = dur || 700;
+  _numCache[id] = { val: value, raf: 0 };
+  (function tick(t) {
+    const p = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - p, 3);
+    el.textContent = fmtFn(from + (value - from) * e);
+    if (p < 1) _numCache[id].raf = requestAnimationFrame(tick);
+  })(t0);
+}
+const fmtEuro = (v) => fmt(Math.round(v));
+const fmtPct = (v) => Math.round(v) + "%";
+const fmtInt = (v) => String(Math.round(v));
+
 const fmt = (n) => {
   // Defensiv: undefined/null/NaN/string -> 0 €
   const num = (typeof n === "number" && !isNaN(n)) ? n : (parseFloat(n) || 0);
@@ -2545,7 +2814,7 @@ function renderObOccupations() {
   const wrap = document.getElementById("ob-occupation-list");
   wrap.innerHTML = OCCUPATIONS.map(o =>
     '<div class="choice-row" data-occupation="' + o.id + '">' +
-      '<div class="icon">' + o.icon + '</div>' +
+      '<div class="icon">' + iconSvg(o.sym) + '</div>' +
       '<div class="text"><div class="t">' + o.label + '</div><div class="s">' + o.desc + '</div></div>' +
     '</div>'
   ).join("");
@@ -2586,7 +2855,7 @@ function renderObChallenges() {
   const wrap = document.getElementById("ob-challenges-list");
   wrap.innerHTML = CHALLENGES.map(c =>
     '<div class="choice-row" data-challenge="' + c.id + '">' +
-      '<div class="icon">' + c.icon + '</div>' +
+      '<div class="icon">' + iconSvg(c.sym) + '</div>' +
       '<div class="text"><div class="t">' + c.label + '</div><div class="s">' + c.desc + '</div></div>' +
     '</div>'
   ).join("");
@@ -2615,14 +2884,14 @@ function renderObSummary() {
   const occ = OCCUPATIONS.find(o => o.id === obData.occupation);
   const challengeLabels = obData.challenges.map(id => {
     const c = CHALLENGES.find(x => x.id === id);
-    return c ? c.icon + " " + c.label : "";
+    return c ? c.label : "";
   }).filter(Boolean).join(", ");
 
   const wrap = document.getElementById("ob-summary");
   wrap.innerHTML =
     '<div class="card-title">Dein Profil</div>' +
     '<div style="font-size:18px;font-weight:800;margin-bottom:6px;">' + escapeHTML(obData.name) + ', ' + obData.age + '</div>' +
-    '<div class="text-muted text-small">' + (occ ? occ.icon + ' ' + occ.label : '') + ' · Stil: ' + obData.style + '</div>' +
+    '<div class="text-muted text-small">' + (occ ? occ.label : '') + ' · Stil: ' + obData.style + '</div>' +
     '<div class="bar-row"><div class="bar-label"><span>FINANZIELLER TIER</span><strong>' + TIER_NAMES[tier] + '</strong></div>' +
       '<div class="bar violet"><span style="width:' + ((tier/5)*100) + '%"></span></div></div>' +
     '<div class="stat-grid">' +
@@ -2630,8 +2899,8 @@ function renderObSummary() {
       '<div class="stat green"><div class="k">Sparrate / Monat</div><div class="v">' + fmt(savings) + '</div></div>' +
     '</div>' +
     '<div class="stat" style="margin-top:8px;"><div class="k">Vermögensziel</div><div class="v">' + fmt(obData.goal) + '</div></div>' +
-    (challengeLabels ? '<div class="next-upgrade" style="margin-top:12px;"><div class="nu-icon">🎯</div><div class="nu-text"><div class="t">Deine Schwerpunkte</div><div class="s">' + escapeHTML(challengeLabels) + '</div></div></div>' : '') +
-    '<div class="next-upgrade"><div class="nu-icon">⚔️</div><div class="nu-text"><div class="t">Personalisierte Quests bereit</div><div class="s">Wir laden Quests, die zu deiner Situation und deinen Schwächen passen.</div></div></div>';
+    (challengeLabels ? '<div class="next-upgrade" style="margin-top:12px;"><div class="nu-icon">' + iconSvg("target", "ico-gold") + '</div><div class="nu-text"><div class="t">Deine Schwerpunkte</div><div class="s">' + escapeHTML(challengeLabels) + '</div></div></div>' : '') +
+    '<div class="next-upgrade"><div class="nu-icon">' + iconSvg("swords", "ico-gold") + '</div><div class="nu-text"><div class="t">Personalisierte Quests bereit</div><div class="s">Wir laden Quests, die zu deiner Situation und deinen Schwächen passen.</div></div></div>';
 }
 
 // Navigation
@@ -2722,7 +2991,7 @@ function updateObLiveCalc() {
   let warnClass = "";
   if (free < 0) warnClass = " warn";
 
-  let html = '<div class="lc-title">💡 Deine Live-Rechnung</div>';
+  let html = '<div class="lc-title">Deine Live-Rechnung</div>';
   html += '<div class="lc-row"><span class="lc-label">Einnahmen</span><span class="lc-val">' + fmt(income) + '</span></div>';
   html += '<div class="lc-row"><span class="lc-label">− Fixkosten</span><span class="lc-val">−' + fmt(fixed) + '</span></div>';
   html += '<div class="lc-row"><span class="lc-label">− Variable Ausgaben</span><span class="lc-val">−' + fmt(variable) + '</span></div>';
@@ -2730,12 +2999,12 @@ function updateObLiveCalc() {
   html += '<div class="lc-total' + (free < 0 ? ' negative' : '') + '"><span>= Rechnerisch frei</span><span>' + fmt(free) + '</span></div>';
 
   if (free < 0) {
-    html += '<div class="lc-hint" style="color:var(--rose);font-weight:600;margin-top:8px;">⚠️ Du gibst monatlich ' + fmt(-free) + ' mehr aus als du einnimmst – wir aktivieren nach dem Onboarding die Notbremse-Quests.</div>';
+    html += '<div class="lc-hint" style="color:var(--rose);font-weight:600;margin-top:8px;">Du gibst monatlich ' + fmt(-free) + ' mehr aus als du einnimmst – wir aktivieren nach dem Onboarding die Notbremse-Quests.</div>';
   } else if (free === 0) {
     html += '<div class="lc-hint">Nullsumme: alles, was reinkommt, geht raus. Erster Schritt: 1 Fixkosten-Audit (Quests sind dafür da).</div>';
   } else {
     html += '<div class="lc-block">';
-    html += '<div class="lc-block-title">🛡️ Notgroschen-Plan</div>';
+    html += '<div class="lc-block-title">Notgroschen-Plan</div>';
     html += '<div class="lc-row"><span class="lc-label">Empfohlenes Ziel</span><span class="lc-val">' + fmt(notgroschenTarget) + '</span></div>';
     html += '<div class="lc-row"><span class="lc-label">Aufbau-Rate (Empfehlung)</span><span class="lc-val">' + fmt(buildup) + '/Monat</span></div>';
     html += '<div class="lc-row"><span class="lc-label">Voll in</span><span class="lc-val">' + months + ' Monaten</span></div>';
@@ -2746,7 +3015,7 @@ function updateObLiveCalc() {
       : 'Notgroschen-Aufbau frisst aktuell alles freie Geld. Das ist OK – sobald er voll ist, kannst du voll investieren.') + '</div>';
     html += '</div>';
     if (savings > 0 && Math.abs(savings - buildup) > 50) {
-      html += '<div class="lc-hint" style="margin-top:8px;">💎 Du hast <strong>' + fmt(savings) + '</strong> als Sparbetrag angegeben' +
+      html += '<div class="lc-hint" style="margin-top:8px;">Du hast <strong>' + fmt(savings) + '</strong> als Sparbetrag angegeben' +
         (savings > buildup ? ' – das ist ehrgeizig, super!' : ' – die App rechnet trotzdem mit deinem Wert.') + '</div>';
     }
   }
@@ -2945,7 +3214,7 @@ function renderAvatar() {
 
   // Krone / Funkeln über dem Kopf (HTML-Overlay)
   const crownEl = document.getElementById("char-crown");
-  if (crownEl) crownEl.textContent = lvl >= 50 ? "👑" : (lvl >= 30 ? "✨" : "");
+  if (crownEl) crownEl.innerHTML = lvl >= 50 ? iconSvg("crown", "ico-gold") : (lvl >= 30 ? iconSvg("spark", "ico-gold") : "");
 
   // Char-Tab Avatar-Klon
   const frame2 = document.getElementById("avatar-frame-2");
@@ -3004,9 +3273,9 @@ function renderHeader() {
 function renderXp() {
   const need = xpForLevel(state.level);
   const pct = Math.min(100, Math.round((state.xp / need) * 100));
-  document.getElementById("xp-current").textContent = state.xp;
+  setNum("xp-current", state.xp, fmtInt);
   document.getElementById("xp-needed").textContent = need;
-  document.getElementById("xp-percent").textContent = pct + "%";
+  setNum("xp-percent", pct, fmtPct);
   document.getElementById("xp-bar").style.width = pct + "%";
 
   const next = nextEquipmentTier();
@@ -3025,24 +3294,24 @@ function renderXp() {
 function renderWealth() {
   const net = netWorth();
   const w = state.wealth;
-  document.getElementById("net-worth").textContent = fmt(net);
-  document.getElementById("net-worth-2").textContent = fmt(net);
+  setNum("net-worth", net, fmtEuro);
+  setNum("net-worth-2", net, fmtEuro);
 
   // Sichtbare Rechen-Aufschlüsselung (nur wenn aufgeklappt)
   const breakdown = document.getElementById("calc-breakdown");
   if (breakdown) {
     const free = net - (state.locked.total || 0);
     breakdown.innerHTML =
-      '<div style="display:flex;justify-content:space-between;"><span>💵 Bargeld</span><span>' + fmt(w.cash) + '</span></div>' +
-      '<div style="display:flex;justify-content:space-between;"><span>+ 🏦 Bank</span><span>' + fmt(w.bank) + '</span></div>' +
-      '<div style="display:flex;justify-content:space-between;"><span>+ 📈 Depot</span><span>' + fmt(w.depot) + '</span></div>' +
-      '<div style="display:flex;justify-content:space-between;"><span>+ 🪙 Gold</span><span>' + fmt(w.gold) + '</span></div>' +
-      '<div style="display:flex;justify-content:space-between;color:var(--red);"><span>− 💳 Schulden</span><span>' + fmt(w.debt) + '</span></div>' +
-      '<div style="border-top:1px dashed var(--glass-border);margin:6px 0;"></div>' +
-      '<div style="display:flex;justify-content:space-between;font-weight:800;color:var(--gold);"><span>= Nettovermögen</span><span>' + fmt(net) + '</span></div>' +
-      '<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--glass-border);font-size:12px;color:var(--muted);">' +
-      '<div style="display:flex;justify-content:space-between;"><span>🔒 davon im Tresor (geschützt)</span><span>' + fmt(state.locked.total) + '</span></div>' +
-      '<div style="display:flex;justify-content:space-between;"><span>🆓 frei verfügbar</span><span>' + fmt(free) + '</span></div>' +
+      '<div class="calc-row"><span>Bargeld</span><span>' + fmt(w.cash) + '</span></div>' +
+      '<div class="calc-row"><span>+ Bank</span><span>' + fmt(w.bank) + '</span></div>' +
+      '<div class="calc-row"><span>+ Depot</span><span>' + fmt(w.depot) + '</span></div>' +
+      '<div class="calc-row"><span>+ Gold</span><span>' + fmt(w.gold) + '</span></div>' +
+      '<div class="calc-row neg"><span>− Schulden</span><span>' + fmt(w.debt) + '</span></div>' +
+      '<div class="calc-divider"></div>' +
+      '<div class="calc-row total"><span>= Nettovermögen</span><span>' + fmt(net) + '</span></div>' +
+      '<div class="calc-sub">' +
+      '<div class="calc-row"><span>davon im Tresor (geschützt)</span><span>' + fmt(state.locked.total) + '</span></div>' +
+      '<div class="calc-row"><span>frei verfügbar</span><span>' + fmt(free) + '</span></div>' +
       '</div>';
   }
   document.getElementById("net-sub").textContent =
@@ -3053,7 +3322,7 @@ function renderWealth() {
   const goal = state.goals.target || nextWealthGoal(net);
   const pct = Math.min(100, Math.max(0, Math.round((net / goal) * 100)));
   document.getElementById("goal-value").textContent = fmt(goal);
-  document.getElementById("goal-percent").textContent = pct + "%";
+  setNum("goal-percent", pct, fmtPct);
   document.getElementById("goal-bar").style.width = pct + "%";
 
   // Inputs vorbefüllen
@@ -3068,11 +3337,11 @@ function renderWealth() {
   // Tresor ist KEIN eigener Posten - nur Cash/Bank/Depot/Gold/Debt zählen.
   // Tresor wird als Markierung in eigener Karte angezeigt.
   const items = [
-    ["💵 Bargeld", state.wealth.cash, ""],
-    ["🏦 Bank",    state.wealth.bank, ""],
-    ["📈 Depot",   state.wealth.depot, ""],
-    ["🪙 Gold",    state.wealth.gold, ""],
-    ["💳 Schulden", state.wealth.debt, "debt"],
+    ["Bargeld", state.wealth.cash, ""],
+    ["Bank", state.wealth.bank, ""],
+    ["Depot", state.wealth.depot, ""],
+    ["Gold", state.wealth.gold, ""],
+    ["Schulden", state.wealth.debt, "debt"],
   ];
   grid.innerHTML = items.map(([k, v, cls]) =>
     '<div class="wealth-item ' + cls + '">' +
@@ -3082,8 +3351,8 @@ function renderWealth() {
   ).join("");
 
   // Stats
-  document.getElementById("stat-locked").textContent = fmt(state.locked.total);
-  document.getElementById("stat-mission-count").textContent = state.stats.missionsDone;
+  setNum("stat-locked", state.locked.total, fmtEuro);
+  setNum("stat-mission-count", state.stats.missionsDone, fmtInt);
 
   // History
   const hist = document.getElementById("history-list");
@@ -3099,8 +3368,8 @@ function renderWealth() {
 function renderCashflow() {
   const cf = state.cashflow;
   const calcFree = (cf.income || 0) - (cf.fixed || 0) - (cf.variable || 0);
-  document.getElementById("cashflow-savings").textContent = fmt(cf.savings || 0);
-  document.getElementById("cashflow-free").textContent = fmt(calcFree);
+  setNum("cashflow-savings", cf.savings || 0, fmtEuro);
+  setNum("cashflow-free", calcFree, fmtEuro);
   document.getElementById("cashflow-tier").textContent = TIER_NAMES[state.userTier];
 
   // Krisen-Banner auf Dashboard
@@ -3120,7 +3389,7 @@ function renderCashflow() {
       // Wichtigste Stufe: Defizit-Warnung
       hint.style.display = "";
       hint.style.color = "var(--red)";
-      hint.innerHTML = "🚨 <strong>Du gibst " + fmt(cashflowDeficit()) + " mehr aus als du einnimmst.</strong> " +
+      hint.innerHTML = iconSvg("alert", "ico-rose") + " <strong>Du gibst " + fmt(cashflowDeficit()) + " mehr aus als du einnimmst.</strong> " +
         "Wahrscheinlich rutscht dein Konto in den Dispo. Tippe oben auf „Notbremse-Plan ansehen”.";
     } else {
       hint.style.color = "";
@@ -3128,9 +3397,9 @@ function renderCashflow() {
       if (cf.income > 0 && Math.abs(diff) > 20) {
         hint.style.display = "";
         if (diff > 0) {
-          hint.textContent = "⚠️ Deine angegebene Sparrate (" + fmt(cf.savings) + ") ist " + fmt(diff) + " höher als rechnerisch frei. Prüfe deine Werte unter Held → Profil bearbeiten.";
+          hint.textContent = "Deine angegebene Sparrate (" + fmt(cf.savings) + ") ist " + fmt(diff) + " höher als rechnerisch frei. Prüfe deine Werte unter Held → Profil bearbeiten.";
         } else {
-          hint.textContent = "💡 Du könntest theoretisch " + fmt(-diff) + " mehr sparen (rechnerisch frei: " + fmt(calcFree) + ").";
+          hint.textContent = "Du könntest theoretisch " + fmt(-diff) + " mehr sparen (rechnerisch frei: " + fmt(calcFree) + ").";
         }
       } else {
         hint.style.display = "none";
@@ -3182,7 +3451,7 @@ function renderProfile() {
   const occ = OCCUPATIONS.find(o => o.id === p.occupation);
   const challengeLabels = (p.challenges || []).map(id => {
     const c = CHALLENGES.find(x => x.id === id);
-    return c ? c.icon + " " + c.label : "";
+    return c ? c.label : "";
   }).filter(Boolean).join(", ");
 
   const wrap = document.getElementById("profile-display");
@@ -3190,7 +3459,7 @@ function renderProfile() {
   wrap.innerHTML =
     '<div class="stat-grid">' +
       '<div class="stat"><div class="k">Alter</div><div class="v">' + (p.age || "—") + '</div></div>' +
-      '<div class="stat"><div class="k">Status</div><div class="v" style="font-size:13px;">' + (occ ? occ.icon + " " + occ.label : "—") + '</div></div>' +
+      '<div class="stat"><div class="k">Status</div><div class="v" style="font-size:13px;">' + (occ ? occ.label : "—") + '</div></div>' +
       '<div class="stat green"><div class="k">Einnahmen</div><div class="v">' + fmt(cf.income) + '</div></div>' +
       '<div class="stat"><div class="k">Fixkosten</div><div class="v">' + fmt(cf.fixed) + '</div></div>' +
       '<div class="stat"><div class="k">Variabel</div><div class="v">' + fmt(cf.variable) + '</div></div>' +
@@ -3198,7 +3467,7 @@ function renderProfile() {
       '<div class="stat gold"><div class="k">Sparziel</div><div class="v">' + fmt(state.goals.target) + '</div></div>' +
       '<div class="stat violet"><div class="k">Tier</div><div class="v" style="font-size:13px;">' + TIER_NAMES[state.userTier] + '</div></div>' +
     '</div>' +
-    (challengeLabels ? '<div class="next-upgrade"><div class="nu-icon">🎯</div><div class="nu-text"><div class="t">Schwerpunkte</div><div class="s">' + escapeHTML(challengeLabels) + '</div></div></div>' : '');
+    (challengeLabels ? '<div class="next-upgrade"><div class="nu-icon">' + iconSvg("target", "ico-gold") + '</div><div class="nu-text"><div class="t">Schwerpunkte</div><div class="s">' + escapeHTML(challengeLabels) + '</div></div></div>' : '');
 }
 
 function renderEquipment() {
@@ -3208,7 +3477,7 @@ function renderEquipment() {
     const unlocked = state.level >= e.lvl;
     const isCurrent = (currentEquipmentTier().lvl === e.lvl);
     return '<div class="next-upgrade" style="margin-top:8px;' + (unlocked ? '' : 'opacity:.5;') + '">' +
-      '<div class="nu-icon">' + (unlocked ? e.icon : '🔒') + '</div>' +
+      '<div class="nu-icon">' + (unlocked ? iconSvg(e.sym, 'ico-gold') : iconSvg('lock')) + '</div>' +
       '<div class="nu-text">' +
         '<div class="t">' + escapeHTML(e.name) + (isCurrent ? ' <span class="tag gold" style="margin-left:4px;">aktuell</span>' : '') + '</div>' +
         '<div class="s">Level ' + e.lvl + ' • ' + escapeHTML(e.desc) + '</div>' +
@@ -3239,6 +3508,11 @@ function renderPie(containerId, slices, opts) {
   opts = opts || {};
   const wrap = document.getElementById(containerId);
   if (!wrap) return;
+  // Signatur-Gating: innerHTML nur bei Datenänderung neu schreiben
+  // (verhindert Re-Animation bei jedem renderAll)
+  const sig = containerId + '|' + slices.map(s => s.label + ':' + s.value).join(',');
+  if (wrap.dataset.sig === sig) return;
+  wrap.dataset.sig = sig;
   const positive = slices.filter(s => (s.value || 0) > 0);
   const total = positive.reduce((a, s) => a + s.value, 0);
   if (total <= 0) {
@@ -3284,6 +3558,9 @@ function renderBars(containerId, bars, opts) {
   opts = opts || {};
   const wrap = document.getElementById(containerId);
   if (!wrap) return;
+  const sigB = containerId + '|' + bars.map(b => b.label + ':' + b.value).join(',');
+  if (wrap.dataset.sig === sigB) return;
+  wrap.dataset.sig = sigB;
   if (!bars.length) {
     wrap.innerHTML = '<div class="chart-empty">Noch keine Daten.</div>';
     return;
@@ -3313,7 +3590,7 @@ function renderBars(containerId, bars, opts) {
     const x = padding + i * barSlot + (barSlot - barW) / 2;
     const y = h - barH;
     if (barH > 0) {
-      svg += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + barW.toFixed(1) + '" height="' + barH.toFixed(1) + '" fill="' + (bar.color || '#0F766E') + '" rx="2"/>';
+      svg += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + barW.toFixed(1) + '" height="' + barH.toFixed(1) + '" fill="' + (bar.color || 'var(--chart-2)') + '" rx="2" style="animation-delay:' + Math.min(i * 30, 360) + 'ms"/>';
     }
   });
   // Baseline
@@ -3363,10 +3640,10 @@ function showQuickLogDialog(catId) {
   const cat = findCategory(catId);
   if (!cat) return;
   modalShell(
-    '<div class="big-icon">' + cat.icon + '</div>' +
+    '<div class="big-icon">' + catIcon(cat, 'ico-gold') + '</div>' +
     '<h2>' + escapeHTML(cat.label) + '</h2>' +
     '<p>Wie viel hast du dafür ausgegeben?</p>' +
-    '<input type="number" inputmode="decimal" id="ql-amount" placeholder="Betrag €" style="margin:8px 0;" />' +
+    '<input type="number" inputmode="decimal" id="ql-amount" placeholder="Betrag €" class="my-8" />' +
     '<div class="btn-row">' +
       '<button class="btn-ghost" onclick="closeModal()">Abbrechen</button>' +
       '<button class="btn-primary" onclick="confirmQuickLog(' + "'" + catId + "'" + ')">Tracken (+5 XP)</button>' +
@@ -3381,14 +3658,12 @@ function showQuickLogDialog(catId) {
 // ====== Custom-Kategorien erstellen / verwalten ======
 function showNewCategoryDialog() {
   modalShell(
-    '<div class="big-icon">🏷️</div>' +
+    '<div class="big-icon">' + iconSvg('tag', 'ico-gold') + '</div>' +
     '<h2>Eigene Kategorie</h2>' +
     '<p>Für persönliche Hebel – z.B. „Rosen", „Vape", „Gym", „Tinder", „Schmuck".</p>' +
     '<label>Name</label>' +
     '<input type="text" id="nc-label" placeholder="z.B. Rosen" maxlength="22" />' +
-    '<label>Symbol (Emoji)</label>' +
-    '<input type="text" id="nc-icon" placeholder="🌹" maxlength="4" />' +
-    '<div class="btn-row" style="margin-top:14px;">' +
+    '<div class="btn-row mt-14">' +
       '<button class="btn-ghost" onclick="closeModal()">Abbrechen</button>' +
       '<button class="btn-primary" onclick="confirmNewCategory()">Erstellen</button>' +
     '</div>'
@@ -3400,19 +3675,18 @@ function showNewCategoryDialog() {
 }
 function confirmNewCategory() {
   const label = String(document.getElementById("nc-label").value || "").trim();
-  let icon = String(document.getElementById("nc-icon").value || "").trim();
   if (!label) { toast("Bitte gib einen Namen ein."); return; }
-  if (!icon) icon = "🏷️";
+  // icon-Feld bleibt im Schema (Rückwärts-Kompatibilität), wird aber nicht mehr gerendert
   state.customCategories.push({
     id: "custom_" + Math.random().toString(36).slice(2, 9),
-    icon: icon.slice(0, 4),
+    icon: "",
     label: label.slice(0, 22),
     planId: null
   });
   save();
   renderAll();
   closeModal();
-  toast("✓ Kategorie „" + label + "\" erstellt");
+  toast("Kategorie „" + label + "\" erstellt");
 }
 
 function showManageCategoriesDialog() {
@@ -3423,13 +3697,13 @@ function showManageCategoriesDialog() {
   } else {
     content += '<div style="text-align:left;">' + list.map(c =>
       '<div class="vault-row">' +
-        '<div class="meta"><span class="label">' + escapeHTML(c.icon) + '  ' + escapeHTML(c.label) + '</span></div>' +
+        '<div class="meta"><span class="label">' + catIcon(c) + '  ' + escapeHTML(c.label) + '</span></div>' +
         '<button class="btn-ghost" style="width:auto;min-height:0;padding:6px 12px;font-size:12px;" ' +
         'onclick="confirmDeleteCustomCategory(' + "'" + c.id + "'" + ')">Löschen</button>' +
       '</div>'
     ).join("") + '</div>';
   }
-  content += '<div class="btn-row" style="margin-top:14px;">' +
+  content += '<div class="btn-row mt-14">' +
     '<button class="btn-ghost" onclick="closeModal()">Schließen</button>' +
     '<button class="btn-primary" onclick="closeModal();showNewCategoryDialog();">+ Neue</button>' +
   '</div>';
@@ -3470,14 +3744,14 @@ function renderQuickTrack() {
     const todayTotal = todayByCat[cat.id] || 0;
     const hasToday = todayTotal > 0 ? " has-today" : "";
     return '<button class="quick-btn' + hasToday + '" data-quick-cat="' + cat.id + '">' +
-      '<span class="qb-icon">' + cat.icon + '</span>' +
+      '<span class="qb-icon">' + catIcon(cat) + '</span>' +
       '<span class="qb-label">' + escapeHTML(cat.label) + '</span>' +
       (todayTotal > 0 ? '<span class="qb-today">' + fmt(todayTotal) + '</span>' : '') +
     '</button>';
   }).join("");
   // + Neu Button immer am Ende
   html += '<button class="quick-btn quick-add-btn" data-quick-new="1">' +
-    '<span class="qb-icon">➕</span>' +
+    '<span class="qb-icon">' + iconSvg('plus') + '</span>' +
     '<span class="qb-label">Neue Kategorie</span>' +
   '</button>';
   grid.innerHTML = html;
@@ -3637,7 +3911,7 @@ function renderConsumptionDiagnosis() {
 
   const allCats = QUICK_LOG_CATEGORIES.concat(state.customCategories || []);
   const rows = Object.keys(byCat).map(catId => {
-    const cat = allCats.find(c => c.id === catId) || { id: catId, icon: "❓", label: catId };
+    const cat = allCats.find(c => c.id === catId) || { id: catId, sym: "help", label: catId };
     return { cat, amount: byCat[catId].amount, count: byCat[catId].count };
   }).sort((a, b) => b.amount - a.amount);
 
@@ -3648,7 +3922,7 @@ function renderConsumptionDiagnosis() {
   const observationHtml = top3.map(r => {
     const pct = Math.round((r.amount / total) * 100);
     return '<div class="cd-row">' +
-      '<span class="cd-icon">' + r.cat.icon + '</span>' +
+      '<span class="cd-icon">' + catIcon(r.cat) + '</span>' +
       '<div class="cd-text">' +
         '<div class="cd-label">' + escapeHTML(r.cat.label) + '</div>' +
         '<div class="cd-meta">' + r.count + 'x getrackt · ' + pct + '% deiner Tracks</div>' +
@@ -3662,18 +3936,18 @@ function renderConsumptionDiagnosis() {
   const impulseCats = ["konsum", "freizeit", "kleidung"];
   const impulseCount = rows.filter(r => impulseCats.includes(r.cat.id)).reduce((a, r) => a + r.count, 0);
   if (impulseCount >= 5) {
-    patternMessages.push("🔔 In den letzten 30 Tagen hast du " + impulseCount + "× spontanen Konsum getrackt – klassisches Impulskauf-Muster.");
+    patternMessages.push("In den letzten 30 Tagen hast du " + impulseCount + "× spontanen Konsum getrackt – klassisches Impulskauf-Muster.");
   }
   const essen = byCat["essen"];
   if (essen && essen.amount >= 150) {
-    patternMessages.push("🍔 " + fmt(essen.amount) + " für Essen unterwegs in 30 Tagen – das sind etwa " + fmt(essen.amount * 12) + " im Jahr.");
+    patternMessages.push("" + fmt(essen.amount) + " für Essen unterwegs in 30 Tagen – das sind etwa " + fmt(essen.amount * 12) + " im Jahr.");
   }
   const abos = byCat["abo"];
   if (abos && abos.count >= 3) {
-    patternMessages.push("📺 " + abos.count + "× Abo-Einzelausgaben – Audit lohnt sich.");
+    patternMessages.push("" + abos.count + "× Abo-Einzelausgaben – Audit lohnt sich.");
   }
   if (rows.length === 1 && rows[0].count >= 7) {
-    patternMessages.push("📊 Du trackst aktuell nur eine Kategorie – ergänze andere, damit wir dein Konsumverhalten ganzheitlich diagnostizieren können.");
+    patternMessages.push("Du trackst aktuell nur eine Kategorie – ergänze andere, damit wir dein Konsumverhalten ganzheitlich diagnostizieren können.");
   }
 
   let html = '<div class="cd-summary">In den letzten 30 Tagen hast du <strong>' + fmt(total) + '</strong> in <strong>' + last30.length + ' Buchungen</strong> getrackt.</div>';
@@ -3681,7 +3955,7 @@ function renderConsumptionDiagnosis() {
   if (patternMessages.length) {
     html += '<div class="cd-patterns">' + patternMessages.map(p => '<div class="cd-pattern">' + p + '</div>').join("") + '</div>';
   }
-  html += '<div class="cd-note">🎯 Wir haben deine Quests an dieses Konsumverhalten angepasst. Schau im Quest-Tab nach „Für dich".</div>';
+  html += '<div class="cd-note">Wir haben deine Quests an dieses Konsumverhalten angepasst. Schau im Quest-Tab nach „Für dich".</div>';
 
   wrap.innerHTML = html;
 }
@@ -3704,11 +3978,11 @@ function renderActionPlan() {
     const sevClass = "action-card sev-" + p.severity;
     const impactLine = p.estimatedSavingMonthly > 0
       ? '<div class="action-impact">≈ <strong>' + fmt(p.estimatedSavingMonthly) + '/Monat</strong> · ' + fmt(p.estimatedSavingMonthly * 12) + '/Jahr</div>'
-      : (p.longTermGain ? '<div class="action-impact">📈 ' + escapeHTML(p.longTermGain) + '</div>' : '');
-    const sevLabel = p.severity === 'crisis' ? '🚨 SOFORT' : (p.severity === 'tox' ? '🎯 HEBEL' : '💚 INVEST');
+      : (p.longTermGain ? '<div class="action-impact">' + iconSvg('chart-up', 'ico-mint') + ' ' + escapeHTML(p.longTermGain) + '</div>' : '');
+    const sevLabel = p.severity === 'crisis' ? iconSvg('alert') + ' SOFORT' : (p.severity === 'tox' ? iconSvg('target') + ' HEBEL' : iconSvg('sprout') + ' INVEST');
     const showDismiss = p.severity === 'invest';
     return '<div class="' + sevClass + '">' +
-      '<div class="action-head"><span class="action-icon">' + p.icon + '</span>' +
+      '<div class="action-head"><span class="action-icon">' + iconSvg(p.sym, 'ico-platinum') + '</span>' +
         '<div class="action-meta"><div class="action-sev">' + sevLabel + '</div><h3 class="action-title">' + escapeHTML(p.title) + '</h3></div>' +
       '</div>' +
       impactLine +
@@ -3762,10 +4036,10 @@ function renderAnalysis() {
   renderConsumptionDiagnosis();
   // 1) Vermögensverteilung (Donut)
   const wealthSlices = [
-    { label: '💵 Bargeld', value: state.wealth.cash || 0, color: '#FBBF24' },
-    { label: '🏦 Bankkonto', value: state.wealth.bank || 0, color: '#10B981' },
-    { label: '📈 Depot/ETF', value: state.wealth.depot || 0, color: '#8B5CF6' },
-    { label: '🪙 Gold/Sachwerte', value: state.wealth.gold || 0, color: '#F59E0B' },
+    { label: 'Bargeld', value: state.wealth.cash || 0, color: 'var(--chart-1)' },
+    { label: 'Bankkonto', value: state.wealth.bank || 0, color: 'var(--chart-3)' },
+    { label: 'Depot/ETF', value: state.wealth.depot || 0, color: 'var(--chart-5)' },
+    { label: 'Gold/Sachwerte', value: state.wealth.gold || 0, color: 'var(--chart-2)' },
   ];
   renderPie('chart-wealth', wealthSlices, {
     donut: true,
@@ -3778,7 +4052,7 @@ function renderAnalysis() {
   const histBars = recent.map(h => ({
     label: h.date ? h.date.substring(5) : '',
     value: Math.max(0, h.net || 0),
-    color: '#0F766E'
+    color: 'var(--chart-2)'
   }));
   renderBars('chart-history', histBars, { showLabels: true });
   const periodLabel = document.getElementById('chart-history-period');
@@ -3787,9 +4061,9 @@ function renderAnalysis() {
   // 3) Konsumverhalten (Cashflow-Donut)
   const cf = state.cashflow;
   const cfSlices = [
-    { label: '📌 Fixkosten', value: cf.fixed || 0, color: '#EF4444' },
-    { label: '🛍️ Variable Ausgaben', value: cf.variable || 0, color: '#F59E0B' },
-    { label: '💎 Sparrate', value: cf.savings || 0, color: '#10B981' },
+    { label: 'Fixkosten', value: cf.fixed || 0, color: 'var(--chart-6)' },
+    { label: 'Variable Ausgaben', value: cf.variable || 0, color: 'var(--chart-1)' },
+    { label: 'Sparrate', value: cf.savings || 0, color: 'var(--chart-4)' },
   ];
   renderPie('chart-cashflow', cfSlices, {
     donut: true,
@@ -3799,12 +4073,12 @@ function renderAnalysis() {
 
   // 4) Quests pro Kategorie (Balken)
   const cats = [
-    { key: 'sparen', color: '#10B981' },
-    { key: 'verdienen', color: '#F59E0B' },
-    { key: 'vertraege', color: '#38BDF8' },
-    { key: 'investieren', color: '#8B5CF6' },
-    { key: 'disziplin', color: '#FB7185' },
-    { key: 'schulden', color: '#EF4444' },
+    { key: 'sparen', color: 'var(--chart-4)' },
+    { key: 'verdienen', color: 'var(--chart-1)' },
+    { key: 'vertraege', color: 'var(--chart-3)' },
+    { key: 'investieren', color: 'var(--chart-5)' },
+    { key: 'disziplin', color: 'var(--chart-2)' },
+    { key: 'schulden', color: 'var(--chart-6)' },
   ];
   const missionBars = cats.map(c => ({
     label: (CATEGORY_LABEL[c.key] || c.key).substring(0, 5),
@@ -3818,14 +4092,14 @@ function renderAnalysis() {
   const fixquote = (cf.income || 0) > 0 ? Math.round((cf.fixed / cf.income) * 100) : 0;
   const goalProgress = (state.goals.target || 0) > 0 ? Math.min(100, Math.round((netWorth() / state.goals.target) * 100)) : 0;
   const stats = [
-    { k: '⭐ Gesamt-XP', v: (state.totalXp || 0).toLocaleString('de-DE'), cls: 'gold' },
-    { k: '⚔️ Quests erledigt', v: state.stats.missionsDone || 0, cls: 'violet' },
-    { k: '🔒 Im Tresor', v: fmt(state.locked.total), cls: 'gold' },
-    { k: '🔥 Streak', v: (state.streak.count || 0) + ' Tage', cls: '' },
-    { k: '💎 Sparquote', v: sparquote + '%', cls: 'green' },
-    { k: '📌 Fix-Quote', v: fixquote + '%', cls: '' },
-    { k: '🎯 Zielfortschritt', v: goalProgress + '%', cls: 'green' },
-    { k: '🏆 Tier', v: TIER_NAMES[state.userTier], cls: 'violet' },
+    { k: 'Gesamt-XP', v: (state.totalXp || 0).toLocaleString('de-DE'), cls: 'gold' },
+    { k: 'Quests erledigt', v: state.stats.missionsDone || 0, cls: 'violet' },
+    { k: 'Im Tresor', v: fmt(state.locked.total), cls: 'gold' },
+    { k: 'Streak', v: (state.streak.count || 0) + ' Tage', cls: '' },
+    { k: 'Sparquote', v: sparquote + '%', cls: 'green' },
+    { k: 'Fix-Quote', v: fixquote + '%', cls: '' },
+    { k: 'Zielfortschritt', v: goalProgress + '%', cls: 'green' },
+    { k: 'Tier', v: TIER_NAMES[state.userTier], cls: 'violet' },
   ];
   const wrap = document.getElementById('analysis-stats');
   if (wrap) {
@@ -4000,7 +4274,7 @@ function bindMissionEvents(scope) {
       state.locked.total = (state.locked.total || 0) + v;
       state.stats.lockedTotal = (state.stats.lockedTotal || 0) + v;
       completeMission(uid);
-      toast("+" + fmt(v) + " auf Bank · 🔒 geschützt");
+      toast("+" + fmt(v) + " auf Bank · geschützt");
     });
   });
 }
@@ -4016,11 +4290,11 @@ function renderMissionCard(m) {
   ];
   if (eff > 0) tags.push('<span class="tag green">≈ ' + eff + '€</span>');
   if (personalDiff !== m.baseDifficulty) tags.push('<span class="tag diff-' + personalDiff + '">Für dich: ' + personalDiff + '</span>');
-  if (isWeaknessMatch) tags.push('<span class="tag violet">🎯 deine Schwäche</span>');
+  if (isWeaknessMatch) tags.push('<span class="tag violet">deine Schwäche</span>');
 
   let actions = '';
   if (m.done) {
-    actions = '<div class="mission-actions"><button class="btn-ghost" disabled>✅ Erledigt am ' + (m.doneDate || '') + '</button></div>';
+    actions = '<div class="mission-actions"><button class="btn-ghost" disabled>Erledigt am ' + (m.doneDate || '') + '</button></div>';
   } else if (m.longQuest) {
     const total = m.longQuest.steps;
     const cur = m.longQuest.currentStep - 1; // bereits abgeschlossene Stufen
@@ -4108,7 +4382,7 @@ function progressLongQuest(uid) {
     m.doneDate = todayISO();
     // Bonus-XP für Abschluss
     awardXp(Math.round((m.xp || 100) * 0.5));
-    toast("🏆 Long-Quest abgeschlossen! Bonus-XP!");
+    toast("Long-Quest abgeschlossen! Bonus-XP!");
   } else {
     toast("+" + partialXp + " XP – Stufe " + (m.longQuest.currentStep - 1) + " geschafft!");
   }
@@ -4210,7 +4484,7 @@ function depositToVault(amount, note = "") {
   pushHistory();
   save();
   renderAll();
-  toast("🔒 " + fmt(amount) + " als geschützt markiert");
+  toast(fmt(amount) + " als geschützt markiert");
 }
 
 // Du hast Tresor-Geld wieder ausgegeben → Bank/Cash wird tatsächlich reduziert,
@@ -4318,10 +4592,10 @@ function showLevelUp(lvl) {
   const tier = currentEquipmentTier();
   const newRank = rankForLevel(lvl);
   modalShell(
-    '<div class="big-icon">🎉</div>' +
+    '<div class="big-icon">' + iconSvg('celebrate', 'ico-gold') + '</div>' +
     '<h2>LEVEL ' + lvl + '!</h2>' +
     '<p><strong style="color:var(--gold)">Rang:</strong> ' + newRank + '<br/>' +
-       '<strong style="color:var(--gold)">Ausrüstung:</strong> ' + tier.icon + ' ' + escapeHTML(tier.name) + '</p>' +
+       '<strong style="color:var(--gold)">Ausrüstung:</strong> ' + escapeHTML(tier.name) + '</p>' +
     '<button class="btn-primary" onclick="closeModal()">Weiter</button>'
   );
   fireConfetti(40);
@@ -4331,7 +4605,7 @@ function showLevelUp(lvl) {
 function showMilestoneModal(ms) {
   const facts = ms.facts.map(f => '<li>' + escapeHTML(f) + '</li>').join("");
   modalShell(
-    '<div class="big-icon">🏆</div>' +
+    '<div class="big-icon">' + iconSvg('trophy', 'ico-gold') + '</div>' +
     '<h2>' + escapeHTML(ms.title) + '</h2>' +
     '<p>Du hast einen wichtigen Meilenstein erreicht.</p>' +
     '<ul class="fact-list">' + facts + '</ul>' +
@@ -4344,7 +4618,7 @@ function showMilestoneModal(ms) {
 
 function showDecayModal(amount, penalty, isEarly) {
   modalShell(
-    '<div class="big-icon">🥀</div>' +
+    '<div class="big-icon">' + iconSvg('wilt', 'ico-rose') + '</div>' +
     '<h2>Rückschlag</h2>' +
     '<p>Du hast <strong>' + fmt(amount) + '</strong> aus dem Tresor entnommen.<br/>' +
     (isEarly ? '<span style="color:var(--red)">Innerhalb 30 Tagen – doppelte Strafe.</span>' : 'Nach 30+ Tagen – einfacher Abzug.') +
@@ -4375,8 +4649,8 @@ function showCashflowCrisisModal() {
   const cf = state.cashflow;
   const deficit = cashflowDeficit();
   modalShell(
-    '<div class="big-icon">🚨</div>' +
-    '<h2 style="background:linear-gradient(135deg,#fca5a5,#ef4444);-webkit-background-clip:text;background-clip:text;color:transparent;">Wichtiger Hinweis</h2>' +
+    '<div class="big-icon">' + iconSvg('alert', 'ico-rose') + '</div>' +
+    '<h2 style="background:linear-gradient(135deg,var(--rose-soft),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent;">Wichtiger Hinweis</h2>' +
     '<p style="text-align:left;">Deine monatlichen Ausgaben (<strong>' + fmt((cf.fixed||0) + (cf.variable||0)) + '</strong>) sind höher als deine Einnahmen (<strong>' + fmt(cf.income) + '</strong>).<br/><br/>' +
        'Das heißt: jeden Monat fehlen dir <strong style="color:var(--red);font-size:18px;">' + fmt(deficit) + '</strong>. Wahrscheinlich rutscht eines dieser Dinge gerade:</p>' +
     '<ul class="fact-list">' +
@@ -4386,16 +4660,16 @@ function showCashflowCrisisModal() {
     '</ul>' +
     '<p style="text-align:left;">Das ist kein Drama – aber dringend. Wir haben dir <strong>7 Notbremse-Quests</strong> aktiviert, die genau aus dieser Lage rausführen:</p>' +
     '<ul class="fact-list">' +
-      '<li>🚨 7 Tage Konsum-STOPP (Bluten stoppen)</li>' +
-      '<li>🚨 Fixkosten-Audit (wo verliert man wirklich Geld)</li>' +
-      '<li>🚨 Dispo-Zinssatz checken</li>' +
-      '<li>🚨 2 Abos sofort kündigen</li>' +
-      '<li>🚨 50€ in 7 Tagen extra einnehmen</li>' +
-      '<li>🚨 30 Tage kein neuer Kredit</li>' +
-      '<li>🚨 Kostenlose Schuldnerberatung anrufen</li>' +
+      '<li>7 Tage Konsum-STOPP (Bluten stoppen)</li>' +
+      '<li>Fixkosten-Audit (wo verliert man wirklich Geld)</li>' +
+      '<li>Dispo-Zinssatz checken</li>' +
+      '<li>2 Abos sofort kündigen</li>' +
+      '<li>50€ in 7 Tagen extra einnehmen</li>' +
+      '<li>30 Tage kein neuer Kredit</li>' +
+      '<li>Kostenlose Schuldnerberatung anrufen</li>' +
     '</ul>' +
     '<p style="text-align:left;color:var(--text-soft);font-size:13px;"><strong>Kein Urteil von uns.</strong> Niemand kommt dahin, weil er „dumm” ist. Aber raus kommst du nur mit Plan. Diese Quests sind dein Plan.</p>' +
-    '<div class="btn-row" style="margin-top:14px;">' +
+    '<div class="btn-row mt-14">' +
       '<button class="btn-ghost" onclick="closeModal()">Später</button>' +
       '<button class="btn-primary" onclick="closeModal();switchView(\'missions\');">Notbremse starten</button>' +
     '</div>',
@@ -4407,7 +4681,7 @@ window.showCashflowCrisisModal = showCashflowCrisisModal;
 
 function showWelcomeModal() {
   modalShell(
-    '<div class="big-icon">⚔️</div>' +
+    '<div class="big-icon">' + iconSvg('swords', 'ico-gold') + '</div>' +
     '<h2>Willkommen, ' + escapeHTML(state.character.name) + '!</h2>' +
     '<p>Dein Charakter ist erschaffen. Wir haben dir bereits passende Quests bereitgelegt – starte mit der ersten unter „Quests”.</p>' +
     '<p><strong style="color:var(--gold)">Dein Tier:</strong> ' + TIER_NAMES[state.userTier] + '</p>' +
@@ -4424,12 +4698,12 @@ function showVaultDepositDialog() {
   const liquid = (state.wealth.cash || 0) + (state.wealth.bank || 0);
   const free = liquid - (state.locked.total || 0);
   modalShell(
-    '<div class="big-icon">🔒</div>' +
+    '<div class="big-icon">' + iconSvg('lock', 'ico-gold') + '</div>' +
     '<h2>Im Tresor markieren</h2>' +
     '<p>Markiert einen Teil deines <strong>bestehenden</strong> Bargelds/Bankkontos als geschützt.<br/>Dein Vermögen ändert sich nicht – aber du verpflichtest dich, diesen Teil nicht anzufassen.</p>' +
-    '<div class="text-small text-muted" style="margin:8px 0;">Bargeld + Bank: ' + fmt(liquid) + ' · davon noch frei (nicht im Tresor): <strong>' + fmt(free) + '</strong></div>' +
-    '<input type="number" inputmode="decimal" id="vault-dep-amount" placeholder="Betrag €" style="margin:8px 0;" />' +
-    '<input type="text" id="vault-dep-note" placeholder="Wo liegt es? z.B. „Festgeld DKB” (optional)” style=”margin-bottom:12px;” />' +
+    '<div class="text-small text-muted my-8">Bargeld + Bank: ' + fmt(liquid) + ' · davon noch frei (nicht im Tresor): <strong>' + fmt(free) + '</strong></div>' +
+    '<input type="number" inputmode="decimal" id="vault-dep-amount" placeholder="Betrag €" class="my-8" />' +
+    '<input type="text" id="vault-dep-note" placeholder="Wo liegt es? z.B. Festgeld (optional)" class="mb-12" />' +
     '<div class="btn-row">' +
       '<button class="btn-ghost" onclick="closeModal()">Abbrechen</button>' +
       '<button class="btn-primary" onclick="handleVaultDeposit()">Markieren</button>' +
@@ -4447,14 +4721,14 @@ function handleVaultDeposit() {
 
 function showVaultWithdrawDialog() {
   modalShell(
-    '<div class="big-icon">⚠️</div>' +
+    '<div class="big-icon">' + iconSvg('alert', 'ico-rose') + '</div>' +
     '<h2>Aus Tresor entnehmen</h2>' +
     '<p>Ehrlich sein: du hast Tresor-Geld wieder ausgegeben.<br/>' +
        '<strong>Folge:</strong> Bank wird um den Betrag reduziert · Tresor sinkt mit · XP-Strafe.<br/>' +
        'Innerhalb 30 Tagen seit Einzahlung = doppelte XP-Strafe.</p>' +
-    '<div class="text-small text-muted" style="margin:8px 0;">Aktuell im Tresor: <strong>' + fmt(state.locked.total) + '</strong></div>' +
-    '<input type="number" inputmode="decimal" id="vault-wd-amount" placeholder="Betrag €" style="margin:8px 0;" />' +
-    '<input type="text" id="vault-wd-note" placeholder="Wofür? (optional)" style="margin-bottom:12px;" />' +
+    '<div class="text-small text-muted my-8">Aktuell im Tresor: <strong>' + fmt(state.locked.total) + '</strong></div>' +
+    '<input type="number" inputmode="decimal" id="vault-wd-amount" placeholder="Betrag €" class="my-8" />' +
+    '<input type="text" id="vault-wd-note" placeholder="Wofür? (optional)" class="mb-12" />' +
     '<div class="btn-row">' +
       '<button class="btn-ghost" onclick="closeModal()">Abbrechen</button>' +
       '<button class="btn-danger" onclick="handleVaultWithdraw()">Entnehmen</button>' +
@@ -4476,7 +4750,7 @@ function showProfileEditDialog() {
   const p = state.profile;
   const cf = state.cashflow;
   const occOptions = OCCUPATIONS.map(o =>
-    '<option value="' + o.id + '"' + (p.occupation === o.id ? ' selected' : '') + '>' + o.icon + ' ' + o.label + '</option>'
+    '<option value="' + o.id + '"' + (p.occupation === o.id ? ' selected' : '') + '>' + o.label + '</option>'
   ).join("");
   modalShell(
     '<h2 style="font-size:22px;">Profil bearbeiten</h2>' +
@@ -4490,7 +4764,7 @@ function showProfileEditDialog() {
       '<label>Sparrate €/Monat</label><input type="number" inputmode="decimal" id="pe-savings" value="' + (cf.savings || '') + '" />' +
       '<label>Sparziel €</label><input type="number" inputmode="decimal" id="pe-goal" value="' + (state.goals.target || '') + '" />' +
     '</div>' +
-    '<div class="btn-row" style="margin-top:14px;">' +
+    '<div class="btn-row mt-14">' +
       '<button class="btn-ghost" onclick="closeModal()">Abbrechen</button>' +
       '<button class="btn-primary" onclick="handleProfileSave()">Speichern</button>' +
     '</div>'
@@ -4538,32 +4812,32 @@ function showHelpModal() {
   modalShell(
     '<h2 style="font-size:22px;margin-bottom:14px;">So funktioniert WealthMission</h2>' +
     '<div style="text-align:left;font-size:13.5px;line-height:1.65;color:var(--text-soft);max-height:60vh;overflow:auto;padding-right:6px;">' +
-      '<p><strong style="color:var(--gold)">💰 Nettovermögen</strong><br/>' +
+      '<p><strong style="color:var(--gold)">Nettovermögen</strong><br/>' +
         'Bargeld + Bankkonto + Depot + Gold − Schulden. <u>Die einzige Vermögenszahl.</u> Alles andere ist nur Detail.</p>' +
-      '<p><strong style="color:var(--gold)">🔒 Tresor</strong><br/>' +
+      '<p><strong style="color:var(--gold)">Tresor</strong><br/>' +
         'Markierung, dass ein Teil deines Bargelds/Bankkontos „geschützt” ist (separates Konto, Schließfach, Festgeld). ' +
         '<strong>Kein zusätzliches Vermögen!</strong> Wenn du 500 € auf der Bank hast und 200 € als Tresor markierst, hast du immer noch 500 € – aber 200 € davon sind „Hände weg”. ' +
         'Wenn du Tresor-Geld entnimmst, sinkt deine Bank UND der Tresor. Entnahme < 30 Tage seit Einzahlung = doppelte XP-Strafe.</p>' +
-      '<p><strong style="color:var(--violet-soft)">🎯 Tier (finanzielle Stufe)</strong><br/>' +
+      '<p><strong style="color:var(--violet-soft)">Tier (finanzielle Stufe)</strong><br/>' +
         'Berechnet aus deiner Sparrate und deinem Nettovermögen:<br/>' +
         '0 Anfänger · 1 Überlebender · 2 Stabiler Sparer · 3 Vermögensaufbauer · 4 Investor · 5 Kapitalstratege.<br/>' +
         'Steuert, welche Quests dir empfohlen werden.</p>' +
-      '<p><strong style="color:var(--gold)">⭐ XP / Level</strong><br/>' +
+      '<p><strong style="color:var(--gold)">XP / Level</strong><br/>' +
         'XP gibt es fürs Erledigen von Quests. Genug XP → Level-Up → neue Charakter-Ausrüstung. ' +
         'Tresor-Entnahme < 30 Tagen kostet doppelte XP. Bei XP-Schwund kann der Charakter im Level fallen.</p>' +
-      '<p><strong style="color:var(--emerald-soft)">📊 Cashflow</strong><br/>' +
+      '<p><strong style="color:var(--emerald-soft)">Cashflow</strong><br/>' +
         '<i>Einnahmen</i> = was reinkommt pro Monat (Gehalt, Job, Rente).<br/>' +
         '<i>Fixkosten</i> = Miete, Strom, Versicherungen, Abos.<br/>' +
         '<i>Variable Ausgaben</i> = Essen, Freizeit, Konsum.<br/>' +
         '<i>Sparrate</i> = was du laut deiner Vorgabe sparen willst.<br/>' +
         'Rechnerisch frei = Einnahmen − Fix − Variabel. Sollte ungefähr deiner Sparrate entsprechen. Wenn nicht, bekommst du einen Hinweis im Dashboard.</p>' +
-      '<p><strong style="color:var(--gold)">🏆 Meilensteine</strong><br/>' +
+      '<p><strong style="color:var(--gold)">Meilensteine</strong><br/>' +
         'Bei 100 € / 500 € / 1.000 € … 1.000.000 € Nettovermögen poppt eine Glückwunsch-Karte mit Kontext-Fakten auf („mehr als 30 % der Deutschen”, „3 Monate ohne Einkommen”, …).</p>' +
-      '<p><strong style="color:var(--gold)">⚔️ Quests</strong><br/>' +
+      '<p><strong style="color:var(--gold)">Quests</strong><br/>' +
         'Konkrete Aufgaben passend zu deiner Lage und deinen Schwächen. Erledigen = XP. ' +
         'Bei Quests mit €-Effekt kannst du beim Abschluss eingeben, wie viel du wirklich gespart hast – das erscheint dann auf deinem Bankkonto und wird im Tresor geschützt.</p>' +
     '</div>' +
-    '<button class="btn-primary" style="margin-top:14px;" onclick="closeModal()">Verstanden</button>'
+    '<button class="btn-primary mt-14" onclick="closeModal()">Verstanden</button>'
   );
 }
 
@@ -4582,7 +4856,7 @@ function fireConfetti(count = 30) {
   if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const layer = document.createElement("div");
   layer.className = "confetti-layer";
-  const colors = ["#e8c468", "#f4dca0", "#10b981", "#8b5cf6", "#38bdf8", "#f472b6", "#fff"];
+  const colors = ["#D8B978", "#E7CF9E", "#34D399", "#A88BE0", "#5BA3E8", "#4FB6A8", "#C7D2E0"];
   for (let i = 0; i < count; i++) {
     const c = document.createElement("div");
     c.className = "confetti";
@@ -4851,16 +5125,16 @@ function showSettingsModal() {
     '<h2 style="font-size:22px;margin-bottom:4px;">Einstellungen</h2>' +
     '<p style="margin-bottom:14px;">Hilfe, Datensicherung und Verwaltung.</p>' +
     '<div style="display:flex;flex-direction:column;gap:10px;text-align:left;">' +
-      '<button class="btn-ghost" onclick="closeModal();showHelpModal();">❓ Wie funktioniert die App?</button>' +
-      '<button class="btn-primary" onclick="closeModal();doExport();">⬇️ Backup speichern</button>' +
-      '<button class="btn-ghost" onclick="closeModal();doImport();">⬆️ Backup laden</button>' +
-      '<button class="btn-ghost" onclick="doRepair();">🛠️ Daten reparieren</button>' +
-      '<button class="btn-danger" onclick="closeModal();doReset();">🗑️ App zurücksetzen</button>' +
+      '<button class="btn-ghost" onclick="closeModal();showHelpModal();">Wie funktioniert die App?</button>' +
+      '<button class="btn-primary" onclick="closeModal();doExport();">' + iconSvg('download') + ' Backup speichern</button>' +
+      '<button class="btn-ghost" onclick="closeModal();doImport();">' + iconSvg('upload') + ' Backup laden</button>' +
+      '<button class="btn-ghost" onclick="doRepair();">' + iconSvg('wrench') + ' Daten reparieren</button>' +
+      '<button class="btn-danger" onclick="closeModal();doReset();">' + iconSvg('trash') + ' App zurücksetzen</button>' +
     '</div>' +
     '<div class="text-muted text-small" style="margin-top:14px;line-height:1.5;">' +
       '<strong>Wichtig:</strong> Deine Daten liegen nur in diesem Browser. Mach regelmäßig ein Backup – die Datei kannst du sichern (Cloud, E-Mail an dich selbst) und jederzeit auf einem neuen Gerät wieder einspielen.' +
     '</div>' +
-    '<button class="btn-ghost" style="margin-top:14px;" onclick="closeModal()">Schließen</button>'
+    '<button class="btn-ghost mt-14" onclick="closeModal()">Schließen</button>'
   );
 }
 window.showSettingsModal = showSettingsModal;
