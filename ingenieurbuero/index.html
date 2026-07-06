@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>K+P Ingenieure – Tragwerksplanung, Statik und Bauplanung</title>
+<meta name="description" content="Ingenieurbüro für Tragwerksplanung, Statik, Bauplanung, Energieberatung und Brandschutz. Präzise Planung und verlässliche Projektbegleitung für Neubau und Bestand." />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="site-header" id="top">
+  <div class="header-inner">
+    <a class="brand" href="#top" aria-label="K+P Ingenieure – zur Startseite">
+      <svg class="brand-mark" width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+        <rect x="1.5" y="1.5" width="33" height="33" stroke="#4d7ea8" stroke-width="1.5"/>
+        <path d="M8 28V8M8 28L28 8M28 8V28" stroke="#ffffff" stroke-width="1.5"/>
+        <circle cx="8" cy="8" r="2" fill="#b5794e"/>
+        <circle cx="28" cy="28" r="2" fill="#b5794e"/>
+      </svg>
+      <span>
+        <span class="brand-name">K+P Ingenieure</span>
+        <span class="brand-sub">Beratende Ingenieure für Bauwesen</span>
+      </span>
+    </a>
+
+    <button class="nav-toggle" aria-expanded="false" aria-controls="main-nav" aria-label="Navigation öffnen">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="Hauptnavigation">
+      <a href="#buero">Büro</a>
+      <a href="#leistungen">Leistungen</a>
+      <a href="#projekte">Projekte</a>
+      <a href="#arbeitsweise">Arbeitsweise</a>
+      <a href="#kontakt" class="nav-cta">Projekt anfragen</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+  <div class="container hero-inner">
+    <p class="eyebrow">Tragwerksplanung · Statik · Bauplanung</p>
+    <h1>Ingenieurplanung mit Präzision, Verantwortung und Weitblick.</h1>
+    <p class="hero-sub">
+      Wir begleiten Bauprojekte von der ersten Analyse bis zur technischen
+      Umsetzung – mit klarer Planung, belastbaren Berechnungen, wirtschaftlichen
+      Lösungen und verlässlicher Kommunikation.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#kontakt">Projekt anfragen</a>
+      <a class="btn btn-ghost" href="#leistungen">Leistungen ansehen</a>
+    </div>
+
+    <!-- Fachwerkträger mit Maßkette -->
+    <figure class="hero-figure" aria-hidden="true">
+      <svg viewBox="0 0 1140 240" fill="none">
+        <!-- Untergurt -->
+        <path d="M40 170 H1100" stroke="#9fc4e0" stroke-opacity=".85" stroke-width="1.5"/>
+        <!-- Obergurt -->
+        <path d="M140 70 H1000" stroke="#9fc4e0" stroke-opacity=".85" stroke-width="1.5"/>
+        <!-- Endschrägen -->
+        <path d="M40 170 L140 70 M1000 70 L1100 170" stroke="#9fc4e0" stroke-opacity=".85" stroke-width="1.5"/>
+        <!-- Diagonalen und Pfosten -->
+        <path d="M140 70 L240 170 L340 70 L440 170 L540 70 L640 170 L740 70 L840 170 L940 70 L1000 70"
+              stroke="#9fc4e0" stroke-opacity=".55" stroke-width="1.2"/>
+        <path d="M240 170 V70 M440 170 V70 M640 170 V70 M840 170 V70"
+              stroke="#9fc4e0" stroke-opacity=".3" stroke-width="1" stroke-dasharray="4 5"/>
+        <!-- Knotenpunkte -->
+        <g fill="#0f1722" stroke="#b5794e" stroke-width="1.5">
+          <circle cx="40" cy="170" r="4"/><circle cx="240" cy="170" r="4"/>
+          <circle cx="440" cy="170" r="4"/><circle cx="640" cy="170" r="4"/>
+          <circle cx="840" cy="170" r="4"/><circle cx="1100" cy="170" r="4"/>
+          <circle cx="140" cy="70" r="4"/><circle cx="340" cy="70" r="4"/>
+          <circle cx="540" cy="70" r="4"/><circle cx="740" cy="70" r="4"/>
+          <circle cx="940" cy="70" r="4"/>
+        </g>
+        <!-- Auflagersymbole -->
+        <path d="M40 174 L28 192 H52 Z" stroke="#9fc4e0" stroke-opacity=".7"/>
+        <path d="M1100 174 L1088 192 H1112 Z" stroke="#9fc4e0" stroke-opacity=".7"/>
+        <path d="M1084 197 H1116" stroke="#9fc4e0" stroke-opacity=".5"/>
+        <!-- Maßkette -->
+        <path d="M40 222 H1100" stroke="#9fc4e0" stroke-opacity=".45" stroke-width="1"/>
+        <path d="M40 214 V230 M1100 214 V230" stroke="#9fc4e0" stroke-opacity=".45" stroke-width="1"/>
+        <path d="M34 228 L46 216 M1094 228 L1106 216" stroke="#9fc4e0" stroke-opacity=".45" stroke-width="1"/>
+        <text x="570" y="216" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Consolas, monospace"
+              font-size="13" letter-spacing="2" fill="#8d9aa9">l = 26,40 m</text>
+      </svg>
+    </figure>
+  </div>
+
+  <div class="hero-facts">
+    <div class="container">
+      <p class="fact"><strong>HOAI Leistungsphasen 1–8</strong>Planung, Nachweise und Ausführungsbegleitung aus einer Hand</p>
+      <p class="fact"><strong>Nachweise nach Eurocode</strong>Prüffähige Statik für Neubau und Bestand</p>
+      <p class="fact"><strong>Wohn-, Gewerbe- und Industriebau</strong>Erfahrung über alle Gebäudeklassen hinweg</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ÜBER UNS ==================== -->
+<section class="section" id="buero">
+  <div class="container about-grid">
+    <div class="reveal">
+      <p class="eyebrow">Das Büro</p>
+      <h2 class="section-title">Technischer Partner für anspruchsvolle Bauaufgaben.</h2>
+    </div>
+    <div class="about-copy reveal">
+      <p class="lead">
+        Wir verstehen uns als technischer Partner für Bauherren, Architekten und
+        Unternehmen – von der Machbarkeit über die Genehmigung bis zur Ausführung.
+      </p>
+      <p>
+        Unser Fokus liegt auf präziser Planung, belastbaren Berechnungen und
+        klarer Abstimmung mit allen Projektbeteiligten. Wir arbeiten strukturiert
+        und verbindlich: Termine, Zuständigkeiten und Planungsstände sind bei uns
+        dokumentiert und für Auftraggeber jederzeit nachvollziehbar.
+      </p>
+      <p>
+        Wirtschaftlichkeit verstehen wir als Planungsaufgabe. Eine gute Konstruktion
+        ist nicht die massivste, sondern die, die Tragfähigkeit, Bauablauf und
+        Kosten zusammen denkt – und im Genehmigungsverfahren ohne Schleifen besteht.
+      </p>
+
+      <div class="clients">
+        <p class="clients-label">Wir arbeiten für</p>
+        <ul>
+          <li>Architekten</li>
+          <li>Bauträger</li>
+          <li>Projektentwickler</li>
+          <li>Öffentliche Auftraggeber</li>
+          <li>Generalunternehmer</li>
+          <li>Hausverwaltungen</li>
+          <li>Investoren</li>
+          <li>Private Bauherren</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== LEISTUNGEN ==================== -->
+<section class="section" id="leistungen" style="padding-top:0;">
+  <div class="container">
+    <div class="reveal">
+      <p class="eyebrow">Leistungen</p>
+      <h2 class="section-title">Planung, Nachweis und Begleitung – über den gesamten Projektverlauf.</h2>
+    </div>
+
+    <div class="services-grid reveal">
+      <article class="service">
+        <svg class="service-icon" width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M3 24 L15 6 L27 24 Z"/><path d="M9 24 L15 15 L21 24" stroke-opacity=".55"/><path d="M1 24 H29"/>
+        </svg>
+        <h3>Tragwerksplanung</h3>
+        <p>Entwurf und Konstruktion tragender Strukturen in Stahlbeton-, Stahl-, Holz- und Mauerwerksbau – vom Konzept bis zur Ausführungsplanung.</p>
+      </article>
+
+      <article class="service">
+        <svg class="service-icon" width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M6 5 H24 M6 25 H24 M15 5 V25"/><path d="M6 3 V7 M24 3 V7 M6 23 V27 M24 23 V27" stroke-opacity=".55"/>
+        </svg>
+        <h3>Statik</h3>
+        <p>Prüffähige statische Berechnungen für Neubau und Bestand, einschließlich aller erforderlichen Nachweise nach den geltenden Eurocodes.</p>
+      </article>
+
+      <article class="service">
+        <svg class="service-icon" width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <rect x="4" y="4" width="22" height="22"/><path d="M4 12 H26 M12 12 V26" stroke-opacity=".55"/><path d="M16 18 H22 M16 22 H20" stroke-opacity=".55"/>
+        </svg>
+        <h3>Bauplanung</h3>
+        <p>Technische Planung über alle Leistungsphasen – koordiniert mit Architektur, Haustechnik und den ausführenden Unternehmen.</p>
+      </article>
+
+      <article class="service">
+        <svg class="service-icon" width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M4 26 A11 11 0 0 1 26 26"/><path d="M15 26 L21 15" /><circle cx="15" cy="26" r="1.6" fill="currentColor"/><path d="M6 21 L8.5 22.4 M24 21 L21.5 22.4 M15 15 V18" stroke-opacity=".55"/>
+        </svg>
+        <h3>Energieberatung</h3>
+        <p>Energetische Bewertung von Gebäuden, Nachweise nach GEG und konkrete Maßnahmenempfehlungen mit Blick auf Wirtschaftlichkeit und Förderfähigkeit.</p>
+      </article>
+
+      <article class="service">
+        <svg class="service-icon" width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M15 4 C15 10 8 12 8 18 A7 7 0 0 0 22 18 C22 12 15 10 15 4 Z"/><path d="M15 26 A3.5 3.5 0 0 1 11.5 22.5" stroke-opacity=".55"/>
+        </svg>
+        <h3>Brandschutzkonzepte</h3>
+        <p>Brandschutznachweise und -konzepte, abgestimmt auf Nutzung, Bauordnung und die Anforderungen der Genehmigungsbehörden.</p>
+      </article>
+
+      <article class="service">
+        <svg class="service-icon" width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <rect x="4" y="4" width="22" height="22"/><path d="M4 14 L11 14 L14 18 L18 10 L21 14 L26 14" stroke-opacity=".9"/>
+        </svg>
+        <h3>Sanierung und Bestandsanalyse</h3>
+        <p>Untersuchung und Bewertung bestehender Bausubstanz, Tragfähigkeitsbewertung und Planung von Instandsetzungs- und Verstärkungsmaßnahmen.</p>
+      </article>
+
+      <article class="service">
+        <svg class="service-icon" width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M4 7 H18 M4 15 H26 M4 23 H14"/><path d="M18 5 V9 M26 13 V17 M14 21 V25" stroke-opacity=".55"/>
+        </svg>
+        <h3>Projektsteuerung</h3>
+        <p>Steuerung von Terminen, Kosten und Qualitäten – mit klaren Zuständigkeiten und nachvollziehbarer Dokumentation über den gesamten Projektverlauf.</p>
+      </article>
+
+      <article class="service">
+        <svg class="service-icon" width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <circle cx="15" cy="7" r="3"/><path d="M13 9.5 L7 26 M17 9.5 L23 26"/><path d="M10 19 H20" stroke-opacity=".55"/>
+        </svg>
+        <h3>Technische Beratung</h3>
+        <p>Unabhängige Beratung bei technischen Fragestellungen, Machbarkeitsstudien und Zweitmeinungen zu bestehenden Planungen.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== WARUM WIR ==================== -->
+<section class="section why" id="warum-wir">
+  <div class="container why-grid">
+    <div class="why-sticky reveal">
+      <p class="eyebrow">Warum wir</p>
+      <h2 class="section-title">Womit Auftraggeber bei uns rechnen können.</h2>
+      <p class="why-note">
+        Keine Werbeversprechen – sondern die Arbeitsweise, an der wir uns in
+        jedem Projekt messen lassen.
+      </p>
+    </div>
+    <ul class="reasons reveal">
+      <li>
+        <h3>Präzision in Planung und Berechnung</h3>
+        <p>Unsere Unterlagen sind prüffähig, vollständig und nachvollziehbar. Das reduziert Rückfragen der Prüfinstanzen, Nachträge und Verzögerungen auf der Baustelle.</p>
+      </li>
+      <li>
+        <h3>Klare Kommunikation</h3>
+        <p>Ein fester Ansprechpartner, definierte Abstimmungswege, dokumentierte Entscheidungen. Sie wissen jederzeit, wo Ihr Projekt steht.</p>
+      </li>
+      <li>
+        <h3>Wirtschaftliche Lösungen</h3>
+        <p>Wir dimensionieren nicht pauschal auf der sicheren Seite, sondern entwickeln Konstruktionen, die statisch und wirtschaftlich tragfähig sind.</p>
+      </li>
+      <li>
+        <h3>Termingerechte Bearbeitung</h3>
+        <p>Terminzusagen behandeln wir wie technische Anforderungen: verbindlich. Engpässe sprechen wir an, bevor sie zum Problem werden.</p>
+      </li>
+      <li>
+        <h3>Erfahrung mit komplexen Projekten</h3>
+        <p>Baulücke, Bestand, Aufstockung oder Sonderkonstruktion – wir kennen die Stellen, an denen Projekte üblicherweise stocken, und planen sie von Beginn an mit ein.</p>
+      </li>
+      <li>
+        <h3>Technische Verantwortung</h3>
+        <p>Wir unterschreiben, was wir berechnen – und stehen im Genehmigungsverfahren wie in der Ausführung zu unserer Planung.</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== PROJEKTE ==================== -->
+<section class="section dark" id="projekte">
+  <div class="container">
+    <div class="projects-head reveal">
+      <div>
+        <p class="eyebrow">Referenzen</p>
+        <h2 class="section-title">Projekte aus Neubau und Bestand.</h2>
+      </div>
+      <p class="section-intro" style="margin-top:0; max-width:38ch;">
+        Ausgewählte Referenzprojekte werden derzeit für die Veröffentlichung
+        aufbereitet. Auf Anfrage nennen wir Ihnen gern Referenzen aus Ihrem
+        Projektumfeld.
+      </p>
+    </div>
+
+    <div class="projects-grid">
+      <article class="project reveal">
+        <div class="project-figure" aria-hidden="true">
+          <svg viewBox="0 0 280 120" fill="none" stroke="#9fc4e0" stroke-width="1.2">
+            <path d="M10 118 V58 L45 34 L80 58 V118 M80 58 V118 M80 78 H150 V118 M150 78 V50 L185 30 L220 50 V118" stroke-opacity=".8"/>
+            <path d="M24 118 V92 H40 V118 M96 118 V96 H112 V118 M164 118 V92 H180 V118" stroke-opacity=".5"/>
+            <path d="M0 118 H280" stroke-opacity=".9"/>
+          </svg>
+        </div>
+        <div class="project-body">
+          <p class="project-cat">Wohnbau</p>
+          <h3>Referenzprojekt Wohnbau</h3>
+          <ul class="project-meta">
+            <li><span>Leistung</span><span>Tragwerksplanung, LPH 1–6</span></li>
+            <li><span>Umfang</span><span>Angabe folgt</span></li>
+            <li><span>Status</span><span>Veröffentlichung folgt</span></li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="project reveal">
+        <div class="project-figure" aria-hidden="true">
+          <svg viewBox="0 0 280 120" fill="none" stroke="#9fc4e0" stroke-width="1.2">
+            <rect x="30" y="26" width="130" height="92" stroke-opacity=".8"/>
+            <path d="M30 49 H160 M30 72 H160 M30 95 H160 M62 26 V118 M95 26 V118 M128 26 V118" stroke-opacity=".4"/>
+            <rect x="176" y="58" width="74" height="60" stroke-opacity=".8"/>
+            <path d="M176 78 H250 M176 98 H250 M213 58 V118" stroke-opacity=".4"/>
+            <path d="M0 118 H280" stroke-opacity=".9"/>
+          </svg>
+        </div>
+        <div class="project-body">
+          <p class="project-cat">Gewerbebau</p>
+          <h3>Referenzprojekt Gewerbebau</h3>
+          <ul class="project-meta">
+            <li><span>Leistung</span><span>Statik und Bauplanung</span></li>
+            <li><span>Umfang</span><span>Angabe folgt</span></li>
+            <li><span>Status</span><span>Veröffentlichung folgt</span></li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="project reveal">
+        <div class="project-figure" aria-hidden="true">
+          <svg viewBox="0 0 280 120" fill="none" stroke="#9fc4e0" stroke-width="1.2">
+            <path d="M20 118 V66 L58 46 V66 L96 46 V66 L134 46 V66 L172 46 V118" stroke-opacity=".8"/>
+            <path d="M20 66 H172" stroke-opacity=".4"/>
+            <rect x="190" y="80" width="60" height="38" stroke-opacity=".7"/>
+            <path d="M205 80 V64 H222 V80" stroke-opacity=".5"/>
+            <path d="M36 118 V88 H70 V118 M108 118 V88 H142 V118" stroke-opacity=".5"/>
+            <path d="M0 118 H280" stroke-opacity=".9"/>
+          </svg>
+        </div>
+        <div class="project-body">
+          <p class="project-cat">Industriebau</p>
+          <h3>Referenzprojekt Industriebau</h3>
+          <ul class="project-meta">
+            <li><span>Leistung</span><span>Tragwerksplanung Stahlbau</span></li>
+            <li><span>Umfang</span><span>Angabe folgt</span></li>
+            <li><span>Status</span><span>Veröffentlichung folgt</span></li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="project reveal">
+        <div class="project-figure" aria-hidden="true">
+          <svg viewBox="0 0 280 120" fill="none" stroke="#9fc4e0" stroke-width="1.2">
+            <path d="M40 118 V50 L85 26 L130 50 V118" stroke-opacity=".8"/>
+            <path d="M56 118 V90 H74 V118 M96 118 V90 H114 V118 M56 66 H74 M96 66 H114" stroke-opacity=".5"/>
+            <path d="M130 74 H226 V118 M226 74 L246 74" stroke-opacity=".8" stroke-dasharray="5 4"/>
+            <path d="M148 118 V94 H166 V118 M186 118 V94 H204 V118" stroke-opacity=".4" stroke-dasharray="5 4"/>
+            <path d="M0 118 H280" stroke-opacity=".9"/>
+          </svg>
+        </div>
+        <div class="project-body">
+          <p class="project-cat">Sanierung</p>
+          <h3>Referenzprojekt Sanierung</h3>
+          <ul class="project-meta">
+            <li><span>Leistung</span><span>Bestandsanalyse und Verstärkung</span></li>
+            <li><span>Umfang</span><span>Angabe folgt</span></li>
+            <li><span>Status</span><span>Veröffentlichung folgt</span></li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="project reveal">
+        <div class="project-figure" aria-hidden="true">
+          <svg viewBox="0 0 280 120" fill="none" stroke="#9fc4e0" stroke-width="1.2">
+            <path d="M24 118 V54 H256 V118" stroke-opacity=".8"/>
+            <path d="M24 54 L140 30 L256 54" stroke-opacity=".8"/>
+            <path d="M52 118 V70 M84 118 V70 M116 118 V70 M148 118 V70 M180 118 V70 M212 118 V70 M244 118 V70" stroke-opacity=".5"/>
+            <path d="M118 118 V88 H162 V118" stroke-opacity=".8"/>
+            <path d="M0 118 H280" stroke-opacity=".9"/>
+          </svg>
+        </div>
+        <div class="project-body">
+          <p class="project-cat">Öffentliche Gebäude</p>
+          <h3>Referenzprojekt öffentlicher Bau</h3>
+          <ul class="project-meta">
+            <li><span>Leistung</span><span>Tragwerksplanung und Brandschutz</span></li>
+            <li><span>Umfang</span><span>Angabe folgt</span></li>
+            <li><span>Status</span><span>Veröffentlichung folgt</span></li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="project reveal">
+        <div class="project-figure" aria-hidden="true">
+          <svg viewBox="0 0 280 120" fill="none" stroke="#9fc4e0" stroke-width="1.2">
+            <rect x="60" y="34" width="160" height="84" stroke-opacity=".8"/>
+            <path d="M60 56 H220 M60 78 H220 M60 100 H220 M100 34 V118 M140 34 V118 M180 34 V118" stroke-opacity=".4"/>
+            <path d="M60 34 L52 22 H228 L220 34" stroke-opacity=".6"/>
+            <path d="M238 44 V108 M238 44 L232 50 M238 44 L244 50 M238 108 L232 102 M238 108 L244 102" stroke-opacity=".55"/>
+            <path d="M0 118 H280" stroke-opacity=".9"/>
+          </svg>
+        </div>
+        <div class="project-body">
+          <p class="project-cat">Bestandsimmobilien</p>
+          <h3>Referenzprojekt Bestand</h3>
+          <ul class="project-meta">
+            <li><span>Leistung</span><span>Bewertung und Umbauplanung</span></li>
+            <li><span>Umfang</span><span>Angabe folgt</span></li>
+            <li><span>Status</span><span>Veröffentlichung folgt</span></li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ARBEITSWEISE ==================== -->
+<section class="section process" id="arbeitsweise">
+  <div class="container">
+    <div class="reveal">
+      <p class="eyebrow">Arbeitsweise</p>
+      <h2 class="section-title">Fünf Schritte. Ein nachvollziehbarer Ablauf.</h2>
+      <p class="section-intro">
+        Strukturierte Projektarbeit heißt für uns: Sie wissen zu jedem Zeitpunkt,
+        was erledigt ist, was als Nächstes ansteht und wer wofür verantwortlich ist.
+      </p>
+    </div>
+
+    <div class="steps reveal">
+      <div class="step">
+        <span class="step-num">Schritt 01</span>
+        <h3>Erstgespräch</h3>
+        <p>Wir klären Aufgabe, Rahmenbedingungen und Ziele – und sagen Ihnen offen, was technisch realistisch und wirtschaftlich sinnvoll ist.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">Schritt 02</span>
+        <h3>Projektanalyse</h3>
+        <p>Sichtung der Unterlagen, Bestandsaufnahme vor Ort, Klärung der technischen und genehmigungsrechtlichen Randbedingungen.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">Schritt 03</span>
+        <h3>Planung und Berechnung</h3>
+        <p>Erarbeitung der Planung und aller erforderlichen Nachweise – prüffähig, termingerecht und vollständig dokumentiert.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">Schritt 04</span>
+        <h3>Abstimmung mit Beteiligten</h3>
+        <p>Koordination mit Architekten, Fachplanern, Prüfingenieuren, Behörden und ausführenden Firmen über definierte Schnittstellen.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">Schritt 05</span>
+        <h3>Umsetzung und technische Begleitung</h3>
+        <p>Begleitung der Ausführung, Prüfungen vor Ort und kurzfristige Klärung technischer Fragen bis zur Fertigstellung.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== KONTAKT ==================== -->
+<section class="section dark" id="kontakt">
+  <div class="container contact-grid">
+    <div class="contact-info reveal">
+      <p class="eyebrow">Kontakt</p>
+      <h2 class="section-title" style="color:#fff;">Sprechen wir über Ihr Projekt.</h2>
+      <p class="section-intro">
+        Wenn ein Bauvorhaben technische Sicherheit, klare Planung und verlässliche
+        Begleitung braucht, sind wir der richtige Ansprechpartner. Schildern Sie
+        uns Ihr Projekt – wir melden uns innerhalb von zwei Arbeitstagen mit einer
+        ersten Einschätzung.
+      </p>
+      <ul class="contact-list">
+        <li><span class="k">Telefon</span><a href="tel:+4900000000000">+49 (0) 000 000 00 00</a></li>
+        <li><span class="k">E-Mail</span><a href="mailto:kontakt@kp-ingenieure.de">kontakt@kp-ingenieure.de</a></li>
+        <li><span class="k">Adresse</span><span>Musterstraße 12, 00000 Musterstadt</span></li>
+        <li><span class="k">Bürozeiten</span><span>Montag bis Freitag, 8:00 – 17:00 Uhr</span></li>
+      </ul>
+    </div>
+
+    <form class="contact-form reveal" id="contact-form" novalidate>
+      <div class="field">
+        <label for="f-name">Name *</label>
+        <input type="text" id="f-name" name="name" autocomplete="name" required />
+      </div>
+      <div class="field">
+        <label for="f-email">E-Mail *</label>
+        <input type="email" id="f-email" name="email" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for="f-phone">Telefonnummer</label>
+        <input type="tel" id="f-phone" name="phone" autocomplete="tel" />
+      </div>
+      <div class="field">
+        <label for="f-company">Unternehmen</label>
+        <input type="text" id="f-company" name="company" autocomplete="organization" />
+      </div>
+      <div class="field wide">
+        <label for="f-type">Projektart</label>
+        <select id="f-type" name="projectType">
+          <option value="">Bitte auswählen</option>
+          <option>Wohnbau</option>
+          <option>Gewerbebau</option>
+          <option>Industriebau</option>
+          <option>Sanierung / Bestand</option>
+          <option>Öffentliches Gebäude</option>
+          <option>Sonstiges</option>
+        </select>
+      </div>
+      <div class="field wide">
+        <label for="f-message">Nachricht *</label>
+        <textarea id="f-message" name="message" required placeholder="Kurze Beschreibung des Vorhabens, Standort, gewünschter Zeitrahmen"></textarea>
+      </div>
+      <div class="form-footer">
+        <button type="submit" class="btn btn-primary">Projekt anfragen</button>
+        <p class="form-note">Mit dem Absenden stimmen Sie der Verarbeitung Ihrer Angaben zur Bearbeitung der Anfrage zu.</p>
+      </div>
+      <p class="form-success" id="form-success" role="status">
+        Vielen Dank für Ihre Anfrage. Wir haben Ihre Nachricht erhalten und melden
+        uns innerhalb von zwei Arbeitstagen bei Ihnen.
+      </p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <span class="brand-name">K+P Ingenieure</span>
+        <span class="brand-sub">Beratende Ingenieure für Bauwesen</span>
+        <p>
+          Ingenieurbüro für Tragwerksplanung, Statik, Bauplanung und technische
+          Projektbegleitung – für Neubau und Bestand.
+        </p>
+      </div>
+      <div>
+        <h4>Leistungen</h4>
+        <ul>
+          <li><a href="#leistungen">Tragwerksplanung</a></li>
+          <li><a href="#leistungen">Statik</a></li>
+          <li><a href="#leistungen">Bauplanung</a></li>
+          <li><a href="#leistungen">Energieberatung</a></li>
+          <li><a href="#leistungen">Brandschutzkonzepte</a></li>
+          <li><a href="#leistungen">Sanierung und Bestand</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Kontakt</h4>
+        <ul>
+          <li>Musterstraße 12</li>
+          <li>00000 Musterstadt</li>
+          <li><a href="tel:+4900000000000">+49 (0) 000 000 00 00</a></li>
+          <li><a href="mailto:kontakt@kp-ingenieure.de">kontakt@kp-ingenieure.de</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Rechtliches</h4>
+        <ul>
+          <li><a href="#">Impressum</a></li>
+          <li><a href="#">Datenschutz</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year">2026</span> K+P Ingenieure. Alle Rechte vorbehalten.</span>
+      <ul>
+        <li><a href="#">Impressum</a></li>
+        <li><a href="#">Datenschutz</a></li>
+        <li><a href="#top">Nach oben</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
