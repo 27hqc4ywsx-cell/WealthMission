@@ -713,6 +713,18 @@
   }
   .wealth-sub { color: var(--muted-deep); font-size: var(--fs-sm); margin-top: 6px; line-height: 1.5; }
 
+  /* Ziel-Karte (erste Dashboard-Karte) */
+  .goal-amount-row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 4px 0 10px; }
+  .goal-current {
+    font-size: var(--fs-display); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em;
+    color: var(--gold-soft); font-variant-numeric: tabular-nums;
+  }
+  .goal-of { color: var(--muted-deep); font-size: var(--fs-base); font-weight: 600; }
+  .goal-projection { color: var(--text-soft); font-size: var(--fs-sm); line-height: 1.5; margin-top: 10px; }
+  .goal-delta { font-size: var(--fs-sm); font-weight: 700; margin-top: 6px; color: var(--muted-deep); }
+  .goal-delta.up { color: var(--mint-soft); }
+  .goal-delta.down { color: var(--rose-soft); }
+
   .wealth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
   .wealth-item {
     background: var(--surface-2); border-radius: var(--radius-sm);
@@ -1494,14 +1506,29 @@
   <!-- ============== DASHBOARD ============== -->
   <section class="view active" data-view="dashboard">
 
-    <!-- Krisen-Banner: nur bei Cashflow-Defizit sichtbar -->
+    <!-- Krisen-Banner: nur nach Geldfluss-Check + ab 3. Besuch (Schuld -> Handlung) -->
     <div class="card crisis" id="crisis-banner" style="display:none;">
-      <div class="card-title"><svg class="ico-svg ico-rose" aria-hidden="true"><use href="#i-alert"/></svg> Cashflow im Minus</div>
+      <div class="card-title"><svg class="ico-svg ico-gold" aria-hidden="true"><use href="#i-wrench"/></svg> Zeit für einen Dreh</div>
       <div style="font-size:14px;line-height:1.5;margin-bottom:10px;">
-        Du gibst monatlich <strong id="crisis-deficit-amount" style="color:var(--red);">0 €</strong> mehr aus als du einnimmst.<br/>
-        Wahrscheinlich rutscht dein Konto in den Dispo. Wir haben dir Notbremse-Quests bereitgelegt.
+        Dein Geldfluss ist gerade negativ (<strong id="crisis-deficit-amount">0 €</strong>/Monat). Kein Drama – hier sind 3 Quests, die das drehen.
       </div>
-      <button class="btn-danger" id="crisis-open-btn">Notbremse-Plan ansehen</button>
+      <button class="btn-primary" id="crisis-open-btn">Plan ansehen</button>
+    </div>
+
+    <!-- Ziel-Karte: beantwortet „Bin ich näher am Ziel als beim letzten Mal?" -->
+    <div class="card goal-card gold" id="goal-card">
+      <div class="card-title">Dein Ziel</div>
+      <div class="goal-amount-row">
+        <span class="goal-current" id="goal-current">0 €</span>
+        <span class="goal-of">von <span id="goal-target">0 €</span></span>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span id="goal-percent-label">0%</span></div>
+        <div class="bar green"><span id="goal-bar"></span></div>
+      </div>
+      <div class="goal-projection" id="goal-projection"></div>
+      <div class="goal-delta" id="goal-delta" style="display:none;"></div>
+      <button class="btn-primary mt-12" id="goal-deposit-btn"><svg class="ico-svg" aria-hidden="true"><use href="#i-coins"/></svg> + Einzahlung</button>
     </div>
 
     <!-- Character Card -->
@@ -1695,7 +1722,14 @@
       </div>
     </div>
 
-    <!-- Wealth Card -->
+    <!-- Aktive Quests (max 3) – direkt hinter dem Charakter -->
+    <div class="card">
+      <div class="card-title">Aktive Quests</div>
+      <div id="dashboard-missions"></div>
+      <button class="btn-ghost mt-12" data-go="missions">Alle Quests anzeigen</button>
+    </div>
+
+    <!-- Wealth Card (Ziel-Balken ist in die Ziel-Karte oben gewandert) -->
     <div class="card">
       <div class="card-title">Nettovermögen <button id="show-calc-btn" class="btn-mini">Rechnung</button></div>
       <div class="wealth-net" id="net-worth">0 €</div>
@@ -1703,14 +1737,6 @@
 
       <!-- Aufklappbare Rechen-Aufschlüsselung -->
       <div id="calc-breakdown" class="calc-breakdown" style="display:none;"></div>
-
-      <div class="bar-row">
-        <div class="bar-label">
-          <span>ZIEL <span id="goal-value">1.000 €</span></span>
-          <strong id="goal-percent">0%</strong>
-        </div>
-        <div class="bar green"><span id="goal-bar"></span></div>
-      </div>
 
       <div class="stat-grid">
         <div class="stat gold">
@@ -1738,13 +1764,6 @@
         </div>
       </div>
       <div class="text-muted text-small mt-12" id="cashflow-hint" style="display:none;line-height:1.4;"></div>
-    </div>
-
-    <!-- Open Missions Preview -->
-    <div class="card">
-      <div class="card-title">Aktive Quests</div>
-      <div id="dashboard-missions"></div>
-      <button class="btn-ghost mt-12" data-go="missions">Alle Quests anzeigen</button>
     </div>
   </section>
 
@@ -3394,6 +3413,60 @@ function renderXp() {
 }
 
 /* =========================================================
+   RENDER: ZIEL-KARTE (Nordstern des Dashboards)
+   ========================================================= */
+function renderGoalCard() {
+  const g = state.goalsV2 || {};
+  const target = g.target || state.goals.target || 0;
+  const net = netWorth();
+  const pct = target > 0 ? Math.min(100, Math.max(0, Math.round((net / target) * 100))) : 0;
+  setNum("goal-current", Math.max(0, net), fmtEuro);      // Count-up-Animation
+  const tEl = document.getElementById("goal-target"); if (tEl) tEl.textContent = fmt(target);
+  const pl = document.getElementById("goal-percent-label"); if (pl) pl.textContent = pct + "%";
+  const bar = document.getElementById("goal-bar"); if (bar) bar.style.width = pct + "%";
+
+  // Projektionssatz
+  const proj = document.getElementById("goal-projection");
+  if (proj) {
+    if (target > 0 && net >= target) {
+      proj.textContent = "Ziel erreicht – stark! Setz dir gleich ein größeres.";
+    } else {
+      const behind = planDelta();
+      if (behind > 0) {
+        proj.textContent = "+" + behind + " Monate hinter Plan – eine Extra-Einzahlung holt das auf.";
+      } else {
+        const months = projectMonths(target, net, g.monthlyRate || 0);
+        proj.textContent = isFinite(months)
+          ? "Auf Kurs: Ziel erreicht im " + projectDateLabel(months) + "."
+          : "Leg eine Monatsrate fest, dann zeigen wir dir dein Zieldatum.";
+      }
+    }
+  }
+
+  // Delta seit dem vorherigen Besuchstag (Basis: visits.prevVisitNet)
+  const deltaEl = document.getElementById("goal-delta");
+  if (deltaEl) {
+    const base = state.visits.prevVisitNet;
+    if (base != null && state.visits.prevVisitDate) {
+      const d = net - base;
+      const days = Math.abs(daysBetween(state.visits.prevVisitDate, todayISO()));
+      const period = days >= 6 ? "seit letzter Woche" : "seit deinem letzten Besuch";
+      if (d === 0) {
+        deltaEl.style.display = "";
+        deltaEl.className = "goal-delta";
+        deltaEl.textContent = "±0 € " + period;
+      } else {
+        deltaEl.style.display = "";
+        deltaEl.className = "goal-delta " + (d > 0 ? "up" : "down");
+        deltaEl.textContent = (d > 0 ? "+" : "−") + fmt(Math.abs(d)) + " " + period + (d > 0 ? " ↑" : " ↓");
+      }
+    } else {
+      deltaEl.style.display = "none";
+    }
+  }
+}
+
+/* =========================================================
    RENDER: WEALTH / CASHFLOW / TRESOR
    ========================================================= */
 function renderWealth() {
@@ -3428,13 +3501,6 @@ function renderWealth() {
     locked ? "Erledige „Kassensturz“, um dein echtes Vermögen zu sehen." :
     net <= 0 ? "Lass uns dein Vermögen aufbauen." :
     net < state.goals.target ? "Auf Kurs zum Ziel." : "Ziel erreicht – setze ein neues!";
-
-  // Persönliches Sparziel statt automatischer Sprungstufe
-  const goal = state.goals.target || nextWealthGoal(net);
-  const pct = Math.min(100, Math.max(0, Math.round((net / goal) * 100)));
-  document.getElementById("goal-value").textContent = fmt(goal);
-  setNum("goal-percent", pct, fmtPct);
-  document.getElementById("goal-bar").style.width = pct + "%";
 
   // Inputs vorbefüllen
   document.getElementById("w-cash").value  = state.wealth.cash  || "";
@@ -3501,11 +3567,10 @@ function renderCashflow() {
   const hint = document.getElementById("cashflow-hint");
   if (hint) {
     if (crisis) {
-      // Wichtigste Stufe: Defizit-Warnung
+      // Handlungsorientiert statt Schuld: sachlich + Verweis auf den Plan
       hint.style.display = "";
-      hint.style.color = "var(--red)";
-      hint.innerHTML = iconSvg("alert", "ico-rose") + " <strong>Du gibst " + fmt(cashflowDeficit()) + " mehr aus als du einnimmst.</strong> " +
-        "Wahrscheinlich rutscht dein Konto in den Dispo. Tippe oben auf „Notbremse-Plan ansehen”.";
+      hint.style.color = "";
+      hint.innerHTML = iconSvg("wrench", "ico-gold") + " Aktuell gibst du <strong>" + fmt(cashflowDeficit()) + "</strong> mehr aus als du einnimmst. Kein Drama – tippe oben auf „Plan ansehen“, wir drehen das zusammen.";
     } else {
       hint.style.color = "";
       const diff = (cf.savings || 0) - calcFree;
@@ -4687,6 +4752,9 @@ function pushHistory() {
     state.history.push({ date: today, net });
   }
   state.userTier = computeUserTier();
+  // Nur EIN Feier-Modal pro Save. Ziel-Prozent hat Vorrang (teilbar/motivierend).
+  _celebrationScheduled = false;
+  checkGoalMilestones();
   checkMilestones();
 }
 
@@ -4776,16 +4844,42 @@ function withdrawFromVault(amount, note = "") {
 /* =========================================================
    MEILENSTEINE
    ========================================================= */
+// Guard, damit pro Save höchstens ein Feier-Modal erscheint (Ziel% + Vermögen).
+let _celebrationScheduled = false;
+
 function checkMilestones() {
   // Meilensteine basieren ausschließlich auf Nettovermögen
   // (Tresor ist Teil davon, KEINE Doppelzählung)
   const total = netWorth();
   for (const ms of MILESTONES) {
     if (total >= ms.at && !state.milestonesReached.includes(ms.at)) {
-      state.milestonesReached.push(ms.at);
-      setTimeout(() => showMilestoneModal(ms), 300);
+      state.milestonesReached.push(ms.at);            // immer als erreicht merken
+      if (!_celebrationScheduled) {
+        _celebrationScheduled = true;
+        setTimeout(() => showMilestoneModal(ms), 300);
+      }
       break; // nur einer pro Save
     }
+  }
+}
+
+// Ziel-Prozent-Meilensteine (25/50/75/100 %) – Feier + Share.
+function checkGoalMilestones() {
+  const g = state.goalsV2 || {};
+  const target = g.target || 0;
+  if (target <= 0) return;
+  if (!Array.isArray(state.goalMilestones)) state.goalMilestones = [];
+  const pct = (netWorth() / target) * 100;
+  let hit = null;
+  GOAL_PCTS.forEach(p => {
+    if (pct >= p && !state.goalMilestones.includes(p)) {
+      state.goalMilestones.push(p);                   // immer merken (kein Re-Trigger)
+      hit = p;                                         // höchsten neu erreichten feiern
+    }
+  });
+  if (hit && !_celebrationScheduled) {
+    _celebrationScheduled = true;
+    setTimeout(() => showGoalMilestoneModal(hit), 400);
   }
 }
 
@@ -4842,6 +4936,67 @@ function showMilestoneModal(ms) {
   );
   fireConfetti(60);
   vibrate(30);
+}
+
+// Ziel-Prozent-Feier (25/50/75/100 %) mit Share. Bei 100 %: Ziel verdoppeln.
+function showGoalMilestoneModal(pct) {
+  const name = state.character.name || "Ich";
+  const target = (state.goalsV2 && state.goalsV2.target) || 0;
+  const isFull = pct >= 100;
+  let extra = '';
+  if (isFull) {
+    extra = '<p style="color:var(--gold-soft);font-weight:700;">Ziel erreicht! Willst du direkt das nächste Level angehen?</p>' +
+      '<button class="btn-primary" onclick="doubleGoal()">Ziel verdoppeln (neu: ' + fmt(target * 2) + ')</button>' +
+      '<button class="btn-ghost mt-8" onclick="closeModal()">Erstmal genießen</button>';
+  } else {
+    extra = '<button class="btn-primary" onclick="closeModal()">Weiter so!</button>';
+  }
+  modalShell(
+    '<div class="big-icon">' + iconSvg('celebrate', 'ico-gold') + '</div>' +
+    '<h2>' + pct + ' % geschafft!</h2>' +
+    '<p>' + escapeHTML(name) + ' hat ' + pct + ' % des Ziels erreicht. Das ist echter Fortschritt – kein Zufall.</p>' +
+    '<button class="btn-ghost mb-8" onclick="shareGoalMilestone(' + pct + ')"><svg class="ico-svg" aria-hidden="true"><use href="#i-upload"/></svg> Teilen</button>' +
+    extra
+  );
+  fireConfetti(80);
+  vibrate(40);
+}
+
+// Share mit dreistufigem Fallback: navigator.share -> clipboard -> Toast. Nie werfend.
+function shareGoalMilestone(pct) {
+  const name = state.character.name || "Ich";
+  const text = name + " hat " + pct + " % seines Ziels erreicht";
+  try {
+    if (navigator.share) {
+      navigator.share({ text: text }).catch(() => {});
+      return;
+    }
+  } catch (e) { /* weiter zum Fallback */ }
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(
+        () => toast("In Zwischenablage kopiert."),
+        () => toast(text)
+      );
+      return;
+    }
+  } catch (e) { /* weiter zum Fallback */ }
+  toast(text);
+}
+
+// Bei 100 %: Ziel verdoppeln, Meilensteine zurücksetzen, Plan-Basis neu setzen.
+function doubleGoal() {
+  const g = state.goalsV2 || (state.goalsV2 = {});
+  g.target = (g.target || 0) * 2;
+  state.goals.target = g.target;
+  g.startAmount = netWorth();
+  g.startDate = todayISO();
+  state.goalMilestones = [];
+  seedGoalMilestones();
+  save();
+  renderAll();
+  closeModal();
+  toast("Neues Ziel: " + fmt(g.target) + ". Auf geht's!");
 }
 
 function showDecayModal(amount, penalty, isEarly) {
@@ -4978,7 +5133,8 @@ function showProfileEditDialog() {
       '<label>Fixkosten €/Monat</label><input type="number" inputmode="decimal" id="pe-fixed" value="' + (cf.fixed || '') + '" />' +
       '<label>Variabel €/Monat</label><input type="number" inputmode="decimal" id="pe-variable" value="' + (cf.variable || '') + '" />' +
       '<label>Sparrate €/Monat</label><input type="number" inputmode="decimal" id="pe-savings" value="' + (cf.savings || '') + '" />' +
-      '<label>Sparziel €</label><input type="number" inputmode="decimal" id="pe-goal" value="' + (state.goals.target || '') + '" />' +
+      '<label>Sparziel €</label><input type="number" inputmode="decimal" id="pe-goal" value="' + ((state.goalsV2 && state.goalsV2.target) || state.goals.target || '') + '" />' +
+      '<label>Monatsrate fürs Ziel €</label><input type="number" inputmode="decimal" id="pe-rate" value="' + ((state.goalsV2 && state.goalsV2.monthlyRate) || '') + '" />' +
     '</div>' +
     '<div class="btn-row mt-14">' +
       '<button class="btn-ghost" onclick="closeModal()">Abbrechen</button>' +
@@ -5003,7 +5159,18 @@ function handleProfileSave() {
   state.cashflow.variable = parseNum("pe-variable");
   state.cashflow.savings = parseNum("pe-savings");
   const goal = parseNum("pe-goal");
-  if (goal > 0) state.goals.target = goal;
+  const rate = parseNum("pe-rate");
+  if (!state.goalsV2) state.goalsV2 = { target: 0, monthlyRate: 0, startAmount: 0, startDate: todayISO() };
+  const goalChanged = goal > 0 && goal !== state.goalsV2.target;
+  if (goal > 0) { state.goals.target = goal; state.goalsV2.target = goal; }
+  state.goalsV2.monthlyRate = rate;
+  if (goalChanged) {
+    // Neues Ziel -> Fortschritt & Plan-Basis neu, Meilensteine zurücksetzen
+    state.goalsV2.startAmount = netWorth();
+    state.goalsV2.startDate = todayISO();
+    state.goalMilestones = [];
+    seedGoalMilestones();
+  }
   state.userTier = computeUserTier();
   // Starter-Quest „Profil vervollständigen": Alter+Beruf holen den Filter nach
   state.unlocks.profil = true;
@@ -5207,6 +5374,8 @@ window.handleGeldflussSave = handleGeldflussSave;
 window.handleGegnerSave = handleGegnerSave;
 window.showDepositDialog = showDepositDialog;
 window.handleDeposit = handleDeposit;
+window.shareGoalMilestone = shareGoalMilestone;
+window.doubleGoal = doubleGoal;
 
 /* =========================================================
    CONFETTI
@@ -5366,6 +5535,7 @@ function doRepair() {
   toast("✓ Daten repariert");
 }
 document.getElementById("crisis-open-btn").addEventListener("click", showCashflowCrisisModal);
+document.getElementById("goal-deposit-btn").addEventListener("click", showDepositDialog);
 
 // Diagramm-Umschalter im Analyse-Tab
 document.querySelectorAll("#chart-tabs .mission-tab").forEach(t => {
@@ -5527,6 +5697,7 @@ function escapeHTML(s) {
 function renderAll() {
   renderHeader();
   renderXp();
+  renderGoalCard();
   renderWealth();
   renderCashflow();
   renderVault();
