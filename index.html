@@ -725,6 +725,17 @@
   .goal-delta.up { color: var(--mint-soft); }
   .goal-delta.down { color: var(--rose-soft); }
 
+  /* Sonntag-Check-in */
+  .checkin-summary { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
+  .checkin-summary > div { display: flex; justify-content: space-between; gap: 10px; font-size: var(--fs-sm); padding: 3px 0; }
+  .checkin-summary > div span { color: var(--muted-deep); }
+  .checkin-summary > div strong { color: var(--gold-soft); font-variant-numeric: tabular-nums; }
+
+  /* Tages-Briefing */
+  .briefing-headline { font-size: var(--fs-lg); font-weight: 800; color: var(--gold-soft); margin: 2px 0 8px; line-height: 1.3; }
+  .briefing-body { color: var(--text-soft); font-size: var(--fs-sm); line-height: 1.6; }
+  #briefing-read-btn.is-read { opacity: .55; }
+
   .wealth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
   .wealth-item {
     background: var(--surface-2); border-radius: var(--radius-sm);
@@ -1531,6 +1542,18 @@
       <button class="btn-primary mt-12" id="goal-deposit-btn"><svg class="ico-svg" aria-hidden="true"><use href="#i-coins"/></svg> + Einzahlung</button>
     </div>
 
+    <!-- Sonntag-Check-in: nur sonntags sichtbar, wenn diese Woche noch offen -->
+    <div class="card checkin-card gold" id="checkin-card" style="display:none;">
+      <div class="card-title"><svg class="ico-svg ico-gold" aria-hidden="true"><use href="#i-check"/></svg> Wochen-Check</div>
+      <div id="checkin-body">
+        <div style="font-size:14px;line-height:1.5;margin-bottom:12px;">Wie lief deine Woche? 30 Sekunden – dann weißt du, wo du stehst.</div>
+        <div class="btn-row">
+          <button class="btn-success" id="checkin-yes">Gespart</button>
+          <button class="btn-ghost" id="checkin-no">Diese Woche nicht</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Character Card -->
     <div class="card char-card gold">
       <div class="char-top">
@@ -1700,7 +1723,7 @@
           </div>
           <div class="char-badges">
             <span class="level-pill">LVL <strong id="char-level">1</strong></span>
-            <span class="streak-chip"><svg class="ico-svg ico-coral" aria-hidden="true"><use href="#i-flame"/></svg> <span id="streak-count">0</span> Tage</span>
+            <span class="streak-chip"><svg class="ico-svg ico-coral" aria-hidden="true"><use href="#i-flame"/></svg> <span id="streak-count">0</span> Wochen</span>
           </div>
         </div>
       </div>
@@ -1727,6 +1750,14 @@
       <div class="card-title">Aktive Quests</div>
       <div id="dashboard-missions"></div>
       <button class="btn-ghost mt-12" data-go="missions">Alle Quests anzeigen</button>
+    </div>
+
+    <!-- Tages-Briefing: EIN Finanz-Fakt, <30s, +10 XP fürs Lesen (1×/Tag) -->
+    <div class="card briefing-card" id="briefing-card">
+      <div class="card-title"><svg class="ico-svg ico-gold" aria-hidden="true"><use href="#i-news"/></svg> Tages-Briefing</div>
+      <div class="briefing-headline" id="briefing-headline"></div>
+      <div class="briefing-body" id="briefing-body"></div>
+      <button class="btn-ghost mt-12" id="briefing-read-btn">Gelesen · +10 XP</button>
     </div>
 
     <!-- Wealth Card (Ziel-Balken ist in die Ziel-Karte oben gewandert) -->
@@ -1804,19 +1835,29 @@
 
     <!-- TRESOR -->
     <div class="card gold">
-      <div class="card-title"><svg class="ico-svg" aria-hidden="true"><use href="#i-lock"/></svg> Tresor – geschützter Anteil <span class="accent" id="vault-protect">Schutz: 0 Tage</span></div>
-      <div class="wealth-net" id="vault-total">0 €</div>
-      <div class="wealth-sub">
-        <strong>Wichtig:</strong> Der Tresor ist <u>kein zusätzliches Vermögen</u> – er markiert, welcher Teil deines Bargelds/Bankkontos „geschützt" ist (Schließfach, Festgeld, separates Konto).<br/>
-        Entnahme = Bank wird tatsächlich reduziert. Innerhalb 30 Tagen seit Einzahlung kostet das doppelte XP.
+      <!-- Gesperrt bis Level 3 -->
+      <div id="vault-locked" style="display:none;text-align:center;padding:8px 0;">
+        <div class="vault-lock-icon"><svg class="ico-svg" aria-hidden="true"><use href="#i-lock"/></svg></div>
+        <div class="card-title" style="justify-content:center;">Ab Level 3</div>
+        <div class="wealth-sub" style="margin-top:8px;">Der Tresor schaltet sich auf Level 3 frei. Sammle XP mit Quests – es lohnt sich.</div>
       </div>
 
-      <div class="btn-row mt-16">
-        <button class="btn-primary" id="vault-deposit-btn">+ Einzahlen</button>
-        <button class="btn-ghost" id="vault-withdraw-btn">– Entnehmen</button>
-      </div>
+      <!-- Freigeschalteter Tresor-Inhalt -->
+      <div id="vault-content">
+        <div class="card-title"><svg class="ico-svg" aria-hidden="true"><use href="#i-lock"/></svg> Tresor – geschützter Anteil <span class="accent" id="vault-protect">Schutz: 0 Tage</span></div>
+        <div class="wealth-net" id="vault-total">0 €</div>
+        <div class="wealth-sub">
+          <strong>Wichtig:</strong> Der Tresor ist <u>kein zusätzliches Vermögen</u> – er markiert, welcher Teil deines Bargelds/Bankkontos „geschützt" ist (Schließfach, Festgeld, separates Konto).<br/>
+          Entnahme = Bank wird tatsächlich reduziert. Innerhalb 30 Tagen seit Einzahlung kostet das doppelte XP.
+        </div>
 
-      <div class="mt-16" id="vault-list"></div>
+        <div class="btn-row mt-16">
+          <button class="btn-primary" id="vault-deposit-btn">+ Einzahlen</button>
+          <button class="btn-ghost" id="vault-withdraw-btn">– Entnehmen</button>
+        </div>
+
+        <div class="mt-16" id="vault-list"></div>
+      </div>
     </div>
 
     <!-- Aufteilung -->
@@ -2414,6 +2455,54 @@ const STARTER_QUESTS = [
 
 // Ziel-Prozent-Meilensteine (Phase 2)
 const GOAL_PCTS = [25, 50, 75, 100];
+
+// Tages-Briefing-Bank (42 Einträge = 6 Wochen Rotation). Faktisch, <30 Sek,
+// ohne Schuldzuweisung. Optionale rpg-Variante wird bei Stil "rpg" genutzt.
+// Lokal gecacht -> 0 API-Calls (Auftrag: gebatcht, hier statisch).
+const BRIEFINGS = [
+  { h: "Der Notgroschen zuerst", b: "3 Monatsausgaben als Puffer sind das Fundament. Du musst ihn nicht auf einmal füllen – 25 € pro Woche sind ein echter Anfang.", rpg: "Bevor du in den Drachenhort ziehst, brauchst du Proviant: 3 Monatsausgaben als Puffer. Fang mit 25 € pro Woche an." },
+  { h: "Zeit schlägt Betrag", b: "100 €/Monat bei 6 % Rendite werden in 20 Jahren zu rund 46.000 €. Früh anfangen wirkt stärker als viel anfangen.", rpg: "Zinseszins ist dein passiver Begleiter, der über Jahre mitlevelt: 100 €/Monat werden in 20 Jahren zu ~46.000 €." },
+  { h: "Pay yourself first", b: "Ein Dauerauftrag am Zahltag spart, bevor das Geld verplant ist. Automatisch schlägt Willenskraft.", rpg: "Zahl zuerst dir selbst Tribut: ein Dauerauftrag am Zahltag, bevor die Gilde ihren Anteil nimmt." },
+  { h: "Breite Streuung per Klick", b: "Ein ETF auf den MSCI World verteilt dein Geld über rund 1.500 Firmen weltweit. Ein Sparplan genügt.", rpg: "Ein ETF-Sparplan ist wie eine Party aus 1.500 Verbündeten statt eines einzelnen Söldners – fällt einer, tragen die anderen." },
+  { h: "Der Dispo ist teuer", b: "Dispozinsen liegen oft bei 10–14 %. Eine Umschuldung in einen Ratenkredit ist meist deutlich günstiger." },
+  { h: "50-30-20 als Kompass", b: "Grobe Richtschnur: 50 % Fixkosten, 30 % Wünsche, 20 % sparen. Kein Gesetz – nur ein Startpunkt zum Anpassen." },
+  { h: "Der Abo-Check", b: "Streaming, Fitness, Apps: Ein 10-Minuten-Blick in die Kontoauszüge findet oft 15–30 € pro Monat, die kaum jemand vermisst." },
+  { h: "Notgroschen ≠ Investment", b: "Der Puffer gehört aufs Tagesgeld – jederzeit verfügbar, kein Kursrisiko. Investiert wird erst das, was darüber hinausgeht." },
+  { h: "Die Gehaltserhöhung sparen", b: "Wer die Differenz nach einer Erhöhung spart, bevor sich der Lebensstil daran gewöhnt, baut fast unbemerkt Vermögen auf." },
+  { h: "Der zweitbeste Zeitpunkt", b: "Der beste Moment zu investieren war vor Jahren. Der zweitbeste ist heute – auch mit kleinem Betrag." },
+  { h: "Kleine Beträge zählen", b: "5 € pro Tag sind 150 € im Monat und 1.800 € im Jahr. Fortschritt entsteht aus Gewohnheit, nicht aus einem großen Wurf." },
+  { h: "Kenn deine Fixkosten", b: "Wer seine monatlichen Fixkosten auf den Euro kennt, trifft bessere Entscheidungen. 5 Minuten Überblick lohnen sich." },
+  { h: "Zinsen vergleichen", b: "Tagesgeld-Konditionen unterscheiden sich stark. Ein Vergleich kostet 10 Minuten und bringt oft mehrere Prozent mehr." },
+  { h: "Der Cost-Average-Effekt", b: "Wer monatlich denselben Betrag investiert, kauft bei tiefen Kursen mehr Anteile und bei hohen weniger – automatisch." },
+  { h: "Schulden zuerst, dann sparen", b: "Bei teuren Krediten (>8 % Zins) lohnt Tilgen meist mehr als Sparen. Der garantierte Gewinn ist der gesparte Zins." },
+  { h: "Der 24-Stunden-Test", b: "Bei Nicht-Alltagskäufen über 50 € eine Nacht drüber schlafen. Erstaunlich oft ist der Wunsch am nächsten Tag weg." },
+  { h: "Girokonto durchleuchten", b: "Kontoführungsgebühren summieren sich. Kostenlose Konten gibt es reichlich – ein Wechsel spart schnell 60–120 € im Jahr." },
+  { h: "Netto vor Brutto", b: "Beim Vermögen zählt, was nach Schulden übrig bleibt. Deshalb ist Nettovermögen die ehrlichste einzelne Zahl." },
+  { h: "Versicherungen: nur das Nötige", b: "Existenzielle Risiken absichern (Haftpflicht, Berufsunfähigkeit), kleine selbst tragen. Nicht jede Police ist ihr Geld wert." },
+  { h: "Inflation frisst Bargeld", b: "Geld unterm Kopfkissen verliert real an Wert. Der Notgroschen darf liegen – der Rest sollte arbeiten." },
+  { h: "Ziele sichtbar machen", b: "Ein konkretes Ziel („5.000 € bis nächsten Sommer“) motiviert stärker als ein vages „mehr sparen“." },
+  { h: "Der Haushalts-Snapshot", b: "Einmal im Monat 10 Minuten: Was kam rein, was ging raus? Kein Micro-Tracking nötig – der grobe Blick reicht." },
+  { h: "Rabatte sind kein Sparen", b: "20 % Rabatt auf etwas Ungeplantes sind 80 % Ausgabe. Gespart hast du erst, wenn das Geld auf dem Konto bleibt." },
+  { h: "Der Arbeitgeber-Zuschuss", b: "Vermögenswirksame Leistungen oder betriebliche Altersvorsorge sind oft geschenktes Geld. Nachfragen lohnt sich." },
+  { h: "Ein Konto fürs Ziel", b: "Ein separates Unterkonto fürs Sparziel macht den Fortschritt sichtbar und schützt vor spontanem Zugriff." },
+  { h: "Fehler sind normal", b: "Niemand spart jeden Monat perfekt. Ein schwacher Monat wirft dich nicht zurück, solange du dranbleibst." },
+  { h: "Der Zinseszins-Turbo", b: "Reinvestierte Erträge erzeugen selbst wieder Erträge. Deshalb wächst investiertes Geld nicht linear, sondern beschleunigt." },
+  { h: "Klein anfangen beim Investieren", b: "Viele Broker erlauben Sparpläne ab 1 €. Der Prozess ist wichtiger als der Betrag – erst starten, dann steigern." },
+  { h: "Fixkosten senken wirkt doppelt", b: "Eine gekündigte 15-€-Ausgabe spart jeden Monat – 180 € im Jahr, ohne je wieder daran denken zu müssen." },
+  { h: "Der Notgroschen gibt Ruhe", b: "Ein Puffer verhindert, dass eine kaputte Waschmaschine zum Dispo-Kredit wird. Sicherheit ist auch eine Rendite." },
+  { h: "Vergleiche dich mit gestern", b: "Nicht mit anderen – mit deinem eigenen Stand von letzter Woche. Das ist der einzige faire Maßstab." },
+  { h: "Sparquote schlägt Einkommen", b: "Nicht wer viel verdient wird wohlhabend, sondern wer einen stabilen Anteil behält. Die Quote zählt, nicht die Summe." },
+  { h: "Ein Kassensturz pro Quartal", b: "Alle drei Monate Vermögen und Schulden aktualisieren reicht völlig, um den Kurs zu halten." },
+  { h: "Impulskäufe entkoppeln", b: "Kreditkarte aus der Shopping-App entfernen. Jede kleine Hürde zwischen Impuls und Kauf spart real Geld." },
+  { h: "Langfristig denken beim Depot", b: "Kursschwankungen sind normal. Wer breit gestreut und lange investiert, muss einzelne rote Tage nicht fürchten." },
+  { h: "Der erste Notgroschen-Meilenstein", b: "1.000 € Puffer decken die meisten Alltags-Notfälle. Ein realistisches erstes Ziel, das viel Stress nimmt." },
+  { h: "Automatisieren, nicht optimieren", b: "Ein solider Dauerauftrag, der einfach läuft, schlägt die perfekte Strategie, die du nie umsetzt." },
+  { h: "Gebühren sind Rendite-Killer", b: "1 % laufende Kosten pro Jahr klingen wenig, kosten über Jahrzehnte aber fünfstellig. Günstige ETFs bevorzugen." },
+  { h: "Das Konto-Polster", b: "Ein kleiner Puffer auf dem Girokonto verhindert Dispo-Zinsen bei Lastschriften, die früher abgehen als das Gehalt kommt." },
+  { h: "Weniger Konten, mehr Überblick", b: "Zu viele Konten verstecken dein echtes Bild. Wenige, klar benannte Konten machen den Fortschritt sichtbar." },
+  { h: "Der Rendite-Dreiklang", b: "Sicherheit, Verfügbarkeit, Rendite – du bekommst selten alle drei. Fürs Ziel entscheiden, was gerade zählt." },
+  { h: "Dranbleiben schlägt Perfektion", b: "Nicht die eine geniale Entscheidung baut Vermögen, sondern viele kleine, die du über Jahre durchhältst." },
+];
 
 /* =========================================================
    SCHNELL-TRACKING – Quick-Tap Konsum-Kategorien
@@ -3383,7 +3472,7 @@ function renderHeader() {
   document.getElementById("char-rank").textContent = rankForLevel(state.level);
   document.getElementById("char-tier").textContent = TIER_NAMES[tier];
   document.getElementById("char-level").textContent = state.level;
-  document.getElementById("streak-count").textContent = state.streak.count;
+  document.getElementById("streak-count").textContent = state.streak.weeks || 0;
 
   const charName2 = document.getElementById("char-name-2");
   if (charName2) {
@@ -3464,6 +3553,87 @@ function renderGoalCard() {
       deltaEl.style.display = "none";
     }
   }
+}
+
+/* =========================================================
+   RETENTION: Sonntag-Check-in + Tages-Briefing
+   ========================================================= */
+// Tages-Briefing per Tages-Index rotieren (deterministisch, kein Zufall).
+function todaysBriefing() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((now - start) / 86400000);
+  const item = BRIEFINGS[dayOfYear % BRIEFINGS.length];
+  const useRpg = state.character.style === "rpg" && item.rpg;
+  return { h: item.h, b: useRpg ? item.rpg : item.b };
+}
+function renderBriefing() {
+  const card = document.getElementById("briefing-card");
+  if (!card) return;
+  const tb = todaysBriefing();
+  document.getElementById("briefing-headline").textContent = tb.h;
+  document.getElementById("briefing-body").textContent = tb.b;
+  const btn = document.getElementById("briefing-read-btn");
+  const readToday = state.briefing.lastReadDate === todayISO();
+  btn.disabled = readToday;
+  btn.textContent = readToday ? "Heute schon gelesen" : "Gelesen · +10 XP";
+  btn.classList.toggle("is-read", readToday);
+}
+// Briefing lesen: +10 XP, 1×/Tag. Zählt NICHT für den Streak.
+function readBriefing() {
+  if (state.briefing.lastReadDate === todayISO()) return;
+  state.briefing.lastReadDate = todayISO();
+  state.briefing.readCount = (state.briefing.readCount || 0) + 1;
+  awardXp(10);
+  logEvent("daily_briefing_read");
+  save();
+  renderAll();
+  toast("+10 XP – bis morgen!");
+}
+
+// Netto-Delta seit Beginn dieser ISO-Woche (aus history).
+function weeklyNetDelta() {
+  const wk = weekKey();
+  const hist = state.history || [];
+  let base = null;
+  for (let i = hist.length - 1; i >= 0; i--) {
+    if (weekKey(hist[i].date) !== wk) { base = hist[i].net; break; }
+  }
+  if (base == null) base = hist.length ? hist[0].net : netWorth();
+  return netWorth() - base;
+}
+// Check-in-Karte: nur sonntags sichtbar, wenn diese Woche noch offen ist.
+function renderCheckin() {
+  const card = document.getElementById("checkin-card");
+  if (!card) return;
+  const isSunday = new Date().getDay() === 0;
+  const openThisWeek = state.checkin.lastWeekKey !== weekKey();
+  card.style.display = (isSunday && openThisWeek) ? "" : "none";
+}
+// Wochen-Check ausführen. Beides gibt XP + markiert die Woche aktiv (kein Zwang).
+function doCheckin(saved) {
+  state.checkin.lastWeekKey = weekKey();
+  markWeekActive();
+  awardXp(saved ? 15 : 5);
+  logEvent("weekly_checkin_done", { saved: saved });
+  const delta = weeklyNetDelta();
+  const questsThisWeek = (state.missions || []).filter(m => m.done && m.doneDate && weekKey(m.doneDate) === weekKey()).length;
+  const body = document.getElementById("checkin-body");
+  if (body) {
+    body.innerHTML =
+      '<div style="font-size:14px;line-height:1.5;margin-bottom:10px;">' +
+        (saved
+          ? "Stark – die Woche ist als aktiv markiert. Weiter so."
+          : "Ehrlichkeit zählt. Nächste Woche reicht schon ein kleiner Schritt – 5 € sind ein Anfang.") +
+      '</div>' +
+      '<div class="checkin-summary">' +
+        '<div><span>Netto-Veränderung diese Woche</span><strong>' + (delta >= 0 ? "+" : "") + fmt(delta) + '</strong></div>' +
+        '<div><span>Erledigte Quests</span><strong>' + questsThisWeek + '</strong></div>' +
+      '</div>';
+  }
+  save();
+  renderHeader(); renderXp(); renderGoalCard();
+  toast("+" + (saved ? 15 : 5) + " XP");
 }
 
 /* =========================================================
@@ -3589,6 +3759,14 @@ function renderCashflow() {
 }
 
 function renderVault() {
+  // Tresor-Gate: bis Level 3 gesperrt anzeigen
+  const lockedEl = document.getElementById("vault-locked");
+  const contentEl = document.getElementById("vault-content");
+  const gated = (state.level || 1) < 3;
+  if (lockedEl) lockedEl.style.display = gated ? "" : "none";
+  if (contentEl) contentEl.style.display = gated ? "none" : "";
+  if (gated) return;
+
   document.getElementById("vault-total").textContent = fmt(state.locked.total);
 
   // Schutz-Streak: Tage seit letzter Entnahme
@@ -3841,9 +4019,9 @@ function logExpense(catId, amount) {
     category: catId,
     amount: amount
   });
-  // Belohnung: +5 XP fuer Tracking
+  // Belohnung: +5 XP fuer Tracking. KEIN markWeekActive – Tracking darf nie
+  // Bedingung für den Wochen-Streak sein (bleibt strikt optional).
   awardXp(5);
-  updateStreak();
   save();
   renderAll();
   toast("+5 XP · " + fmt(amount) + " getrackt");
@@ -4314,7 +4492,7 @@ function renderAnalysis() {
     { k: 'Gesamt-XP', v: (state.totalXp || 0).toLocaleString('de-DE'), cls: 'gold' },
     { k: 'Quests erledigt', v: state.stats.missionsDone || 0, cls: 'violet' },
     { k: 'Im Tresor', v: fmt(state.locked.total), cls: 'gold' },
-    { k: 'Streak', v: (state.streak.count || 0) + ' Tage', cls: '' },
+    { k: 'Wochen-Streak', v: (state.streak.weeks || 0) + ' Wochen', cls: '' },
     { k: 'Sparquote', v: sparquote + '%', cls: 'green' },
     { k: 'Fix-Quote', v: fixquote + '%', cls: '' },
     { k: 'Zielfortschritt', v: goalProgress + '%', cls: 'green' },
@@ -4605,7 +4783,7 @@ function completeMission(uid) {
 
   awardXp(m.xp);
   state.stats.missionsDone++;
-  updateStreak();
+  markWeekActive();
   pushHistory();
   save();
   renderAll();
@@ -4619,7 +4797,7 @@ function progressLongQuest(uid) {
   const partialXp = Math.round((m.xp || 100) / m.longQuest.steps);
   awardXp(partialXp);
   state.stats.missionsDone++;
-  updateStreak();
+  markWeekActive();
 
   m.longQuest.currentStep++;
   if (m.longQuest.currentStep > m.longQuest.steps) {
@@ -4673,8 +4851,13 @@ function awardXp(amount) {
   }
   if (state.level > oldLevel) {
     showLevelUp(state.level);
+    // Tresor-Freischaltung auf Level 3: Intro erst nach Level-Up-Modal zeigen
+    if (oldLevel < 3 && state.level >= 3 && !state.vaultIntroSeen) {
+      _vaultIntroPending = true;
+    }
   }
 }
+let _vaultIntroPending = false;
 
 function deductXp(amount) {
   state.xp -= amount;
@@ -4684,20 +4867,6 @@ function deductXp(amount) {
     state.xp += xpForLevel(state.level);
   }
   if (state.xp < 0) state.xp = 0;
-}
-
-function updateStreak() {
-  const today = todayISO();
-  const last = state.streak.lastDate;
-  if (last === today) return;
-  if (last) {
-    const diff = daysBetween(last, today);
-    if (diff === 1) state.streak.count++;
-    else if (diff > 1) state.streak.count = 1;
-  } else {
-    state.streak.count = 1;
-  }
-  state.streak.lastDate = today;
 }
 
 // Wöchentlicher Streak (ersetzt den täglichen Zwang). Eine Woche gilt als aktiv,
@@ -5064,6 +5233,36 @@ window.showCashflowCrisisModal = showCashflowCrisisModal;
 
 // (showWelcomeModal entfernt – der First-Win-Screen im Onboarding ersetzt es.)
 
+// Tresor-Freischalt-Intro (2 Screens, einfache Sprache). markiert vaultIntroSeen.
+function showVaultIntro(screen) {
+  if (screen === 0) {
+    modalShell(
+      '<div class="big-icon">' + iconSvg('lock', 'ico-gold') + '</div>' +
+      '<h2>Der Tresor ist offen!</h2>' +
+      '<p>Level 3 erreicht – stark. Der Tresor hilft dir, einen Teil deines Geldes bewusst „unantastbar" zu machen.</p>' +
+      '<p class="text-small text-muted">Kurz erklärt, dann kannst du ihn nutzen.</p>' +
+      '<button class="btn-primary" onclick="showVaultIntro(1)">Wie funktioniert das?</button>'
+    );
+    fireConfetti(30);
+    vibrate(20);
+  } else {
+    modalShell(
+      '<div class="big-icon">' + iconSvg('shield', 'ico-gold') + '</div>' +
+      '<h2>So funktioniert\'s</h2>' +
+      '<p style="text-align:left;">Du markierst einen Teil deines Bargelds oder Bankkontos als <strong>geschützt</strong>. Dein Vermögen ändert sich dadurch nicht – aber dieser Teil ist ab jetzt „Hände weg".</p>' +
+      '<p style="text-align:left;">Nimmst du geschütztes Geld früh wieder heraus (innerhalb 30 Tagen), kostet das doppelt XP. Das ist der sanfte Anstupser, drangeblieben.</p>' +
+      '<button class="btn-primary" onclick="closeVaultIntro()">Tresor öffnen</button>'
+    );
+  }
+}
+function closeVaultIntro() {
+  state.vaultIntroSeen = true;
+  save();
+  closeModal();
+}
+window.showVaultIntro = showVaultIntro;
+window.closeVaultIntro = closeVaultIntro;
+
 // Vault Deposit/Withdraw Dialogs
 function showVaultDepositDialog() {
   const liquid = (state.wealth.cash || 0) + (state.wealth.bank || 0);
@@ -5135,6 +5334,7 @@ function showProfileEditDialog() {
       '<label>Sparrate €/Monat</label><input type="number" inputmode="decimal" id="pe-savings" value="' + (cf.savings || '') + '" />' +
       '<label>Sparziel €</label><input type="number" inputmode="decimal" id="pe-goal" value="' + ((state.goalsV2 && state.goalsV2.target) || state.goals.target || '') + '" />' +
       '<label>Monatsrate fürs Ziel €</label><input type="number" inputmode="decimal" id="pe-rate" value="' + ((state.goalsV2 && state.goalsV2.monthlyRate) || '') + '" />' +
+      '<label>Zahltag (Tag im Monat, optional)</label><input type="number" inputmode="numeric" id="pe-payday" min="1" max="31" value="' + ((state.notifyPrefs && state.notifyPrefs.payday) || '') + '" placeholder="z.B. 1" />' +
     '</div>' +
     '<div class="btn-row mt-14">' +
       '<button class="btn-ghost" onclick="closeModal()">Abbrechen</button>' +
@@ -5164,6 +5364,10 @@ function handleProfileSave() {
   const goalChanged = goal > 0 && goal !== state.goalsV2.target;
   if (goal > 0) { state.goals.target = goal; state.goalsV2.target = goal; }
   state.goalsV2.monthlyRate = rate;
+  // Zahltag für spätere Notifications vormerken (nur Datenvorbereitung, kein Push)
+  const payday = parseInt(document.getElementById("pe-payday").value, 10);
+  if (!state.notifyPrefs) state.notifyPrefs = { payday: 0, weeklyReminder: false };
+  state.notifyPrefs.payday = (payday >= 1 && payday <= 31) ? payday : 0;
   if (goalChanged) {
     // Neues Ziel -> Fortschritt & Plan-Basis neu, Meilensteine zurücksetzen
     state.goalsV2.startAmount = netWorth();
@@ -5536,6 +5740,9 @@ function doRepair() {
 }
 document.getElementById("crisis-open-btn").addEventListener("click", showCashflowCrisisModal);
 document.getElementById("goal-deposit-btn").addEventListener("click", showDepositDialog);
+document.getElementById("checkin-yes").addEventListener("click", () => doCheckin(true));
+document.getElementById("checkin-no").addEventListener("click", () => doCheckin(false));
+document.getElementById("briefing-read-btn").addEventListener("click", readBriefing);
 
 // Diagramm-Umschalter im Analyse-Tab
 document.querySelectorAll("#chart-tabs .mission-tab").forEach(t => {
@@ -5698,6 +5905,8 @@ function renderAll() {
   renderHeader();
   renderXp();
   renderGoalCard();
+  renderCheckin();
+  renderBriefing();
   renderWealth();
   renderCashflow();
   renderVault();
@@ -5716,6 +5925,12 @@ function renderAll() {
       state.decay.isDamaged = false;
       save();
     }
+  }
+  // Tresor-Intro nachziehen, aber nur wenn gerade kein anderes Modal offen ist
+  // (verhindert Kollision mit dem Level-Up-Modal).
+  if (_vaultIntroPending && !document.getElementById("modal-bg")) {
+    _vaultIntroPending = false;
+    setTimeout(() => showVaultIntro(0), 500);
   }
 }
 
