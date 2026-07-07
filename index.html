@@ -331,7 +331,7 @@
 
   /* Onboarding Schritt 2: Live-Projektionssatz */
   .ob-projection {
-    margin-top: 16px; padding: 14px 16px; border-radius: var(--r-md);
+    margin-top: 16px; padding: 14px 16px; border-radius: var(--radius-md);
     background: var(--primary-bg); border: 1px solid rgba(216,185,120,0.28);
     color: var(--text-soft); font-size: var(--fs-sm); line-height: 1.5; min-height: 20px;
     transition: opacity .2s;
@@ -342,14 +342,14 @@
   /* Onboarding Schritt 3: First-Win Level-1-Badge */
   .fw-badge {
     display: flex; align-items: center; gap: 14px; margin: 20px 0 4px;
-    padding: 16px 18px; border-radius: var(--r-md);
+    padding: 16px 18px; border-radius: var(--radius-md);
     background: linear-gradient(135deg, rgba(216,185,120,0.16), rgba(216,185,120,0.05));
     border: 1px solid rgba(216,185,120,0.35);
     animation: fwPop .6s cubic-bezier(.2,1.3,.4,1) backwards;
   }
   .fw-badge-lvl {
     flex-shrink: 0; font-weight: 900; font-size: var(--fs-lg); color: var(--bg);
-    background: var(--primary); border-radius: var(--r-sm); padding: 8px 12px;
+    background: var(--primary); border-radius: var(--radius-sm); padding: 8px 12px;
     letter-spacing: .04em; box-shadow: 0 4px 14px rgba(216,185,120,0.4);
   }
   .fw-badge-text { font-size: var(--fs-sm); font-weight: 700; color: var(--gold-soft); line-height: 1.35; }
@@ -735,6 +735,14 @@
   .briefing-headline { font-size: var(--fs-lg); font-weight: 800; color: var(--gold-soft); margin: 2px 0 8px; line-height: 1.3; }
   .briefing-body { color: var(--text-soft); font-size: var(--fs-sm); line-height: 1.6; }
   #briefing-read-btn.is-read { opacity: .55; }
+
+  /* Interne Statistik (Metriken-Modal) */
+  .stats-block { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 12px 14px; }
+  .stats-title { font-size: var(--fs-xs); font-weight: 800; letter-spacing: var(--track-overline); text-transform: uppercase; color: var(--muted-deep); margin-bottom: 8px; }
+  .stats-row { display: flex; justify-content: space-between; gap: 12px; font-size: var(--fs-sm); padding: 4px 0; border-bottom: 1px solid var(--line); }
+  .stats-row:last-child { border-bottom: none; }
+  .stats-row > span { color: var(--text-soft); }
+  .stats-ev { display: flex; justify-content: space-between; gap: 12px; font-size: var(--fs-xs); padding: 3px 0; color: var(--muted-deep); font-variant-numeric: tabular-nums; }
 
   .wealth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
   .wealth-item {
@@ -5868,6 +5876,74 @@ function doReset() {
 }
 
 // ===== Einstellungs-Menü (Zahnrad) =====
+// Lokale Kennzahlen aus dem Event-Log berechnen (kein Backend nötig).
+function computeMetrics() {
+  const ev = state.events || [];
+  const dayOf = (e) => (e.t || "").slice(0, 10);
+  const first = (name) => ev.find(e => e.name === name);
+  const finished = first("onboarding_finished");
+  const projection = first("first_projection_seen");
+  const finishedDay = finished ? dayOf(finished) : null;
+
+  // Aktivierung: Onboarding abgeschlossen UND Projektion am selben Tag gesehen
+  const activation = !!(finished && projection && dayOf(projection) === finishedDay);
+
+  // Aha→Aktion: erste Einzahlung innerhalb von 7 Tagen nach Abschluss
+  let ahaToAction = false;
+  if (finishedDay) {
+    const dep = first("deposit_logged");
+    if (dep) { const d = daysBetween(finishedDay, dayOf(dep)); ahaToAction = d >= 0 && d <= 7; }
+  }
+
+  // North Star: distinkte Wochen mit Einzahlung ODER Check-in
+  const nsWeeks = new Set();
+  ev.forEach(e => {
+    if (e.name === "deposit_logged" || e.name === "weekly_checkin_done") nsWeeks.add(weekKey(dayOf(e)));
+  });
+
+  // D1/D7: kam eine Session am Tag finished+1 bzw. +7? Ohne finished-Event: "–"
+  const sessionDays = new Set(ev.filter(e => e.name === "session_start").map(dayOf));
+  const addDays = (iso, n) => { const d = new Date(iso + "T12:00:00"); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+  const retention = (n) => finishedDay ? (sessionDays.has(addDays(finishedDay, n)) ? "Ja" : "Nein") : "–";
+
+  return {
+    activation, ahaToAction,
+    northStar: nsWeeks.size,
+    d1: retention(1), d7: retention(7),
+    sessionDays: sessionDays.size,
+    eventCount: ev.length,
+    last10: ev.slice(-10).reverse(),
+  };
+}
+
+function showStatsModal() {
+  const m = computeMetrics();
+  const yn = (b) => b ? '<strong style="color:var(--mint-soft)">Ja</strong>' : '<strong style="color:var(--rose-soft)">Nein</strong>';
+  const row = (k, v) => '<div class="stats-row"><span>' + k + '</span><strong>' + v + '</strong></div>';
+  const evList = m.last10.length
+    ? m.last10.map(e => '<div class="stats-ev"><span>' + escapeHTML((e.t || "").slice(0, 10)) + '</span><span>' + escapeHTML(e.name) + '</span></div>').join("")
+    : '<div class="text-muted text-small">Noch keine Events.</div>';
+  modalShell(
+    '<h2 style="font-size:22px;margin-bottom:4px;">Interne Statistik</h2>' +
+    '<p class="text-small text-muted" style="margin-bottom:12px;">Lokal berechnet aus deinem Event-Log – nur für dich sichtbar, im Backup enthalten.</p>' +
+    '<div class="stats-block" style="text-align:left;">' +
+      '<div class="stats-title">Kern-Kennzahlen</div>' +
+      '<div class="stats-row"><span>Aktivierung (Onboarding + Projektion)</span>' + yn(m.activation) + '</div>' +
+      '<div class="stats-row"><span>Aha→Aktion (Einzahlung ≤ 7 Tage)</span>' + yn(m.ahaToAction) + '</div>' +
+      row("North Star (aktive Wochen)", m.northStar) +
+      row("D1-Retention", m.d1) +
+      row("D7-Retention", m.d7) +
+      row("Aktive Tage gesamt", m.sessionDays) +
+      row("Events gespeichert", m.eventCount + " / 500") +
+    '</div>' +
+    '<div class="stats-block" style="text-align:left;margin-top:12px;">' +
+      '<div class="stats-title">Letzte Events</div>' + evList +
+    '</div>' +
+    '<button class="btn-primary mt-14" onclick="closeModal()">Schließen</button>'
+  );
+}
+window.showStatsModal = showStatsModal;
+
 function showSettingsModal() {
   modalShell(
     '<h2 style="font-size:22px;margin-bottom:4px;">Einstellungen</h2>' +
@@ -5877,6 +5953,7 @@ function showSettingsModal() {
       '<button class="btn-primary" onclick="closeModal();doExport();">' + iconSvg('download') + ' Backup speichern</button>' +
       '<button class="btn-ghost" onclick="closeModal();doImport();">' + iconSvg('upload') + ' Backup laden</button>' +
       '<button class="btn-ghost" onclick="doRepair();">' + iconSvg('wrench') + ' Daten reparieren</button>' +
+      '<button class="btn-ghost" onclick="closeModal();showStatsModal();">' + iconSvg('stats') + ' Interne Statistik</button>' +
       '<button class="btn-danger" onclick="closeModal();doReset();">' + iconSvg('trash') + ' App zurücksetzen</button>' +
     '</div>' +
     '<div class="text-muted text-small" style="margin-top:14px;line-height:1.5;">' +
