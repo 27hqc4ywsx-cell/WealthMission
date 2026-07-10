@@ -562,104 +562,82 @@
   }
 
   /* =========================================================
-     AVATAR – Light theme adapted
+     AVATAR – Asset-basierte Premium-Stage (Game-Profile-Card)
+     Der Charakter ist ein Bild-Asset (WebP-Render); Code zeichnet nichts.
      ========================================================= */
   .avatar-wrap {
     position: relative; flex-shrink: 0;
-    width: 116px; height: 156px;
+    width: 124px;
     display: flex; align-items: center; justify-content: center;
   }
-  .avatar-aura {
-    position: absolute; inset: -8px;
-    border-radius: var(--radius-lg);
-    background: radial-gradient(60% 55% at 50% 42%, var(--accent-glow), transparent 72%);
-    filter: blur(10px); opacity: .55;
-    animation: auraBreath 4.5s ease-in-out infinite alternate;
-    pointer-events: none;
-  }
-  .avatar-aura.legendary { opacity: .9; inset: -12px; }
-  @keyframes auraBreath {
-    from { opacity: .35; transform: scale(.97); }
-    to   { opacity: .65; transform: scale(1.04); }
-  }
-  .avatar-frame {
-    position: relative; z-index: 1;
-    width: 108px; height: 148px;
+  .avatar-stage {
+    position: relative;
+    width: 100%; aspect-ratio: 4 / 5;
     border-radius: var(--radius);
     overflow: hidden;
-    background: var(--surface-2);
+    /* Ruhiger Premium-Hintergrund: Deep-Navy-Radial + Vignette */
+    background:
+      radial-gradient(120% 90% at 50% 12%, rgba(216,185,120,0.10), transparent 55%),
+      radial-gradient(140% 110% at 50% 30%, #1A2233 0%, #10151F 62%, #0A0D14 100%);
     border: 1px solid var(--line-strong);
-    box-shadow: var(--shadow-md), inset 0 1px 0 rgba(199, 210, 224, 0.10);
+    box-shadow: var(--shadow-md), inset 0 1px 0 rgba(199, 210, 224, 0.08), inset 0 -18px 28px rgba(0,0,0,0.35);
   }
-  .avatar-frame.gold-border {
+  .avatar-stage.gold-ring {
     border-color: var(--primary-soft);
-    box-shadow: var(--shadow-md), 0 0 0 3px var(--amber-bg), 0 0 26px var(--accent-glow);
+    box-shadow: var(--shadow-md), 0 0 0 3px var(--amber-bg), 0 0 26px var(--accent-glow), inset 0 -18px 28px rgba(0,0,0,0.35);
   }
-  .avatar-frame.damaged { filter: saturate(0.4) brightness(0.95); }
-
-  /* Background scenes – dunkles Premium-Ambiente, Akzent-Glow je Stil */
-  .scene { position: absolute; inset: 0; }
-  .scene.fantasy {
-    background:
-      radial-gradient(80% 60% at 50% 18%, rgba(168,139,224,0.28), transparent 70%),
-      linear-gradient(180deg, #161B2E 0%, #0A0D18 100%);
-  }
-  .scene.fantasy::before {
-    content: ""; position: absolute; left: 12%; top: 14%; width: 2px; height: 2px;
-    border-radius: 50%; background: rgba(231,207,158,0.9);
-    box-shadow:
-      18px 4px 0 rgba(231,207,158,0.7), 35px 14px 0 rgba(199,210,224,0.5),
-      55px 8px 0 rgba(231,207,158,0.6), 75px 22px 0 rgba(199,210,224,0.7),
-      14px 30px 0 rgba(231,207,158,0.5), 60px 36px 0 rgba(199,210,224,0.4);
-  }
-  .scene.casual {
-    background:
-      radial-gradient(80% 60% at 50% 20%, rgba(91,163,232,0.22), transparent 70%),
-      linear-gradient(180deg, #14233A 0%, #0A0D18 100%);
-  }
-  .scene.luxury {
-    background:
-      radial-gradient(85% 65% at 50% 12%, rgba(216,185,120,0.30), transparent 72%),
-      linear-gradient(180deg, #1C1A14 0%, #0A0906 100%);
-  }
-  .scene.luxury::after {
-    content: ""; position: absolute; bottom: 22%; left: 0; right: 0; height: 24px;
-    background: linear-gradient(90deg,
-      #2A2418 0 14%, #3A3022 14% 26%, #2A2418 26% 40%,
-      #4A3C20 40% 56%, #2A2418 56% 70%, #3A3022 70% 84%, #2A2418 84% 100%);
-    box-shadow: inset 0 8px 0 rgba(216,185,120,0.08);
-  }
-  .scene.penthouse {
-    background:
-      radial-gradient(90% 70% at 50% 10%, rgba(216,185,120,0.40), transparent 70%),
-      linear-gradient(180deg, #2A2012 0%, #0A0805 100%);
-  }
-  .scene.penthouse::after {
-    content: ""; position: absolute; bottom: 22%; left: 0; right: 0; height: 28px;
-    background: linear-gradient(90deg,
-      #3A2E18 0 14%, #5A4520 14% 26%, #3A2E18 26% 40%,
-      #A8884B 40% 56%, #3A2E18 56% 70%, #5A4520 70% 84%, #3A2E18 84% 100%);
-  }
-
-  /* Character SVG container */
-  .char {
-    position: absolute; left: 50%; bottom: 0;
+  .avatar-stage.damaged .avatar-img { filter: saturate(0.4) brightness(0.92); }
+  /* Elliptischer Bodenschatten: erdet den Charakter */
+  .stage-shadow {
+    position: absolute; left: 50%; bottom: 7%;
+    width: 68%; height: 10%;
     transform: translateX(-50%);
-    width: 100px; height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,0.55), transparent 72%);
     pointer-events: none;
   }
-  .char-svg {
+  .avatar-img {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
+    object-fit: contain; object-position: center bottom;
+    padding: 6% 4% 4%;
     display: block;
-    overflow: visible;
   }
-  .char .crown {
-    position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
-    font-size: var(--fs-lg); line-height: 1; z-index: 2;
+  .avatar-img[hidden] { display: none; }
+  /* Platzhalter: non-figurales Premium-Emblem (kein CSS-Charakter) */
+  .avatar-placeholder {
+    position: absolute; inset: 0;
+    display: none;
+    flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    text-align: center;
+  }
+  .avatar-placeholder.show { display: flex; }
+  .avatar-placeholder .ico-svg {
+    width: 34px; height: 34px; color: var(--primary);
+    filter: drop-shadow(0 4px 12px rgba(216,185,120,0.35));
+  }
+  .avatar-placeholder .ph-line {
+    font-size: var(--fs-xs); font-weight: 700; letter-spacing: var(--track-overline);
+    text-transform: uppercase; color: var(--muted-deep);
+  }
+  /* Ausrüstungs-Tier-Chip an der Stage-Unterkante */
+  .stage-tier {
+    position: absolute; left: 50%; bottom: 6px;
+    transform: translateX(-50%);
+    max-width: 92%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: 9px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--gold-soft);
+    background: rgba(10, 13, 20, 0.72);
+    border: 1px solid rgba(216,185,120,0.25);
+    border-radius: var(--radius-pill);
+    padding: 3px 9px;
     pointer-events: none;
-    text-shadow: 0 2px 3px rgba(0,0,0,0.30);
   }
+  /* Held-Tab: größere Stage, Karte gestapelt und zentriert */
+  [data-view="char"] .char-top { flex-direction: column; gap: 14px; }
+  [data-view="char"] .avatar-wrap { width: 200px; margin: 0 auto; }
+  [data-view="char"] .char-info { text-align: center; }
+  [data-view="char"] .char-badges { justify-content: center; }
 
   /* =========================================================
      PROGRESS BARS
@@ -1322,7 +1300,7 @@
       transition-duration: 0.01ms !important;
     }
     /* infinite-Animationen wuerden mit 0.01ms busy-loopen -> ganz aus */
-    .wealth-net, .avatar-aura { animation: none !important; }
+    .wealth-net { animation: none !important; }
   }
 </style>
 </head>
@@ -1566,160 +1544,14 @@
     <div class="card char-card gold">
       <div class="char-top">
         <div class="avatar-wrap">
-          <div class="avatar-aura" id="avatar-aura"></div>
-          <div class="avatar-frame" id="avatar-frame">
-            <div class="scene" id="scene"></div>
-            <div class="char" id="char">
-              <div class="crown" id="char-crown"></div>
-              <svg class="char-svg" id="char-svg" viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <radialGradient id="skinG" cx="40%" cy="30%" r="75%">
-                    <stop offset="0%" stop-color="#FCDFC0"/>
-                    <stop offset="45%" stop-color="#F0C49B"/>
-                    <stop offset="80%" stop-color="#D9A074"/>
-                    <stop offset="100%" stop-color="#B07A50"/>
-                  </radialGradient>
-                  <linearGradient id="outfitG" x1="10%" y1="0%" x2="90%" y2="100%">
-                    <stop offset="0%" id="outfit-stop-light" stop-color="#5B6B82"/>
-                    <stop offset="100%" id="outfit-stop-dark" stop-color="#36425A"/>
-                  </linearGradient>
-                  <linearGradient id="pantsG" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" id="pants-stop-light" stop-color="#1E40AF"/>
-                    <stop offset="100%" id="pants-stop-dark" stop-color="#172554"/>
-                  </linearGradient>
-                  <linearGradient id="hairG" x1="35%" y1="0%" x2="65%" y2="100%">
-                    <stop offset="0%" id="hair-stop-light" stop-color="#5C4326"/>
-                    <stop offset="100%" id="hair-stop-dark" stop-color="#2E1F10"/>
-                  </linearGradient>
-                  <radialGradient id="irisG" cx="50%" cy="40%" r="60%">
-                    <stop offset="0%" stop-color="#8A6A44"/>
-                    <stop offset="100%" stop-color="#3A2616"/>
-                  </radialGradient>
-                  <linearGradient id="lipMG" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#C77A63"/><stop offset="100%" stop-color="#A85B45"/>
-                  </linearGradient>
-                  <linearGradient id="lipFG" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#D4726E"/><stop offset="100%" stop-color="#B14F58"/>
-                  </linearGradient>
-                  <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
-                    <feGaussianBlur in="SourceAlpha" stdDeviation="0.5"/><feOffset dy="0.7"/>
-                    <feComponentTransfer><feFuncA type="linear" slope="0.30"/></feComponentTransfer>
-                    <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
-                  </filter>
-                  <clipPath id="eyeClipL"><path d="M 38.5 25.8 Q 42 23.4 45.8 25.6 Q 42.4 27.8 38.5 25.8 Z"/></clipPath>
-                  <clipPath id="eyeClipR"><path d="M 54.2 25.6 Q 58 23.4 61.5 25.8 Q 57.6 27.8 54.2 25.6 Z"/></clipPath>
-                </defs>
-
-                <!-- CAPE (Lvl 30+) -->
-                <path id="char-cape" style="display:none" d="M 30 54 Q 14 70 18 138 L 38 138 L 36 60 Z M 70 54 Q 86 70 82 138 L 62 138 L 64 60 Z" fill="url(#outfitG)" fill-opacity="0.55" filter="url(#softShadow)"/>
-
-                <!-- TORSO / OUTFIT -->
-                <path id="char-torso-male" d="M 50 49 C 35 49 27 56 23 69 C 20 81 19 100 18 140 L 82 140 C 81 100 80 81 77 69 C 73 56 65 49 50 49 Z" fill="url(#outfitG)" filter="url(#softShadow)"/>
-                <path id="char-torso-female" style="display:none" d="M 50 50 C 39 50 31 56 27 69 C 23 81 21 100 20 140 L 80 140 C 79 100 77 81 73 69 C 69 56 61 50 50 50 Z" fill="url(#outfitG)" filter="url(#softShadow)"/>
-                <path d="M 30 60 C 25 66 22 80 21 105 L 27 105 C 28 80 30 67 34 61 Z" fill="#fff" fill-opacity="0.10"/>
-                <path d="M 70 60 C 75 66 78 80 79 110 L 73 110 C 72 82 70 67 66 61 Z" fill="#000" fill-opacity="0.16"/>
-                <path d="M 42 80 Q 44 105 42 138" stroke="#000" stroke-opacity="0.10" stroke-width="1.2" fill="none"/>
-                <path d="M 58 80 Q 56 105 58 138" stroke="#000" stroke-opacity="0.10" stroke-width="1.2" fill="none"/>
-
-                <!-- KRAGEN (Mann / Frau) -->
-                <g id="char-collar-male">
-                  <path d="M 42 50 L 50 60 L 58 50 L 57 49 L 50 56 L 43 49 Z" fill="#000" fill-opacity="0.22"/>
-                  <path d="M 41.5 49.5 L 48.5 49 L 50 58 L 46 53 Z" fill="url(#outfitG)"/>
-                  <path d="M 58.5 49.5 L 51.5 49 L 50 58 L 54 53 Z" fill="url(#outfitG)" opacity="0.82"/>
-                </g>
-                <g id="char-collar-female" style="display:none">
-                  <path d="M 41 51 Q 50 63 59 51 Q 58 49 56 50 Q 50 58 44 50 Q 42 49 41 51 Z" fill="#000" fill-opacity="0.18"/>
-                  <path d="M 42.5 51 Q 50 60 57.5 51" stroke="rgba(255,255,255,0.35)" stroke-width="0.8" fill="none"/>
-                </g>
-
-                <!-- Accessory (Sash) -->
-                <rect id="char-accessory" x="22" y="116" width="56" height="6" rx="2" fill="transparent" opacity="0.92"/>
-
-                <!-- HALS -->
-                <path d="M 42.5 43 Q 42.5 49 44.5 51.5 L 55.5 51.5 Q 57.5 49 57.5 43 Z" fill="url(#skinG)"/>
-                <path d="M 42.5 43 Q 50 49 57.5 43 L 57.5 46 Q 50 51 42.5 46 Z" fill="#000" fill-opacity="0.22"/>
-                <path d="M 42.5 44 Q 43 49 45 51.5 L 43.3 51.5 Q 42 48 42.2 44 Z" fill="#000" fill-opacity="0.10"/>
-                <path d="M 57.5 44 Q 57 49 55 51.5 L 56.7 51.5 Q 58 48 57.8 44 Z" fill="#000" fill-opacity="0.10"/>
-
-                <!-- OHREN -->
-                <ellipse cx="34.5" cy="28" rx="2.4" ry="3.4" fill="url(#skinG)"/>
-                <ellipse cx="34.8" cy="28" rx="1" ry="1.8" fill="#000" fill-opacity="0.14"/>
-                <ellipse cx="65.5" cy="28" rx="2.4" ry="3.4" fill="url(#skinG)"/>
-                <ellipse cx="65.2" cy="28" rx="1" ry="1.8" fill="#000" fill-opacity="0.14"/>
-
-                <!-- KOPF / GESICHT -->
-                <path d="M 35 23 C 35 12 41.5 6 50 6 C 58.5 6 65 12 65 23 C 65 31 61.5 39 55.5 43 C 53 45 47 45 44.5 43 C 38.5 39 35 31 35 23 Z" fill="url(#skinG)" filter="url(#softShadow)"/>
-                <ellipse cx="44" cy="17" rx="6" ry="7" fill="#fff" fill-opacity="0.14"/>
-                <path d="M 60 22 C 62 28 60 36 55 41 C 59 34 59 28 58 23 Z" fill="#000" fill-opacity="0.07"/>
-                <path d="M 44.5 42 Q 50 45 55.5 42 Q 50 43.5 44.5 42 Z" fill="#000" fill-opacity="0.10"/>
-
-                <!-- AUGENBRAUEN -->
-                <path d="M 39 20.8 Q 43 18.9 47 20.6" stroke="#2E1F10" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-                <path d="M 53 20.6 Q 57 18.9 61 20.8" stroke="#2E1F10" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-
-                <!-- AUGEN -->
-                <path d="M 38.5 25.8 Q 42 23.2 45.8 25.6 Q 42.4 28 38.5 25.8 Z" fill="#F6F1EA"/>
-                <path d="M 54.2 25.6 Q 58 23.2 61.5 25.8 Q 57.6 28 54.2 25.6 Z" fill="#F6F1EA"/>
-                <g clip-path="url(#eyeClipL)"><circle cx="42.2" cy="25.7" r="1.7" fill="url(#irisG)"/><circle cx="42.2" cy="25.7" r="0.85" fill="#16110C"/><circle cx="42.7" cy="25.2" r="0.4" fill="#fff"/></g>
-                <g clip-path="url(#eyeClipR)"><circle cx="57.8" cy="25.7" r="1.7" fill="url(#irisG)"/><circle cx="57.8" cy="25.7" r="0.85" fill="#16110C"/><circle cx="58.3" cy="25.2" r="0.4" fill="#fff"/></g>
-                <path d="M 38.5 25.4 Q 42 22.9 45.9 25.2" stroke="#3A2A1E" stroke-width="0.8" fill="none" stroke-linecap="round"/>
-                <path d="M 54.1 25.2 Q 58 22.9 61.5 25.4" stroke="#3A2A1E" stroke-width="0.8" fill="none" stroke-linecap="round"/>
-                <g id="char-eyelashes" style="display:none">
-                  <path d="M 45.9 25.0 l 1 -0.7 M 44.7 24.3 l 0.4 -0.9 M 54.1 25.0 l -1 -0.7 M 55.3 24.3 l -0.4 -0.9" stroke="#241308" stroke-width="0.5" stroke-linecap="round"/>
-                </g>
-
-                <!-- NASE -->
-                <path d="M 49.5 27 Q 48.4 31.5 48.2 33 Q 49 34.4 50 34.4 Q 51 34.4 51.8 33 Q 51.6 31.5 50.5 27" fill="#000" fill-opacity="0.05"/>
-                <path d="M 48 33 Q 50 34.6 52 33" stroke="#000" stroke-opacity="0.18" stroke-width="0.6" fill="none" stroke-linecap="round"/>
-                <ellipse cx="48.4" cy="33" rx="0.6" ry="0.4" fill="#000" fill-opacity="0.18"/>
-                <ellipse cx="51.6" cy="33" rx="0.6" ry="0.4" fill="#000" fill-opacity="0.18"/>
-                <ellipse cx="49.6" cy="30" rx="0.8" ry="2.4" fill="#fff" fill-opacity="0.12"/>
-
-                <!-- WANGEN -->
-                <ellipse cx="41" cy="33" rx="3" ry="1.7" fill="#E8918A" fill-opacity="0.26"/>
-                <ellipse cx="59" cy="33" rx="3" ry="1.7" fill="#E8918A" fill-opacity="0.26"/>
-
-                <!-- LIPPEN -->
-                <g id="char-mouth-male">
-                  <path d="M 46 37.8 Q 50 36.8 54 37.8 Q 52 39.6 50 39.7 Q 48 39.6 46 37.8 Z" fill="url(#lipMG)"/>
-                  <path d="M 46 37.8 Q 50 38.8 54 37.8" stroke="#6E3A2A" stroke-width="0.5" fill="none"/>
-                </g>
-                <g id="char-mouth-female" style="display:none">
-                  <path d="M 45.5 37.6 Q 50 36 54.5 37.6 Q 52.5 40.4 50 40.6 Q 47.5 40.4 45.5 37.6 Z" fill="url(#lipFG)"/>
-                  <path d="M 45.5 37.6 Q 50 39 54.5 37.6" stroke="#7A3340" stroke-width="0.5" fill="none"/>
-                  <path d="M 47 38 Q 50 37.4 53 38" stroke="#fff" stroke-opacity="0.25" stroke-width="0.4" fill="none"/>
-                </g>
-
-                <!-- HAARE -->
-                <g id="char-hair-male">
-                  <path d="M 35 24 C 34 11 41 4 50 4 C 60 4 66 12 65 24 C 64 19 62 13 56 12 C 58 14 58 17 57 19 C 55 14 49 12 44 13 C 47 14 47 17 46 19 C 43 14 38 16 36 21 Z" fill="url(#hairG)"/>
-                  <path d="M 36 21 C 35 18 38 13 44 12 C 41 15 41 19 42 21 Z" fill="#fff" fill-opacity="0.16"/>
-                  <path d="M 50 5 Q 56 6 60 12" stroke="#fff" stroke-opacity="0.20" stroke-width="1" fill="none" stroke-linecap="round"/>
-                </g>
-                <g id="char-hair-female" style="display:none">
-                  <path d="M 36 16 C 31 22 28.5 36 29.5 50 C 30 60 33 70 38.5 77 C 37 67 36.5 54 37.5 40 C 38 30 39.5 22 40 17 Z" fill="url(#hairG)"/>
-                  <path d="M 64 16 C 69 22 71.5 36 70.5 50 C 70 60 67 70 61.5 77 C 63 67 63.5 54 62.5 40 C 62 30 60.5 22 60 17 Z" fill="url(#hairG)"/>
-                  <path d="M 33 26 C 31 11 40 3 50 3 C 60 3 69 11 67 26 C 66 17 60 9 50 9 C 40 9 34 17 33 26 Z" fill="url(#hairG)"/>
-                  <path d="M 38.5 18 C 35 24 33 38 34 52" stroke="#000" stroke-opacity="0.16" stroke-width="1" fill="none"/>
-                  <path d="M 61.5 18 C 65 24 67 38 66 52" stroke="#000" stroke-opacity="0.16" stroke-width="1" fill="none"/>
-                  <path d="M 31.5 30 C 30.5 42 31 54 33 64" stroke="#fff" stroke-opacity="0.16" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-                  <path d="M 50 4 Q 48 9 49 14" stroke="#000" stroke-opacity="0.18" stroke-width="0.6" fill="none"/>
-                  <path d="M 40 8 Q 46 4.5 53 6" stroke="#fff" stroke-opacity="0.30" stroke-width="1.3" fill="none" stroke-linecap="round"/>
-                </g>
-
-                <!-- HELM (Lvl 20+) -->
-                <g id="char-helmet" style="display:none">
-                  <path d="M 33 26 C 32 9 40 1 50 1 C 60 1 68 9 67 26 C 67 30 65 33 62 34 L 60 30 C 61 22 60 16 50 16 C 40 16 39 22 40 30 L 38 34 C 35 33 33 30 33 26 Z" fill="url(#outfitG)" stroke="#000" stroke-opacity="0.3" stroke-width="0.5"/>
-                  <path d="M 36 12 C 39 6 45 3 50 3 C 47 4 41 7 38 14 Z" fill="#fff" fill-opacity="0.30"/>
-                  <path d="M 47 1 L 53 1 L 50 -4 Z" fill="#000" fill-opacity="0.4"/>
-                  <rect x="49" y="18" width="2" height="8" fill="#000" fill-opacity="0.4"/>
-                  <rect x="46" y="21" width="8" height="2" fill="#000" fill-opacity="0.4"/>
-                </g>
-
-                <!-- SKIRT (Frau) -->
-                <path id="char-skirt" style="display:none" d="M 30 120 L 22 140 L 78 140 L 70 120 Z" fill="url(#outfitG)" filter="url(#softShadow)"/>
-              </svg>
+          <div class="avatar-stage" id="avatar-stage">
+            <div class="stage-shadow" aria-hidden="true"></div>
+            <img class="avatar-img" id="avatar-img" alt="Dein Charakter" decoding="async" />
+            <div class="avatar-placeholder" id="avatar-ph">
+              <svg class="ico-svg" aria-hidden="true"><use href="#i-crest"/></svg>
+              <div class="ph-line">Avatar folgt</div>
             </div>
+            <div class="stage-tier" id="stage-tier"></div>
           </div>
         </div>
         <div class="char-info">
@@ -1964,8 +1796,15 @@
     <div class="card char-card gold">
       <div class="char-top">
         <div class="avatar-wrap">
-          <div class="avatar-aura" id="avatar-aura-2"></div>
-          <div class="avatar-frame" id="avatar-frame-2"></div>
+          <div class="avatar-stage" id="avatar-stage-2">
+            <div class="stage-shadow" aria-hidden="true"></div>
+            <img class="avatar-img" id="avatar-img-2" alt="Dein Charakter" decoding="async" />
+            <div class="avatar-placeholder" id="avatar-ph-2">
+              <svg class="ico-svg" aria-hidden="true"><use href="#i-crest"/></svg>
+              <div class="ph-line">Avatar folgt</div>
+            </div>
+            <div class="stage-tier" id="stage-tier-2"></div>
+          </div>
         </div>
         <div class="char-info">
           <h2 class="char-name" id="char-name-2">—</h2>
@@ -3347,123 +3186,69 @@ function switchView(name) {
 }
 
 /* =========================================================
-   AVATAR
+   AVATAR – Asset-basiert
+   Der Code wählt nur das richtige Bild-Asset; gezeichnet wird nichts.
+   Pfadschema: assets/characters/{gender}/{stil}/level-{tier}.webp
    ========================================================= */
-function renderAvatar() {
-  const style = state.character.style;
-  const lvl = state.level;
-  const gender = state.character.gender;
+const AVATAR_TIERS = [30, 10, 1];                                   // absteigend; neue Stufe = Datei dazulegen + hier eintragen
+const STYLE_DIR = { rpg: "fantasy", sims: "luxus", hybrid: "hybrid" };
 
-  let scene = "fantasy";
-  if (style === "sims") {
-    if (lvl >= 50) scene = "penthouse";
-    else if (lvl >= 30) scene = "luxury";
-    else scene = "casual";
-  } else if (style === "hybrid") {
-    if (lvl >= 50) scene = "penthouse";
-    else if (lvl >= 30) scene = "luxury";
-    else scene = "fantasy";
-  }
-
-  const tier = currentEquipmentTier();
-  const colors = computeOutfitColors(style, tier.lvl);
-
-  const frame = document.getElementById("avatar-frame");
-  frame.classList.toggle("gold-border", lvl >= 50);
-  frame.classList.toggle("damaged", state.decay.isDamaged);
-  document.getElementById("scene").className = "scene " + scene;
-
-  // Aura nur als CSS-Klasse, hat im neuen Design keinen visuellen Effekt mehr
-  const aura = document.getElementById("avatar-aura");
-  if (aura) aura.classList.toggle("legendary", lvl >= 50);
-
-  // SVG-Gradient-Stops setzen
-  const setStop = (id, color) => {
-    const el = document.getElementById(id);
-    if (el) el.setAttribute("stop-color", color);
-  };
-  setStop("outfit-stop-light", colors.outfitLight);
-  setStop("outfit-stop-dark", colors.outfitDark);
-  // Bei Frau: Hose nimmt Outfit-Farbe an, damit das Kleid einheitlich wirkt
-  if (gender === "female") {
-    setStop("pants-stop-light", colors.outfitLight);
-    setStop("pants-stop-dark", colors.outfitDark);
-  } else {
-    setStop("pants-stop-light", colors.pantsLight);
-    setStop("pants-stop-dark", colors.pantsDark);
-  }
-  setStop("hair-stop-light", gender === "female" ? "#7A4523" : "#3D2818");
-  setStop("hair-stop-dark", gender === "female" ? "#3D2010" : "#1F1108");
-
-  // Gender-spezifische Elemente umschalten
-  const isFem = gender === "female";
-  const toggle = (id, show) => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = show ? "" : "none";
-  };
-  toggle("char-hair-male", !isFem);
-  toggle("char-hair-female", isFem);
-  toggle("char-torso-male", !isFem);
-  toggle("char-torso-female", isFem);
-  toggle("char-mouth-male", !isFem);
-  toggle("char-mouth-female", isFem);
-  toggle("char-collar-male", !isFem);
-  toggle("char-collar-female", isFem);
-  toggle("char-eyelashes", isFem);
-
-  // Rock immer für Frau sichtbar (klares feminines Markenzeichen)
-  toggle("char-skirt", isFem);
-
-  // Helm ab Lvl 20 im RPG-Stil (versteckt Haare wenn aktiv)
-  const showHelmet = style !== "sims" && lvl >= 20;
-  toggle("char-helmet", showHelmet);
-  if (showHelmet) {
-    // Haare unter Helm verstecken
-    toggle("char-hair-male", false);
-    toggle("char-hair-female", false);
-  }
-
-  // Cape ab Lvl 30 im RPG-Stil
-  toggle("char-cape", style !== "sims" && lvl >= 30);
-
-  // Accessoire-Farbe (Sash/Belt sichtbar ab Lvl 5)
-  const acc = document.getElementById("char-accessory");
-  if (acc) {
-    const showAcc = lvl >= 5 && colors.accent !== "transparent";
-    acc.setAttribute("fill", showAcc ? colors.accent : "transparent");
-  }
-
-  // Krone / Funkeln über dem Kopf (HTML-Overlay)
-  const crownEl = document.getElementById("char-crown");
-  if (crownEl) crownEl.innerHTML = lvl >= 50 ? iconSvg("crown", "ico-gold") : (lvl >= 30 ? iconSvg("spark", "ico-gold") : "");
-
-  // Char-Tab Avatar-Klon
-  const frame2 = document.getElementById("avatar-frame-2");
-  const aura2 = document.getElementById("avatar-aura-2");
-  if (frame2) {
-    frame2.innerHTML = frame.innerHTML;
-    frame2.className = frame.className;
-    if (aura2) aura2.className = aura ? aura.className : "avatar-aura";
-  }
+// Höchste Asset-Stufe, die das Level erreicht hat (Fallback: 1)
+function avatarTier(level) {
+  for (const t of AVATAR_TIERS) if ((level || 1) >= t) return t;
+  return AVATAR_TIERS[AVATAR_TIERS.length - 1];
 }
 
-function computeOutfitColors(style, lvl) {
-  // Liefert separate Light/Dark-Stops für die SVG-Gradients
-  if (style === "rpg" || style === "hybrid") {
-    if (lvl >= 50) return { outfitLight: "#FCD34D", outfitDark: "#E7CF9E", pantsLight: "#B45309", pantsDark: "#78350F", accent: "#FEF3C7" };
-    if (lvl >= 30) return { outfitLight: "#A78BFA", outfitDark: "#4C1D95", pantsLight: "#C3B0EC", pantsDark: "#2E1065", accent: "#DDD6FE" };
-    if (lvl >= 20) return { outfitLight: "#CBD5E1", outfitDark: "#475569", pantsLight: "#475569", pantsDark: "#1E293B", accent: "#94A3B8" };
-    if (lvl >= 10) return { outfitLight: "#94A3B8", outfitDark: "#334155", pantsLight: "#334155", pantsDark: "#1E293B", accent: "#CBD5E1" };
-    if (lvl >= 5)  return { outfitLight: "#A0522D", outfitDark: "#5C3317", pantsLight: "#5C3317", pantsDark: "#3D2417", accent: "#C68B5C" };
-    return { outfitLight: "#94A3B8", outfitDark: "#475569", pantsLight: "#475569", pantsDark: "#334155", accent: "transparent" };
-  }
-  // sims-Stil: moderne, edle Farben
-  if (lvl >= 50) return { outfitLight: "#1F2937", outfitDark: "#0F172A", pantsLight: "#0F172A", pantsDark: "#020617", accent: "#F59E0B" };
-  if (lvl >= 30) return { outfitLight: "#7C3AED", outfitDark: "#2E1065", pantsLight: "#1E1B4B", pantsDark: "#0F0E2A", accent: "#F59E0B" };
-  if (lvl >= 20) return { outfitLight: "#1F2937", outfitDark: "#0F172A", pantsLight: "#0F172A", pantsDark: "#020617", accent: "#F59E0B" };
-  if (lvl >= 10) return { outfitLight: "#0F766E", outfitDark: "#134E4A", pantsLight: "#134E4A", pantsDark: "#042F2E", accent: "#FFFFFF" };
-  if (lvl >= 5)  return { outfitLight: "#6B7280", outfitDark: "#374151", pantsLight: "#374151", pantsDark: "#1F2937", accent: "transparent" };
-  return { outfitLight: "#94A3B8", outfitDark: "#475569", pantsLight: "#475569", pantsDark: "#334155", accent: "transparent" };
+// Kandidaten-Pfade in Fallback-Reihenfolge: exakte Stufe -> kleinere Stufen.
+// Existiert keiner (onerror-Kette durchlaufen), zeigt die Stage den Platzhalter.
+function avatarCandidates(gender, style, level) {
+  const dir = "assets/characters/" + (gender === "female" ? "female" : "male") + "/" + (STYLE_DIR[style] || "hybrid");
+  return AVATAR_TIERS.filter(t => t <= avatarTier(level)).map(t => dir + "/level-" + t + ".webp");
+}
+
+// Bestückt eine Stage: img mit Fallback-Kette, Platzhalter bei Totalausfall.
+function setAvatarStage(imgId, phId, candidates) {
+  const img = document.getElementById(imgId);
+  const ph = document.getElementById(phId);
+  if (!img) return;
+  const key = candidates.join("|");
+  if (img.dataset.key === key) return;              // Pfad unverändert -> kein Neuladen/Flackern
+  img.dataset.key = key;
+  let i = 0;
+  img.onerror = () => {
+    i++;
+    if (i < candidates.length) { img.src = candidates[i]; return; }
+    img.hidden = true;                               // kein Broken-Image-Icon
+    if (ph) ph.classList.add("show");
+  };
+  img.onload = () => {
+    img.hidden = false;
+    if (ph) ph.classList.remove("show");
+  };
+  img.hidden = true;                                 // bis zum ersten load unsichtbar
+  if (ph) ph.classList.add("show");                  // Platzhalter als Ladezustand
+  img.src = candidates[0];
+}
+
+function renderAvatar() {
+  const c = state.character;
+  const lvl = state.level || 1;
+  const candidates = avatarCandidates(c.gender, c.style, lvl);
+  setAvatarStage("avatar-img", "avatar-ph", candidates);
+  setAvatarStage("avatar-img-2", "avatar-ph-2", candidates);
+
+  // Zustands-Effekte als Rahmen/Filter auf der Stage (kein Zeichnen)
+  const tierName = currentEquipmentTier().name;
+  ["avatar-stage", "avatar-stage-2"].forEach(id => {
+    const stage = document.getElementById(id);
+    if (!stage) return;
+    stage.classList.toggle("gold-ring", lvl >= 50);
+    stage.classList.toggle("damaged", !!state.decay.isDamaged);
+  });
+  ["stage-tier", "stage-tier-2"].forEach(id => {
+    const chip = document.getElementById(id);
+    if (chip) chip.textContent = tierName;
+  });
 }
 
 /* =========================================================
