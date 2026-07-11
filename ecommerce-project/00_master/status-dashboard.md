@@ -1,63 +1,48 @@
 # Projekt-Dashboard
 
-**Stand:** 2026-07-11 · **Aktuelle Phase:** Phase 0 – Onboarding und Rahmenbedingungen
-**Gesamtfortschritt:** Phase 0 zu ca. 80 % (Dokumente erstellt, Antworten des Auftraggebers ausstehend)
-
-## Projektziel
-
-Aufbau eines belastbaren E-Commerce-Geschäfts (DE/EU-Fokus, offene Annahme A-001) – siehe `project-brief.md`.
+**Stand:** 2026-07-11 (aktualisiert nach Bauphase) · **Aktuelle Phase:** 14 abgeschlossen (Build + Test) → wartet auf Launch-Blocker B-1…B-7
+**Produkt:** WealthMission Money OS – gebaut, getestet, committet. **Launch:** blockiert durch externe Pflichten (erwartbar, s. launch-readiness.md)
 
 ## Phasenstatus
 
-| Phase | Bezeichnung | Verantwortlicher Agent | Status | Priorität | Frist | Quellenstatus | Qualitätsstatus |
-|---|---|---|---|---|---|---|---|
-| 0 | Onboarding & Rahmenbedingungen | Agent 1 (CSO) | wartet auf Daten | kritisch | offen | n/a | QA-Prüfung ausstehend |
-| 1 | Geschäftsmodell-Auswahl | Agent 1 (CSO) | nicht begonnen | kritisch | – | – | – |
-| 2 | Markt- & Problemrecherche | Agent 2 (Market Intelligence) | nicht begonnen | hoch | – | – | – |
-| 3 | Produktrecherche | Agent 3 (Product Discovery) | nicht begonnen | hoch | – | – | – |
-| 4 | Wettbewerbsanalyse | Agent 2 (Market Intelligence) | nicht begonnen | hoch | – | – | – |
-| 5 | Lieferantenprüfung | Agent 4 (Supplier & Procurement) | nicht begonnen | hoch | – | – | – |
-| 6 | Wirtschaftlichkeitsrechnung | Agent 5 (Finance) | nicht begonnen | kritisch | – | – | – |
-| 7 | Recht, Compliance, Steuern | Agent 6 (Legal & Compliance) | nicht begonnen | kritisch | – | – | – |
-| 8 | Marke & Angebot | Agent 7 (Brand & Offer) | nicht begonnen | mittel | – | – | – |
-| 9 | Shopplattform & Aufbau | Agent 9 (Shop Development) | nicht begonnen | hoch | – | – | – |
-| 10 | Technische Integrationen | Agent 9 (Shop Development) | nicht begonnen | mittel | – | – | – |
-| 11 | Marketing- & Verkaufssystem | Agent 10 (Marketing & Growth) | nicht begonnen | mittel | – | – | – |
-| 12 | Bestell- & Betriebsprozesse | Agent 12 (Operations) | nicht begonnen | mittel | – | – | – |
-| 13 | Tracking & Analyse | Agent 11 (Analytics) | nicht begonnen | mittel | – | – | – |
-| 14 | Test & Launch | Agent 14 (QA & Audit) | nicht begonnen | kritisch | – | – | – |
-| 15 | Kontrollierter Markttest | Agent 10 + Agent 5 | nicht begonnen | kritisch | – | – | – |
-| 16 | Laufende Optimierung | alle | nicht begonnen | mittel | – | – | – |
+| Phase | Bezeichnung | Agent | Status | Ergebnis-Dokument |
+|---|---|---|---|---|
+| 0 | Onboarding | 1 | abgeschlossen (mit Default-Annahmen, D-003) | project-brief, Register |
+| 1 | Geschäftsmodell | 1 | abgeschlossen (D-004: digital) | 01_strategy/business-models.md |
+| 2 | Markt/Probleme | 2 | abgeschlossen (kompakt, quellenbasiert) | 02_market-research/* |
+| 3 | Produktrecherche | 3 | abgeschlossen (D-005: Money OS) | 03_product-research/* |
+| 4 | Wettbewerb | 2 | abgeschlossen (10 Wettbewerber, Lücke belegt) | competitor-analysis.md |
+| 5 | Lieferanten | 4 | abgeschlossen (n/a begründet) | 04_suppliers/supplier-decision.md |
+| 6 | Wirtschaftlichkeit | 5 | abgeschlossen (DB1 19,23 €; R-018 erkannt) | 05_finance/unit-economics.md |
+| 7 | Recht/Steuern | 6 | Recherche fertig; **externe Prüfung offen (B-1–B-3)** | 06_legal-compliance/* |
+| 8 | Marke/Angebot | 7 | abgeschlossen (D-006, Vorbehalt Markenrecherche) | 07_brand/brand-strategy.md |
+| 9 | Shopaufbau | 9 | **abgeschlossen: 12 Seiten + App gebaut** | /shop, 08_shop/* |
+| 10 | Integrationen | 9 | vorbereitet, **wartet auf Zugriff** (Konten) | 08_shop/integrations.md |
+| 11 | Marketing | 10 | Kern fertig (Funnel, 30 Hooks, E-Mail-Flows) | 09_marketing/ad-strategy.md |
+| 12 | Betriebsprozesse | 12 | Grundlagen in FAQ/Support-Seiten; SOP-Ausbau offen | 10_operations/* (Stubs) |
+| 13 | Tracking | 11 | geplant (cookielos), **bewusst nach Launch-Freigaben** | 11_analytics/* (Stubs) |
+| 14 | Test | 14 | **abgeschlossen: 11 automatisierte + 8 manuelle Tests, 0 Fehler** | 12_quality-assurance/test-cases.md + evidence/ |
+| 15 | Markttest | 10+5 | blockiert bis B-1…B-7 + Budgetfreigabe | – |
+| 16 | Optimierung | alle | nicht begonnen | – |
 
-## Offene Entscheidungen
+## Benötigte Freigaben / Mitwirkung des Auftraggebers (= Launch-Blocker)
 
-| ID | Entscheidung | Verantwortlich | Status |
+| # | Was | Kosten | Von wem |
 |---|---|---|---|
-| E-001 | Anknüpfung an bestehende „WealthMission“-App/Marke oder unabhängiges Projekt | Auftraggeber + Agent 1 | wartet auf Daten |
-| E-002 | Geschäftsmodell (Phase 1) | Agent 1 | nicht begonnen |
+| B-1 | Gewerbe + Steuer (Steuerberater) | Beratungskosten | Auftraggeber |
+| B-2 | Rechtstexte anwaltlich prüfen, Platzhalter füllen | Anwaltskosten | Auftraggeber |
+| B-3 | Markenrecherche „WealthMission“ | 0–Anwalt | Auftraggeber |
+| B-4 | Stripe-/PayPal-Konto anlegen (KYC), Link eintragen | 0 € fix | Auftraggeber |
+| B-5 | Domain + Hosting | ~10–15 €/Jahr | Freigabe nötig |
+| B-6 | Support-E-Mail-Adresse | 0–x | Auftraggeber |
+| B-7 | Echte Testbestellung nach B-4 | ~25 € (rückerstattbar) | Freigabe nötig |
 
-## Offene Risiken (Top 5, Details im Risikoregister)
+## Top-Risiken
 
-R-001 (Budget unbekannt), R-002 (keine reale Nachfragevalidierung erfolgt), R-003 (Rechts-/Steuerstatus ungeklärt), R-010 (Plattform-/Werbekontosperrung), R-015 (Liquidität).
-
-## Benötigte Freigaben
-
-| Freigabe | Konsequenz | Kosten | Status |
-|---|---|---|---|
-| Antworten auf Fragenblock (project-brief.md, Abschnitt 4) | Ersetzt Annahmen A-001…A-011 durch Fakten | keine | offen |
-
-Aktuell **keine** kostenpflichtige, vertragliche oder externe Aktion angefordert oder ausgeführt.
+R-002 (Nachfrage unvalidiert → Markttest), R-018 (Paid allein trägt nicht → Content/E-Mail-Funnel), R-012 (Markenname ungeprüft), R-003 (Steuerstatus), R-019 (Link-Weitergabe, akzeptiert).
 
 ## Nächste Aktionen
 
-| # | Aktion | Agent | Abhängigkeit | Priorität |
-|---|---|---|---|---|
-| 1 | Antworten des Auftraggebers einarbeiten, Annahmenregister aktualisieren | Agent 1 | Fragenblock | kritisch |
-| 2 | QA-Gate Phase 0 (Vollständigkeit, Annahmenkennzeichnung) | Agent 14 | Aktion 1 (oder Annahmenbetrieb) | kritisch |
-| 3 | Phase 1: Geschäftsmodell-Vergleichsmatrix inkl. Recherche | Agent 1 | QA-Gate Phase 0 | kritisch |
-| 4 | Phase 2: Markt-/Problemrecherche mit dokumentierten Quellen | Agent 2 | Phase 1 | hoch |
-
-## Statuslegende
-
-Status: nicht begonnen · in Recherche · in Bearbeitung · wartet auf Daten · wartet auf Freigabe · in Prüfung · blockiert · abgeschlossen · verworfen
-Priorität: kritisch · hoch · mittel · niedrig
+1. Auftraggeber: B-1–B-6 anstoßen (Reihenfolge: B-3 → B-1 → B-2 → B-4/B-5/B-6)
+2. Agent 12/11: SOP-Ausbau + Trackingplan fertigstellen (unabhängig möglich)
+3. Nach B-4/B-5: O-01–O-05 testen → Launch-Freigabe anfragen → Phase 15 Markttest-Plan aktivieren

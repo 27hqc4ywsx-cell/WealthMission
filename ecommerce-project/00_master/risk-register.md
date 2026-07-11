@@ -20,7 +20,9 @@
 | R-014 | Lieferverzögerung (v. a. bei Übersee-Beschaffung) | Lieferkette | mittel | mittel | mittel | Tracking-Stillstand, Feiertage (z. B. CNY) | EU-Lager-Optionen in Phase 1 bewerten, Pufferzeiten | Proaktive Kundenkommunikation, Erstattungs-SOP | Agent 12 | offen |
 | R-015 | Liquiditätsmangel durch Kapitalbindung (Ware, Werbevorlauf, Payment-Holds) | Finanzen | mittel | hoch | hoch | Cash-Reichweite < 2 Monate | Cashflow-Plan Phase 6, Sicherheitspuffer | Ausgabenstopp, Bestandsabverkauf | Agent 5 | offen |
 | R-016 | Datenverlust / technischer Ausfall des Shops | Technik | niedrig | mittel | mittel | Fehlende Backups | Backup-/Deployment-Plan Phase 9 | Restore lt. Plan | Agent 9 | offen |
-| R-017 | Verpackungsgesetz-Verstoß (LUCID/Systembeteiligung fehlt) | Recht | mittel | mittel | hoch | Versand ohne LUCID-Registrierung | Tax-/Legal-Checkliste vor erstem Versand | Registrierung nachholen, Versandstopp | Agent 6 | offen |
+| R-017 | Verpackungsgesetz-Verstoß (LUCID/Systembeteiligung fehlt) | Recht | mittel | mittel | hoch | Versand ohne LUCID-Registrierung | Tax-/Legal-Checkliste vor erstem Versand | Registrierung nachholen, Versandstopp | Agent 6 | **entfallen durch D-004 (kein Warenversand)** |
+| R-018 | Profitabilität hängt an organischem/E-Mail-Anteil; reines Paid-Ads-Modell rechnet sich nicht (Phase-6-Rechnung) | Marketing/Finanzen | hoch | mittel | hoch | Organische Inhalte erzeugen <50 % des Traffics im Markttest | Lead-Magnet-Funnel + Content-Plan VOR Paid-Start; Ziel-CAC-Grenze 9,60 € | Paid stoppen, Content-Only-Strategie | Agent 10/5 | offen |
+| R-019 | Kaufversion (statischer Link) technisch teilbar → Umsatzverlust durch Weitergabe | Technik/Umsatz | mittel | niedrig–mittel | mittel | Auffällig viele Zugriffe ohne Käufe | Akzeptiert für Teststufe (dokumentiert); bei Traktion tokenisierte Auslieferung | Anbieterwechsel lt. deployment-plan | Agent 9 | akzeptiert (Teststufe) |
 
 ## Pflegeregeln
 
