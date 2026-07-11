@@ -18,6 +18,18 @@
 | T-10 | Mobile Darstellung | Screenshots 390 px | kein horizontales Scrollen, lesbar | evidence/app-uebersicht-mobil.png, shop-start-mobil.png | ✅ |
 | T-11 | Desktop Darstellung | Screenshot 1280 px | Layout 2-spaltig, Nav vollständig | evidence/shop-start-desktop.png | ✅ |
 
+## Backoffice-Cockpit (Buchhaltung/Controlling, ausgeführt 2026-07-11)
+
+| ID | Testfall | Erwartet | Ergebnis | Status |
+|---|---|---|---|---|
+| T-12 | Bestellung erfassen + Erstattung markieren | KPI: 1 Verkauf, 1 Erstattung | korrekt | ✅ |
+| T-13 | DB1-Berechnung mit Erstattungsgebühr | 21,00−0,62−0,10−0,62 = 19,66 € | 19,66 € | ✅ |
+| T-14 | Ausgaben (Adspend 100 + Fix 30) → Monatsergebnis | 19,66 − 130 = −110,34 € | −110,34 € | ✅ |
+| T-15 | Blended CAC | 100 € / 1 Verkauf | 100,00 € | ✅ |
+| T-16 | Verlustbudget-Ampel | 110/1500 ≈ 7 %, grün | 7 % | ✅ |
+| T-17 | Persistenz nach Reload | 2 Bestellungen, 2 Ausgaben, 1 Erstattung | korrekt | ✅ |
+| T-18 | USt-Herausrechnung (19 %) | 3,99 € je 24,99 € | 3,99 € | ✅ |
+
 ## Manuell geprüft (Code-Review durch Agent 14)
 
 | ID | Prüfpunkt | Ergebnis |

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Groschenwerk Backoffice – Buchhaltung & Controlling</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+  body{line-height:1.45}
+  .wrap{max-width:880px}
+  .tabbar{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+  .tabbar button{font-family:inherit;font-weight:700;font-size:.9rem;border:1px solid var(--line);background:var(--bg-2);color:var(--muted);border-radius:12px;padding:.55rem 1rem;cursor:pointer}
+  .tabbar button[aria-selected="true"]{background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:#161000;border-color:transparent}
+  .view{display:none}.view.active{display:block}
+  .kgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}
+  @media(min-width:700px){.kgrid{grid-template-columns:repeat(4,1fr)}}
+  .kpi{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:12px}
+  .kpi .v{font-weight:800;font-size:1.15rem}
+  .kpi .l{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .pos{color:var(--green)}.neg{color:var(--red)}.goldc{color:var(--gold)}
+  .ampel{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:baseline}
+  .formrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;align-items:end}
+  label{font-size:.78rem;color:var(--muted);font-weight:600;margin:.4rem 0 .2rem}
+  input,select{padding:.55rem .7rem;font-size:.95rem}
+  .list li{font-size:.9rem}
+  .del{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:.2rem}
+  .del:hover{color:var(--red)}
+  .badge2{font-size:.7rem;border-radius:999px;padding:.1rem .5rem;border:1px solid var(--line);color:var(--muted)}
+  .badge2.ref{color:var(--red);border-color:var(--red)}
+  .switch{display:flex;align-items:center;gap:.6rem;font-size:.85rem;color:var(--muted)}
+  .mono{font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="site">
+  <div class="wrap nav">
+    <a class="logo" href="../index.html"><span class="coin" aria-hidden="true"></span>Groschenwerk <span class="badge" style="margin-left:4px">Backoffice</span></a>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <div class="notice" style="margin-top:16px">🔒 <strong>Internes Werkzeug.</strong> Daten liegen nur lokal in diesem Browser – regelmäßig exportieren. Das Cockpit unterstützt die Buchführung, <strong>ersetzt aber weder Belegarchivierung (GoBD) noch den Steuerberater</strong> (s. tax-checklist L-2).</div>
+
+    <div class="tabbar" role="tablist" aria-label="Bereiche">
+      <button role="tab" aria-selected="true" data-view="kpi">📊 Übersicht</button>
+      <button role="tab" aria-selected="false" data-view="orders">🧾 Bestellungen</button>
+      <button role="tab" aria-selected="false" data-view="costs">💸 Ausgaben</button>
+      <button role="tab" aria-selected="false" data-view="report">📁 Bericht & Export</button>
+    </div>
+
+    <!-- ÜBERSICHT -->
+    <section class="view active" id="view-kpi">
+      <div class="row" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <h1 style="margin:0;font-size:1.3rem">Controlling</h1>
+        <span style="flex:1"></span>
+        <button class="btn btn-ghost" id="kPrev" aria-label="Voriger Monat" style="padding:.4rem .8rem">←</button>
+        <strong id="kLabel" class="mono"></strong>
+        <button class="btn btn-ghost" id="kNext" aria-label="Nächster Monat" style="padding:.4rem .8rem">→</button>
+      </div>
+      <div class="kgrid" id="kpiGrid"></div>
+      <div class="card">
+        <h2 style="margin-top:0;font-size:1.05rem">Verlustbudget-Ampel (A-003: 1.500 €)</h2>
+        <p id="budgetLine" style="margin:.2rem 0"></p>
+        <p class="small muted" style="margin:0">Kumuliertes Gesamtergebnis aller Monate gegen das maximale Verlustbudget. Rot (≥ 80 % verbraucht) = Stop-Trigger gemäß goals.md.</p>
+      </div>
+      <div class="card">
+        <h2 style="margin-top:0;font-size:1.05rem">Steuermodus</h2>
+        <div class="switch">
+          <input type="checkbox" id="kleinunternehmer" style="width:auto">
+          <label for="kleinunternehmer" style="margin:0">Kleinunternehmerregelung §19 UStG aktiv (keine USt-Herausrechnung) — <strong>erst nach Steuerberater-Entscheid S-3 umstellen</strong></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- BESTELLUNGEN -->
+    <section class="view" id="view-orders">
+      <div class="card">
+        <h2 style="margin-top:0;font-size:1.05rem">Bestellung erfassen</h2>
+        <div class="formrow">
+          <div><label for="oDate">Datum</label><input type="date" id="oDate"></div>
+          <div><label for="oGross">Brutto (€)</label><input type="text" inputmode="decimal" id="oGross" value="24,99"></div>
+          <div><label for="oChannel">Kanal</label><select id="oChannel"><option>organisch</option><option>newsletter</option><option>tiktok-ads</option><option>meta-ads</option><option>seo</option><option>direkt/unbekannt</option></select></div>
+          <div><label for="oRef">Beleg-/Stripe-Nr.</label><input type="text" id="oRef" placeholder="pi_..."></div>
+          <div><button class="btn btn-gold" id="oAdd" style="width:100%">Speichern</button></div>
+        </div>
+        <p class="small muted" style="margin:.6rem 0 0">Gebühr wird mit 1,5 % + 0,25 € geschätzt (Q-01) — monatlich gegen Stripe-Abrechnung abgleichen (SOP-01).</p>
+      </div>
+      <div class="card"><ul class="list" id="oList"></ul></div>
+    </section>
+
+    <!-- AUSGABEN -->
+    <section class="view" id="view-costs">
+      <div class="card">
+        <h2 style="margin-top:0;font-size:1.05rem">Betriebsausgabe erfassen</h2>
+        <div class="formrow">
+          <div><label for="cDate">Datum</label><input type="date" id="cDate"></div>
+          <div><label for="cAmount">Betrag (€)</label><input type="text" inputmode="decimal" id="cAmount" placeholder="30,00"></div>
+          <div><label for="cCat">Kategorie</label><select id="cCat"><option>Adspend</option><option>Fixkosten (Hosting/Tools)</option><option>Beratung (Anwalt/StB)</option><option>Domain/Technik</option><option>Sonstiges</option></select></div>
+          <div><label for="cNote">Notiz/Beleg</label><input type="text" id="cNote" maxlength="60" placeholder="Rechnung Nr. …"></div>
+          <div><button class="btn btn-gold" id="cAdd" style="width:100%">Speichern</button></div>
+        </div>
+      </div>
+      <div class="card"><ul class="list" id="cList"></ul></div>
+    </section>
+
+    <!-- BERICHT -->
+    <section class="view" id="view-report">
+      <div class="card">
+        <h2 style="margin-top:0;font-size:1.05rem">Monatsbericht <span id="rLabel" class="goldc mono"></span></h2>
+        <table id="rTable"></table>
+        <p style="margin:1rem 0 0;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-gold" id="csvOrders">⬇️ CSV Einnahmen (StB)</button>
+          <button class="btn btn-gold" id="csvCosts">⬇️ CSV Ausgaben (StB)</button>
+          <button class="btn btn-ghost" id="boExport">💾 Komplett-Backup (JSON)</button>
+          <button class="btn btn-ghost" id="boImport">⬆️ Import</button>
+          <input type="file" id="boFile" accept="application/json" hidden>
+        </p>
+        <p class="small muted">CSV-Spalten folgen einer einfachen EÜR-Logik (Datum, Beschreibung, Netto, USt, Brutto, Beleg). Übergabeformat mit dem Steuerberater abstimmen.</p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site"><div class="wrap legal-note">Groschenwerk Backoffice · lokal, ohne Server · Version 1.0</div></footer>
+
+<script>
+"use strict";
+const KEY="gw_backoffice_v1";
+const BUDGET=1500, FEE_PCT=0.015, FEE_FIX=0.25, HOSTING_UNIT=0.10;
+let S=load();
+function load(){ try{const r=localStorage.getItem(KEY); if(r) return JSON.parse(r);}catch(e){}
+  return {orders:[],costs:[],kleinunternehmer:false}; }
+function save(){ localStorage.setItem(KEY,JSON.stringify(S)); }
+const fmt=n=>(n||0).toLocaleString("de-DE",{style:"currency",currency:"EUR"});
+const parseAmt=v=>{const n=parseFloat(String(v).replace(/\./g,"").replace(",","."));return isFinite(n)&&n>0?Math.round(n*100)/100:null;};
+const today=()=>new Date().toISOString().slice(0,10);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let month=new Date().toISOString().slice(0,7);
+
+/* Berechnungen */
+function orderCalc(o){
+  const vat = S.kleinunternehmer ? 0 : Math.round(o.gross/1.19*0.19*100)/100;
+  const net = Math.round((o.gross-vat)*100)/100;
+  const fee = Math.round((o.gross*FEE_PCT+FEE_FIX)*100)/100;
+  const db1 = o.refunded ? -fee : Math.round((net-fee-HOSTING_UNIT)*100)/100;
+  return {vat,net,fee,db1};
+}
+function monthData(m){
+  const o=S.orders.filter(x=>x.d.slice(0,7)===m);
+  const c=S.costs.filter(x=>x.d.slice(0,7)===m);
+  const sold=o.filter(x=>!x.refunded), refunded=o.filter(x=>x.refunded);
+  const gross=sold.reduce((s,x)=>s+x.gross,0);
+  const vat=sold.reduce((s,x)=>s+orderCalc(x).vat,0);
+  const fees=o.reduce((s,x)=>s+orderCalc(x).fee,0);
+  const db1=o.reduce((s,x)=>s+orderCalc(x).db1,0);
+  const refunds=refunded.reduce((s,x)=>s+x.gross,0);
+  const costs=c.reduce((s,x)=>s+x.a,0);
+  const ads=c.filter(x=>x.cat==="Adspend").reduce((s,x)=>s+x.a,0);
+  const result=Math.round((db1-costs)*100)/100;
+  const cac= sold.length&&ads ? Math.round(ads/sold.length*100)/100 : null;
+  return {sold:sold.length,refunded:refunded.length,gross,vat,fees,db1,refunds,costs,ads,result,cac};
+}
+function totalResult(){
+  const months=new Set([...S.orders,...S.costs].map(x=>x.d.slice(0,7)));
+  let t=0; months.forEach(m=>t+=monthData(m).result); return Math.round(t*100)/100;
+}
+
+/* Tabs */
+document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tabbar button").forEach(x=>x.setAttribute("aria-selected","false"));
+  b.setAttribute("aria-selected","true");
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.getElementById("view-"+b.dataset.view).classList.add("active");
+});
+
+/* Übersicht */
+function label(m){const[y,mm]=m.split("-");return["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"][+mm-1]+" "+y;}
+function renderKPI(){
+  document.getElementById("kLabel").textContent=label(month);
+  document.getElementById("rLabel").textContent=label(month);
+  const d=monthData(month);
+  const g=document.getElementById("kpiGrid");
+  g.innerHTML=`
+    <div class="kpi"><div class="v goldc">${d.sold}</div><div class="l">Verkäufe</div></div>
+    <div class="kpi"><div class="v">${fmt(d.gross)}</div><div class="l">Umsatz brutto</div></div>
+    <div class="kpi"><div class="v pos">${fmt(d.db1)}</div><div class="l">Deckungsbeitrag 1</div></div>
+    <div class="kpi"><div class="v ${d.result>=0?"pos":"neg"}">${fmt(d.result)}</div><div class="l">Ergebnis (Monat)</div></div>
+    <div class="kpi"><div class="v">${d.cac===null?"–":fmt(d.cac)}</div><div class="l">Blended CAC (Ziel ≤ 9,60 €)</div></div>
+    <div class="kpi"><div class="v ${d.refunded&&d.refunded/(d.sold+d.refunded)>0.1?"neg":""}">${d.refunded}</div><div class="l">Erstattungen</div></div>
+    <div class="kpi"><div class="v neg">${fmt(d.costs)}</div><div class="l">Ausgaben</div></div>
+    <div class="kpi"><div class="v">${fmt(d.vat)}</div><div class="l">USt (Rücklage!)</div></div>`;
+  const t=totalResult(), used=t<0?Math.min(100,Math.round(-t/BUDGET*100)):0;
+  const col= used>=80?"var(--red)":used>=50?"var(--gold)":"var(--green)";
+  document.getElementById("budgetLine").innerHTML=
+    `<span class="ampel" style="background:${col}"></span><strong>${fmt(t)}</strong> kumuliert · Verlustbudget verbraucht: <strong>${used} %</strong>`;
+  document.getElementById("kleinunternehmer").checked=!!S.kleinunternehmer;
+}
+document.getElementById("kPrev").onclick=()=>{const d=new Date(month+"-15");d.setMonth(d.getMonth()-1);month=d.toISOString().slice(0,7);renderAll();};
+document.getElementById("kNext").onclick=()=>{const d=new Date(month+"-15");d.setMonth(d.getMonth()+1);month=d.toISOString().slice(0,7);renderAll();};
+document.getElementById("kleinunternehmer").onchange=e=>{
+  if(!confirm("Steuermodus wirklich umstellen? Nur nach Steuerberater-Entscheid (S-3).")){e.target.checked=!!S.kleinunternehmer;return;}
+  S.kleinunternehmer=e.target.checked; save(); renderAll();
+};
+
+/* Bestellungen */
+document.getElementById("oDate").value=today();
+document.getElementById("cDate").value=today();
+document.getElementById("oAdd").onclick=()=>{
+  const gross=parseAmt(document.getElementById("oGross").value);
+  if(!gross){alert("Gültigen Bruttobetrag eingeben");return;}
+  S.orders.push({id:Date.now()+"",d:document.getElementById("oDate").value||today(),gross,
+    ch:document.getElementById("oChannel").value,ref:document.getElementById("oRef").value.trim(),refunded:false});
+  document.getElementById("oRef").value=""; save(); renderAll();
+};
+function renderOrders(){
+  const rows=S.orders.filter(x=>x.d.slice(0,7)===month).sort((a,b)=>b.d.localeCompare(a.d));
+  document.getElementById("oList").innerHTML=rows.length?rows.map(o=>{
+    const c=orderCalc(o);
+    return `<li>
+      <span class="badge2 ${o.refunded?"ref":""}">${o.refunded?"erstattet":"bezahlt"}</span>
+      <span class="mono">${o.d.slice(8,10)}.${o.d.slice(5,7)}.</span>
+      <span class="grow small muted" style="flex:1">${esc(o.ch)}${o.ref?" · "+esc(o.ref):""} · Netto ${fmt(c.net)} · Gebühr ${fmt(c.fee)}</span>
+      <span class="amount mono ${o.refunded?"neg":"pos"}">${fmt(o.gross)}</span>
+      <button class="del" title="${o.refunded?"als bezahlt markieren":"als erstattet markieren"}" data-ref="${o.id}">↩</button>
+      <button class="del" title="Löschen" data-del="${o.id}">✕</button></li>`;
+  }).join(""):'<li><span class="muted small">Keine Bestellungen in diesem Monat.</span></li>';
+  document.querySelectorAll("#oList [data-del]").forEach(b=>b.onclick=()=>{
+    if(!confirm("Bestellung löschen? (Nur bei Fehleingabe – sonst als erstattet markieren!)"))return;
+    S.orders=S.orders.filter(x=>x.id!==b.dataset.del);save();renderAll();});
+  document.querySelectorAll("#oList [data-ref]").forEach(b=>b.onclick=()=>{
+    const o=S.orders.find(x=>x.id===b.dataset.ref);o.refunded=!o.refunded;save();renderAll();});
+}
+
+/* Ausgaben */
+document.getElementById("cAdd").onclick=()=>{
+  const a=parseAmt(document.getElementById("cAmount").value);
+  if(!a){alert("Gültigen Betrag eingeben");return;}
+  S.costs.push({id:Date.now()+"",d:document.getElementById("cDate").value||today(),a,
+    cat:document.getElementById("cCat").value,n:document.getElementById("cNote").value.trim()});
+  document.getElementById("cAmount").value="";document.getElementById("cNote").value=""; save(); renderAll();
+};
+function renderCosts(){
+  const rows=S.costs.filter(x=>x.d.slice(0,7)===month).sort((a,b)=>b.d.localeCompare(a.d));
+  document.getElementById("cList").innerHTML=rows.length?rows.map(c=>`<li>
+      <span class="badge2">${esc(c.cat)}</span>
+      <span class="mono">${c.d.slice(8,10)}.${c.d.slice(5,7)}.</span>
+      <span class="grow small muted" style="flex:1">${esc(c.n||"")}</span>
+      <span class="amount mono neg">−${fmt(c.a)}</span>
+      <button class="del" title="Löschen" data-cdel="${c.id}">✕</button></li>`).join("")
+    :'<li><span class="muted small">Keine Ausgaben in diesem Monat.</span></li>';
+  document.querySelectorAll("#cList [data-cdel]").forEach(b=>b.onclick=()=>{
+    if(!confirm("Ausgabe löschen?"))return;
+    S.costs=S.costs.filter(x=>x.id!==b.dataset.cdel);save();renderAll();});
+}
+
+/* Bericht + Export */
+function renderReport(){
+  const d=monthData(month);
+  document.getElementById("rTable").innerHTML=`
+    <tr><th scope="row">Verkäufe / Erstattungen</th><td class="mono">${d.sold} / ${d.refunded}</td></tr>
+    <tr><th scope="row">Umsatz brutto</th><td class="mono">${fmt(d.gross)}</td></tr>
+    <tr><th scope="row">./. USt-Anteil (Rücklage)</th><td class="mono">${fmt(d.vat)}</td></tr>
+    <tr><th scope="row">./. Zahlungsgebühren (geschätzt)</th><td class="mono">${fmt(d.fees)}</td></tr>
+    <tr><th scope="row">= Deckungsbeitrag 1</th><td class="mono">${fmt(d.db1)}</td></tr>
+    <tr><th scope="row">./. Ausgaben (davon Adspend ${fmt(d.ads)})</th><td class="mono">${fmt(d.costs)}</td></tr>
+    <tr><th scope="row"><strong>Monatsergebnis</strong></th><td class="mono"><strong class="${d.result>=0?"pos":"neg"}">${fmt(d.result)}</strong></td></tr>
+    <tr><th scope="row">Blended CAC</th><td class="mono">${d.cac===null?"–":fmt(d.cac)}</td></tr>`;
+}
+function csv(rows,name){
+  const blob=new Blob(["﻿"+rows.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(";")).join("\n")],{type:"text/csv"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);
+}
+const de=n=>n.toFixed(2).replace(".",",");
+document.getElementById("csvOrders").onclick=()=>{
+  const rows=[["Datum","Beschreibung","Status","Kanal","Beleg","Netto","USt","Brutto"]];
+  S.orders.filter(x=>x.d.slice(0,7)===month).forEach(o=>{const c=orderCalc(o);
+    rows.push([o.d,"Groschenwerk Money OS (GW-MOS-001)",o.refunded?"ERSTATTET":"bezahlt",o.ch,o.ref||"",de(o.refunded?0:c.net),de(o.refunded?0:c.vat),de(o.refunded?-o.gross:o.gross)]);});
+  csv(rows,`einnahmen-${month}.csv`);
+};
+document.getElementById("csvCosts").onclick=()=>{
+  const rows=[["Datum","Kategorie","Notiz/Beleg","Betrag"]];
+  S.costs.filter(x=>x.d.slice(0,7)===month).forEach(c=>rows.push([c.d,c.cat,c.n||"",de(c.a)]));
+  csv(rows,`ausgaben-${month}.csv`);
+};
+document.getElementById("boExport").onclick=()=>{
+  const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`backoffice-backup-${today()}.json`;a.click();URL.revokeObjectURL(a.href);
+};
+document.getElementById("boImport").onclick=()=>document.getElementById("boFile").click();
+document.getElementById("boFile").addEventListener("change",e=>{
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(!d||!Array.isArray(d.orders))throw 0;
+    if(!confirm("Import ersetzt alle Cockpit-Daten. Fortfahren?"))return;
+    S=d;save();renderAll();}catch(_){alert("Ungültige Backup-Datei");}};
+  r.readAsText(f);e.target.value="";
+});
+
+function renderAll(){renderKPI();renderOrders();renderCosts();renderReport();}
+renderAll();
+</script>
+</body>
+</html>
