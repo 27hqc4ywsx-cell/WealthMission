@@ -1,4 +1,4 @@
-# Phase 6: Unit Economics & Szenarien – „WealthMission Money OS“
+# Phase 6: Unit Economics & Szenarien – „Groschenwerk Money OS“
 
 **Stand:** 2026-07-11 · **Agent 5** · Alle Werte in EUR. **Kategorie je Zeile gekennzeichnet.** Steuerannahme: Regelbesteuerung 19 % USt (A-007 offen → falls Kleinunternehmer §19 UStG, verschieben sich Nettowerte; beide Varianten unten).
 

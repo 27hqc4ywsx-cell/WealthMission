@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0d0d14">
-<title>WealthMission Money OS</title>
+<title>Groschenwerk Money OS</title>
 <style>
 :root{
   --bg-0:#07070c;--bg-1:#0f1018;--bg-2:#161826;--bg-3:#1f2235;--line:#2a2d44;
@@ -210,7 +210,7 @@ header.app .coin{width:30px;height:30px;border-radius:50%;background:radial-grad
 
 <script>
 "use strict";
-/* WealthMission Money OS – alle Daten bleiben lokal (localStorage). Keine Netzwerkzugriffe. */
+/* Groschenwerk Money OS – alle Daten bleiben lokal (localStorage). Keine Netzwerkzugriffe. */
 const KEY = "wm_money_os_v1";
 const CATS_OUT = ["Wohnen","Lebensmittel","Mobilität","Abos & Verträge","Freizeit","Gesundheit","Kleidung","Bildung","Sonstiges"];
 const CATS_IN  = ["Gehalt","Nebenjob","Verkauf","Geschenk","Rückerstattung","Sonstiges"];
@@ -436,7 +436,7 @@ function doExport(){
   const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"});
   const a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
-  a.download="wealthmission-backup-"+todayStr()+".json";
+  a.download="groschenwerk-backup-"+todayStr()+".json";
   a.click(); URL.revokeObjectURL(a.href);
   S.lastExport=todayStr(); save(); checkBackupBanner();
   toast("Backup exportiert 💾");

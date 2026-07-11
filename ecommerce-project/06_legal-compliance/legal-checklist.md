@@ -20,7 +20,7 @@
 | BFSG (Barrierefreiheit, seit 28.06.2025) | **ja, prüfen** | E-Commerce-Dienstleistungen erfasst; Kleinstunternehmer-Ausnahme (<10 MA, ≤2 Mio. €) gilt für **Dienstleistungen** nach Recherche | Shop trotzdem barrierearm gebaut (Semantik, Kontrast, Tastatur); Ausnahme-Status dokumentieren | umgesetzt (best effort) | Marktüberwachung | **ja** |
 | Keine Steuer-/Anlageberatung im Produkt | ja | StBerG/WpHG-Abgrenzung | Inhalte rein edukativ/Tool-Charakter; Disclaimer im Produkt | umgesetzt | Untersagung | ja bei Inhaltsausbau |
 | Urheber-/Bildrechte | ja | eigene Inhalte | ausschließlich selbst erstellte Grafiken/SVG/Texte; keine Fremdfotos | umgesetzt | Abmahnung | – |
-| Markenrecht „WealthMission“ | ja | Namensnutzung | **DPMA-/EUIPO-Recherche AUSSTEHEND** – vor öffentlichem Launch durchführen | **offen (Launch-Blocker)** | Rebranding | Anwalt empfohlen |
+| Markenrecht „Groschenwerk“ | ja | Namensnutzung | **DPMA-/EUIPO-Recherche AUSSTEHEND** – vor öffentlichem Launch durchführen | **offen (Launch-Blocker)** | Rebranding | Anwalt empfohlen |
 | E-Mail-Marketing/Double-Opt-in | ja (ab Newsletter) | UWG §7 | DOI-Prozess in E-Mail-Tool konfigurieren (Phase 10) | geplant | Abmahnung | – |
 | Bewertungsdarstellung | ja (falls genutzt) | keine unverifizierten/erfundenen Bewertungen | Shop enthält bewusst KEINE Testimonials bis echte vorliegen | umgesetzt | Abmahnung | – |
 

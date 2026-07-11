@@ -61,4 +61,4 @@ Alle Annahmen sind im Annahmenregister (`assumptions-register.md`) geführt und 
 
 ## 6. Abgrenzung zum bestehenden Repo-Inhalt
 
-Im Repository existiert bereits `index.html` – ein Prototyp „WealthMission – Vermögen trifft Charakter“ (Finanz-Gamification-App, Deutsch). **Offene Entscheidung E-001:** Soll das E-Commerce-Projekt an diese Marke/App anknüpfen (z. B. digitale Produkte im Finanzbildungs-Umfeld) oder unabhängig davon aufgebaut werden? Bis zur Antwort wird beides offen gehalten; Phase 1/2 bewertet beide Pfade.
+**Geklärt (D-008, 2026-07-11):** Das E-Commerce-Projekt ist vollständig unabhängig von der bestehenden „WealthMission“-App des Auftraggebers. Marke: „Groschenwerk“. Das Projekt wird in ein eigenes Repository separiert; das WealthMission-Repo bleibt unberührt.

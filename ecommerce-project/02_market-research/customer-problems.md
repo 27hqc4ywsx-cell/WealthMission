@@ -54,4 +54,4 @@ Budgetierung · Sparziel-Tracking · Schuldenabbau · Notgroschen-Aufbau · Paar
 | L4 | „Vom Wissen zum Tun“: Umsetzungs-Companion zu Finanz-Content | Problem 11; riesige Content-Reichweiten (Q-02) ohne Umsetzungstool |
 | L5 | Offline-first-Finanztool (Daten bleiben auf dem Gerät) als explizites Datenschutzversprechen | Probleme 4, 18 |
 
-**Gewählter Fokus:** L1 (+ Elemente aus L4/L5) – deckungsgleich mit vorhandener WealthMission-App-Basis (Gamification, Deutsch, Dark-Premium-Design) → Synergie mit E-001.
+**Gewählter Fokus:** L1 (+ Elemente aus L4/L5) – Umsetzung unter eigenständiger Marke „Groschenwerk“ (Rebrand-Beschluss D-008).

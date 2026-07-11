@@ -2,7 +2,7 @@
 
 **Stand:** 2026-07-11 · **Agent 3 + Agent 1** · **Status:** abgeschlossen (QA-Gate: siehe /12_quality-assurance/audit-report.md)
 
-## Produkt: „WealthMission Money OS“ – das gamifizierte Finanz-Cockpit (Einmalkauf)
+## Produkt: „Groschenwerk Money OS“ – das gamifizierte Finanz-Cockpit (Einmalkauf)
 
 Interaktive deutschsprachige Web-App (läuft komplett im Browser, offline-fähig, Daten bleiben auf dem Gerät). Module:
 
@@ -10,7 +10,7 @@ Interaktive deutschsprachige Web-App (läuft komplett im Browser, offline-fähig
 2. **Sparziele & Notgroschen** – Ziele mit Fortschrittsbalken und Missionen
 3. **52-Wochen-Challenge** – interaktiver Tracker
 4. **Vermögensübersicht** – Net-Worth über die Zeit
-5. **Gamification-Schicht** – XP, Level, Streaks (Anschluss an bestehende WealthMission-App-Mechanik, E-001: anknüpfen)
+5. **Gamification-Schicht** – XP, Level, Streaks (eigenständige Umsetzung unter der Marke „Groschenwerk“, D-008)
 
 ## Steckbrief
 

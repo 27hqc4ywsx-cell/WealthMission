@@ -8,7 +8,7 @@
 |---|---|---|---|
 | B-1 | Gewerbeanmeldung + steuerliche Erfassung (§19-Entscheidung) | Auftraggeber + Steuerberater | legal-checklist |
 | B-2 | Rechtstexte: Platzhalter füllen + anwaltliche Prüfung (Impressum, DSE, AGB, Widerruf) | Auftraggeber + Anwalt | professional-review-required |
-| B-3 | Markenrecherche „WealthMission“ (DPMA/EUIPO) | Auftraggeber (ggf. Anwalt) | R-012 |
+| B-3 | Markenrecherche „Groschenwerk“ (DPMA/EUIPO) | Auftraggeber (ggf. Anwalt) | R-012 |
 | B-4 | Stripe- (und optional PayPal-)Konto + Payment-Link in `shop/assets/config.js` | Auftraggeber (KYC) + Freigabe | integrations.md |
 | B-5 | Domain + Hosting einrichten | Auftraggeber (Freigabe: Kosten) | deployment-plan |
 | B-6 | E-Mail-Adresse für Support/Auslieferung + Eintrag in Kontakt/Impressum | Auftraggeber | kontakt.html |

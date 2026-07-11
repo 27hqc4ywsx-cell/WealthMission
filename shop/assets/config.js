@@ -1,5 +1,5 @@
 /**
- * WealthMission Shop – Konfiguration
+ * Groschenwerk Shop – Konfiguration
  * NUR öffentliche Werte. Keine API-Keys, keine Secrets (Regel 2.5).
  *
  * Aktivierung Zahlung: Nach Freigabe + Stripe-Konto den Payment-Link
@@ -12,5 +12,5 @@ window.WM_CONFIG = {
   paypalLink: "",         // Fallback (R-010)
   newsletterEndpoint: "", // DOI-Formular-Endpoint (Brevo o. ä.), leer = Formular deaktiviert
   price: "24,99 €",
-  productName: "WealthMission Money OS"
+  productName: "Groschenwerk Money OS"
 };

@@ -1,7 +1,7 @@
 # Projekt-Dashboard
 
 **Stand:** 2026-07-11 (aktualisiert nach Bauphase) · **Aktuelle Phase:** 14 abgeschlossen (Build + Test) → wartet auf Launch-Blocker B-1…B-7
-**Produkt:** WealthMission Money OS – gebaut, getestet, committet. **Launch:** blockiert durch externe Pflichten (erwartbar, s. launch-readiness.md)
+**Produkt:** Groschenwerk Money OS – gebaut, getestet, committet. **Launch:** blockiert durch externe Pflichten (erwartbar, s. launch-readiness.md)
 
 ## Phasenstatus
 
@@ -31,7 +31,7 @@
 |---|---|---|---|
 | B-1 | Gewerbe + Steuer (Steuerberater) | Beratungskosten | Auftraggeber |
 | B-2 | Rechtstexte anwaltlich prüfen, Platzhalter füllen | Anwaltskosten | Auftraggeber |
-| B-3 | Markenrecherche „WealthMission“ | 0–Anwalt | Auftraggeber |
+| B-3 | Markenrecherche „Groschenwerk“ | 0–Anwalt | Auftraggeber |
 | B-4 | Stripe-/PayPal-Konto anlegen (KYC), Link eintragen | 0 € fix | Auftraggeber |
 | B-5 | Domain + Hosting | ~10–15 €/Jahr | Freigabe nötig |
 | B-6 | Support-E-Mail-Adresse | 0–x | Auftraggeber |

@@ -4,7 +4,7 @@
 
 ## Empfohlener Weg (Freigabe erforderlich: Domain-Kosten ~10–15 €/Jahr)
 
-1. Domain registrieren (nach Markenrecherche B-3) — Vorschlag: wealthmission.de (Verfügbarkeit ungeprüft!)
+1. Domain registrieren (nach Markenrecherche B-3) — Vorschlag: groschenwerk.de (Verfügbarkeit ungeprüft!)
 2. Hosting: GitHub Pages (kostenlos) oder Netlify Free — `/shop` als Site-Root veröffentlichen
 3. `shop/assets/config.js`: `paymentLink` (Stripe) eintragen — erst nach B-4
 4. 404-Handling: GitHub Pages nutzt `404.html` automatisch

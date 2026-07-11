@@ -15,7 +15,7 @@
 | A-009 | Keine eigene Lagerung gewünscht; Fulfillment ausgelagert | offene Annahme | Konservativer Default bei unbekannter Zeit/Infrastruktur | Falsche Geschäftsmodell-Gewichtung in Phase 1 | Frage 8 | offen |
 | A-010 | Ausgeschlossen bis auf Widerruf: Lebensmittel, Kosmetik, Medizinprodukte, Kinder-/Babyprodukte, Elektronik mit Funk/Akku | offene Annahme | Hohe regulatorische Last (GPSR, CE, Kosmetik-/LebensmittelR, SpielzeugR); konservativer Default für Einsteiger | Attraktive Kategorien evtl. unnötig ausgeschlossen | Frage 10 | offen |
 | A-011 | Risikobereitschaft: konservativ | offene Annahme | Keine Angabe | Zu vorsichtige oder zu aggressive Empfehlungen | Frage 12 | offen |
-| A-012 | Das bestehende `index.html`-Projekt („WealthMission“-App) ist nicht zwingend Teil des E-Commerce-Vorhabens | Hypothese | Repo-Inhalt geprüft am 2026-07-11; kein Bezug im Auftrag genannt | Fehlende Synergien oder falscher Markenaufbau | Entscheidung E-001 | offen |
+| A-012 | Das bestehende `index.html`-Projekt („WealthMission“-App) ist nicht Teil des E-Commerce-Vorhabens | bestätigter Fakt | **Ersetzt am 2026-07-11 durch Auftraggeber-Klarstellung (D-008): Projekte sind vollständig getrennt** | – | – | ersetzt |
 
 ## Regeln
 
