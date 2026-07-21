@@ -47,23 +47,56 @@ Im Code mit `[PLATZHALTER …]` markiert (einfach danach suchen):
 | Kontakt | Google-Maps-Einbindung |
 | `rechtliches/` | Impressum und Datenschutz (fachlich prüfen lassen!) |
 
-## Echte Inhalte einbauen
+## Bilder einbauen – so einfach wie möglich
 
-**Galerie-Bilder:** In `index.html` innerhalb jeder `figure.gallery-tile`
-ein Bild ergänzen und die Verlaufsklasse (`tile-1` … `tile-5`) sowie den
-Hinweis-Badge entfernen:
+Die Seite ist für 7 Fotos vorbereitet. Es reicht, die Dateien unter den
+folgenden Namen in den Ordner `bilder/` zu legen – sie erscheinen dann
+automatisch in den Bogenrahmen. Fehlt eine Datei, bleibt der elegante
+Farbverlauf als gestalteter Zustand stehen (kein kaputtes Bild-Icon).
 
-```html
-<figure class="gallery-tile reveal">
-  <img src="bilder/volumenlook.jpg" alt="Volumen-Wimpernverlängerung, Ergebnis nach der Behandlung"
-       style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;" />
-  <figcaption class="tile-label">Volumenlook</figcaption>
-</figure>
-```
+| Dateiname | Motiv | Format |
+|---|---|---|
+| `bilder/hero.jpg` | Nahaufnahme Auge/Wimpern (geschlossenes Lid wirkt am edelsten) | Hochformat 4:5 |
+| `bilder/salon.jpg` | Salon-/Arbeitsdetail, warme Materialien | Hochformat 3:4 |
+| `bilder/galerie-1.jpg` | Wimpernverlängerung, klassisch | Hochformat 3:4 |
+| `bilder/galerie-2.jpg` | Volumenlook | Hochformat 3:4 |
+| `bilder/galerie-3.jpg` | Naturlook | Hochformat 3:4 |
+| `bilder/galerie-4.jpg` | Wimpernlifting | Hochformat 3:4 |
+| `bilder/galerie-5.jpg` | Browlifting / Brow-Detail | Hochformat 3:4 |
 
-Empfehlung: eigene Handy-Aufnahmen bei Tageslicht, einheitlicher
-Bildausschnitt (Augenpartie), Hochformat 4:5 – das wirkt hochwertiger als
-Stock-Material und ist zugleich Instagram-tauglich.
+### Kostenlose, legale Stockfotos finden
+
+**Lizenz:** Fotos von Unsplash und Pexels dürfen kostenlos privat und
+kommerziell genutzt werden, ohne Namensnennung (diese ist aber eine
+schöne Geste). Nicht erlaubt ist im Wesentlichen nur der Weiterverkauf
+der unveränderten Fotos. Details: unsplash.com/license bzw.
+pexels.com/license. Wichtig bei erkennbaren Personen/Augenpartien:
+seriöse Plattformen wie diese beiden verwenden; keine Bilder aus
+Google-Suche oder Instagram übernehmen.
+
+**Suchlinks** (direkt anklickbar):
+
+- Hero + Galerie 1–3: https://unsplash.com/s/photos/eyelash-extensions
+  und https://www.pexels.com/search/eyelash%20extensions/
+- Wimpernlifting: https://www.pexels.com/search/lash%20lift/
+- Browlifting: https://unsplash.com/s/photos/eyebrow-lamination
+  und https://www.pexels.com/search/eyebrows%20closeup/
+- Salonbild: https://unsplash.com/s/photos/beauty-salon-interior
+  (Filter: helle, warme Räume)
+
+**Auswahlkriterien, damit alles zur Seite passt:**
+
+1. Warme, helle Töne (Creme, Beige, Rosé, Haut) – keine kalten Blau- oder
+   Neonstimmungen, keine harten Blitzfotos.
+2. Ruhiger Bildausschnitt: ein Auge / eine Augenpartie, weiche Tiefenschärfe.
+3. Natürliche Haut, kein überretuschierter Werbe-Look.
+4. Auf Unsplash/Pexels die Größe „Medium“ (~1200–1600 px) herunterladen –
+   scharf genug und schnell ladend.
+5. Datei umbenennen (z. B. `galerie-2.jpg`) und in `bilder/` legen – fertig.
+
+Am stärksten wirken mittelfristig **eigene Aufnahmen** bei Tageslicht mit
+einheitlichem Ausschnitt – sie zeigen echte Ergebnisse und sind zugleich
+Instagram-tauglich. Die Stockfotos sind der hochwertige Start.
 
 **Instagram-Link:** Platzhalter durch
 `<a href="https://instagram.com/DEIN_PROFIL">@dein_profil</a>` ersetzen.

@@ -12,6 +12,26 @@
 
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  /* Bogenrahmen-Bilder: Solange eine Bilddatei in /bilder fehlt, wird das
+     <img> ausgeblendet und der gestaltete Grundzustand (Verlauf bzw.
+     Zeichnung) bleibt sichtbar. Sobald die Datei vorliegt, erscheint das
+     Foto automatisch – ohne Code-Änderung. */
+  document.querySelectorAll(".arch > img").forEach(function (img) {
+    function markMissing() {
+      img.style.display = "none";
+    }
+    function markLoaded() {
+      img.style.display = "";
+      var note = img.parentElement.querySelector(".arch-note");
+      if (note) note.style.display = "none";
+    }
+    if (img.complete) {
+      if (img.naturalWidth === 0) markMissing(); else markLoaded();
+    }
+    img.addEventListener("error", markMissing);
+    img.addEventListener("load", markLoaded);
+  });
+
   /* Header: dezenter Schatten nach dem Einstieg */
   var header = document.querySelector(".site-header");
   function onScroll() {
@@ -51,7 +71,7 @@
     }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
     /* Staffelung innerhalb der Kartengruppen */
-    document.querySelectorAll(".price-grid, .steps-grid, .gallery-grid").forEach(function (grid) {
+    document.querySelectorAll(".steps-grid, .gallery-grid, .why-grid").forEach(function (grid) {
       var i = 0;
       grid.querySelectorAll(".reveal").forEach(function (el) { el.dataset.stagger = i++ % 4; });
     });

@@ -1,0 +1,2 @@
+Hier die 7 Fotos ablegen (Dateinamen siehe README.md):
+hero.jpg, salon.jpg, galerie-1.jpg ... galerie-5.jpg
