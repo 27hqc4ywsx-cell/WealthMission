@@ -12,24 +12,14 @@
 
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* Bogenrahmen-Bilder: Solange eine Bilddatei in /bilder fehlt, wird das
-     <img> ausgeblendet und der gestaltete Grundzustand (Verlauf bzw.
-     Zeichnung) bleibt sichtbar. Sobald die Datei vorliegt, erscheint das
-     Foto automatisch – ohne Code-Änderung. */
+  /* Bogenrahmen-Bilder: Die <img>-Elemente sind standardmäßig unsichtbar
+     und zeigen sich erst, wenn ihre Datei in /bilder wirklich geladen
+     werden konnte. Bis dahin (und ohne JavaScript) bleibt die gezeichnete
+     Illustration der gestaltete Zustand – nie ein kaputtes Bild-Symbol. */
   document.querySelectorAll(".arch > img").forEach(function (img) {
-    function markMissing() {
-      img.style.display = "none";
-    }
-    function markLoaded() {
-      img.style.display = "";
-      var note = img.parentElement.querySelector(".arch-note");
-      if (note) note.style.display = "none";
-    }
-    if (img.complete) {
-      if (img.naturalWidth === 0) markMissing(); else markLoaded();
-    }
-    img.addEventListener("error", markMissing);
-    img.addEventListener("load", markLoaded);
+    function show() { img.style.display = "block"; }
+    if (img.complete && img.naturalWidth > 0) show();
+    else img.addEventListener("load", show);
   });
 
   /* Header: dezenter Schatten nach dem Einstieg */
